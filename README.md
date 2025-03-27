@@ -1,3 +1,4 @@
+![Chrauma Tactics](./CT.png)
 # Chrauma Tactics
 
 **Chrauma Tactics** is a turn-based strategy game with auto-battler mechanics, built in Unity. Players deploy units in the planning phase, then watch them fight it out automatically in tactical, grid-based combat. With randomized elements, deep unit synergies, and evolving upgrades, no two games play the same.
