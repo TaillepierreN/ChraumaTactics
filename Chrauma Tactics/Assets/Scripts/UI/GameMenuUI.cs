@@ -6,6 +6,7 @@ public class GameMenuUI : MonoBehaviour
     public GameObject settingsPanel;
     public GameObject gameMenuPanel;
     public GameObject popupQuitPanel;
+    public GameObject rankingPanel;
 
 
 
@@ -72,7 +73,22 @@ public class GameMenuUI : MonoBehaviour
 
     public void OnRankings()
     {
-        Debug.Log("Rankings");
+        if (rankingPanel != null && gameMenuPanel != null)
+        {
+            rankingPanel.SetActive(true);
+            gameMenuPanel.SetActive(false);
+            Debug.Log("Rankings opened");
+        }
+    }
+
+    public void CloseRankings()
+    {
+        if (rankingPanel != null && gameMenuPanel != null)
+        {
+            rankingPanel.SetActive(false);
+            gameMenuPanel.SetActive(true);
+            Debug.Log("Rankings closed");
+        }
     }
 
     public void OnQuit()
