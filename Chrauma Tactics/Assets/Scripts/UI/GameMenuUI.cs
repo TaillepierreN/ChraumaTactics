@@ -3,6 +3,13 @@ using UnityEngine.SceneManagement;
 
 public class GameMenuUI : MonoBehaviour
 {
+    public GameObject settingsPanel;
+    public GameObject gameMenuPanel;
+    public GameObject popupQuitPanel;
+
+
+
+
     public void OnPlay()
     {
         SceneManager.LoadScene("GameLobby");
@@ -25,14 +32,29 @@ public class GameMenuUI : MonoBehaviour
 
     public void OnSettings()
     {
-        Debug.Log("Settings");
+        if (settingsPanel != null && gameMenuPanel != null)
+        {
+            settingsPanel.SetActive(true);
+            gameMenuPanel.SetActive(false);
+            Debug.Log("Settings opened");
+        }
+    }
+
+    public void CloseSettings()
+    {
+        if (settingsPanel != null && gameMenuPanel != null)
+        {
+            settingsPanel.SetActive(false);
+            gameMenuPanel.SetActive(true);
+            Debug.Log("Settings closed");
+        }
     }
 
     public void OnCommunity()
     {
         // Application.OpenURL("onverra");
     }
-    
+
     public void OnCollection()
     {
         Debug.Log("Collection");
@@ -58,4 +80,22 @@ public class GameMenuUI : MonoBehaviour
         Application.Quit();
         Debug.Log("Game exited");
     }
+
+    public void OnPopupQuit()
+    {
+        if (popupQuitPanel != null)
+        {
+            popupQuitPanel.SetActive(true);
+            Debug.Log("Quit confirmation popup opened");
+        }
+    }
+    public void ClosePopupQuit()
+    {
+        if (popupQuitPanel != null)
+        {
+            popupQuitPanel.SetActive(false);
+            Debug.Log("Quit confirmation popup closed");
+        }
+    }
+    
 }
