@@ -23,27 +23,27 @@ namespace CT.Grid
             }
             Instance = this;
 
-            _gridSystem = new GridSystem(gridX, gridZ, 2f);
+            _gridSystem = new GridSystem(gridX, gridZ, 10f);
             _gridSystem.CreateDebugObjects(_gridDebugObjectPrefab);
         }
 
-        /*public void AddUnitAtGridPosition(GridPosition gridPosition, Unit unit)
+        /*public void AddSquadAtGridPosition(GridPosition gridPosition, Squad squad)
         {
-            _gridSystem.GetGridObject(gridPosition).AddUnit(unit);
+            _gridSystem.GetGridObject(gridPosition).AddSquad(squad);
         }
-        public List<Unit> GetUnitListAtGridPosition(GridPosition gridPosition)
+        public List<Squad> GetSquadListAtGridPosition(GridPosition gridPosition)
         {
-            return _gridSystem.GetGridObject(gridPosition).GetUnitList();
+            return _gridSystem.GetGridObject(gridPosition).GetSquadList();
         }
-        public void RemoveUnitAtGridPosition(GridPosition gridPosition, Unit unit)
+        public void RemoveSquadAtGridPosition(GridPosition gridPosition, Squad squad)
         {
-            _gridSystem.GetGridObject(gridPosition).RemoveUnit(unit);
+            _gridSystem.GetGridObject(gridPosition).RemoveSquad(squad);
         }
 
-        public void UnitMovedGridPosition(GridPosition  fromGridPosition, GridPosition toGridPosition, Unit unit)
+        public void SquadMovedGridPosition(GridPosition  fromGridPosition, GridPosition toGridPosition, Squad squad)
         {
-            RemoveUnitAtGridPosition(fromGridPosition, unit);
-            AddUnitAtGridPosition(toGridPosition, unit);
+            RemoveSquadAtGridPosition(fromGridPosition, squad);
+            AddSquadAtGridPosition(toGridPosition, squad);
         }*/
 
         public GridPosition GetGridPosition(Vector3 worldPosition) => _gridSystem.GetGridPosition(worldPosition);
@@ -52,10 +52,10 @@ namespace CT.Grid
         public int GetWidth() => _gridSystem.GetWidth();
         public int GetHeight() => _gridSystem.GetHeight();
 
-        /*public bool HasAnyUnitOnGridPosition(GridPosition gridPosition)
+        /*public bool HasAnySquadOnGridPosition(GridPosition gridPosition)
         {
             GridObject gridObject = _gridSystem.GetGridObject(gridPosition);
-            return gridObject.HasAnyUnit();
+            return gridObject.HasAnySquad();
         }*/
     }
 }
