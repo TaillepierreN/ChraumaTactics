@@ -8,6 +8,7 @@ public abstract class Unit : MonoBehaviour
     public bool DebugMode = false;
     public UnitType unitType;
     public Team team;
+    protected Squad squad;
 
 
     [Header("Unit Base Stats")]
@@ -19,6 +20,7 @@ public abstract class Unit : MonoBehaviour
 
 
     [Header("Unit Boosted Stats")]
+    // These stats will be modified by bonuses or boosts during the game.
     protected int boostedHealth;
     protected int boostedAtk;
     protected float boostedMoveSpeed;
@@ -35,6 +37,7 @@ public abstract class Unit : MonoBehaviour
 
 
     [Header("Unit Spawn Position")]
+    /// <summary>The position where the unit spawns at the start of the game or round.</summary>
     public Vector3 spawnPosition;
 
 
@@ -50,6 +53,7 @@ public abstract class Unit : MonoBehaviour
     private float detectionInterval = 0.2f;
     private float detectionTimer = 0f;
     private HashSet<Unit> knownFriendlies = new();
+    private LayerMask detectionMask = ~0; // all layers for now, TODO: set to only units layer
 
 
     [Header("State")]
@@ -59,10 +63,18 @@ public abstract class Unit : MonoBehaviour
 
     #endregion
 
+    #region Unit Events
+
+    /// <summary>Event triggered when the unit dies.</summary>
+    public event System.Action<Unit> OnUnitDeath;
+
+    #endregion
+
     #region Unit Getters
     /// <summary>
     /// Gets the current health of the unit.
     public int CurrentHealth => currentHealth;
+
     #endregion
 
     #region Unity callbacks
@@ -93,25 +105,26 @@ public abstract class Unit : MonoBehaviour
 
     #region Stats
 
-    /// <summary>
-    /// Initializes the unit's stats based on base values.
-    /// </summary>
+    /// <summary>Initializes the unit's stats based on base values.</summary>
     public virtual void Initialize()
     {
         SetCurrentStats(baseHealth, baseAtk, baseMoveSpeed, baseAtkSpeed, baseRange);
     }
 
-    /// <summary>
-    /// Sets the team of the unit. 
-    /// </summary>
+    /// <summary>Sets the team of the unit.</summary>
     public virtual void SetTeam(Team newTeam)
     {
         team = newTeam;
     }
 
-    /// <summary>
-    /// Sets the current stats of the unit.
-    /// </summary>
+    /// <summary>Sets the squad of the unit.</summary>
+    /// <param name="newSquad"></param>
+    public void SetSquad(Squad newSquad)
+    {
+        squad = newSquad;
+    }
+
+    /// <summary>Sets the current stats of the unit.</summary>
     /// <param name="health"></param>
     /// <param name="atk"></param>
     /// <param name="moveSpeed"></param>
@@ -127,6 +140,7 @@ public abstract class Unit : MonoBehaviour
         agent.speed = currentMoveSpeed;
     }
 
+    //TODO 
     // Example of boost to stats at start of rounds?
     /*public virtual void UpdateBoostedStats(BonusManager manager)
     {
@@ -138,8 +152,7 @@ public abstract class Unit : MonoBehaviour
         SetCurrentStats(boostedHealth, boostedAtk, boostedMoveSpeed, boostedAtkSpeed, boostedRange);
     }*/
 
-    /// <summary>
-    /// Resets the unit's stats to the boosted values and position .Call at game round end
+    /// <summary>Resets the unit's stats to the boosted values and position .Call at game round end</summary>
     public virtual void ResetStats()
     {
         SetCurrentStats(boostedHealth, boostedAtk, boostedMoveSpeed, boostedAtkSpeed, boostedRange);
@@ -150,9 +163,7 @@ public abstract class Unit : MonoBehaviour
 
     #region Movement mecanics
 
-    /// <summary>
-    /// Moves the unit to a target position.
-    /// </summary>
+    /// <summary>Moves the unit to a target position.</summary>
     /// <param name="destination"></param>
     public void MoveTo(Vector3 destination)
     {
@@ -163,9 +174,7 @@ public abstract class Unit : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Stops the unit's movement.
-    /// </summary>
+    /// <summary>Stops the unit's movement.</summary>
     public void StopMovement()
     {
         if (agent != null && agent.isActiveAndEnabled)
@@ -178,33 +187,28 @@ public abstract class Unit : MonoBehaviour
 
     #region Battle mecanics
 
-    /// <summary>
-    /// Starts the round for the unit, allowing it to engage in combat.
-    /// </summary>
+    /// <summary>Starts the round for the unit, allowing it to engage in combat.</summary>
     public virtual void StartRound()
     {
         RoundStarted = true;
     }
 
-    /// <summary>
-    /// Applies damage to the unit and checks if it should be dead.
-    /// </summary>
+    /// <summary>Applies damage to the unit and checks if it should be dead.</summary>
     public virtual void TakeDamage(int damage)
     {
         currentHealth -= damage;
         if (currentHealth <= 0)
         {
+            OnUnitDeath?.Invoke(this);
             // Explosion animation
             this.gameObject.SetActive(false);
         }
     }
 
-    /// <summary>
-    /// Detects enemies within range and engages them if found.
-    /// </summary>
+    /// <summary>Detects enemies within range and engages them if found.</summary>
     private void DetectEnemies()
     {
-        Collider[] hits = Physics.OverlapSphere(transform.position, currentRange);
+        Collider[] hits = Physics.OverlapSphere(transform.position, currentRange/*, detectionMask*/);
 
         foreach (Collider hit in hits)
         {
@@ -213,7 +217,7 @@ public abstract class Unit : MonoBehaviour
 
             Unit otherUnit = hit.GetComponent<Unit>();
 
-            if (knownFriendlies.Contains(otherUnit))
+            if (otherUnit == null || knownFriendlies.Contains(otherUnit))
                 continue;
 
             if (otherUnit.team == this.team)
@@ -225,24 +229,30 @@ public abstract class Unit : MonoBehaviour
             if (otherUnit != null && otherUnit.team != this.team)
             {
                 StopMovement();
-                EngageTarget(otherUnit);
+                squad?.ReportTarget(otherUnit);
                 break;
             }
         }
     }
 
-    /// <summary>
-    /// Engages the target unit in combat.
-    /// </summary>
-    protected virtual void EngageTarget(Unit target)
+    /// <summary>Engages the target unit in combat.</summary>
+    public virtual void EngageTarget(Unit target)
     {
         IsAttacking = true;
         Debug.Log($"piou piou piou");
+        /* TODO */
+        // when enemy unit dies ClearTarget();
+    }
+
+    /// <summary>Clears the current target of the unit, stopping any ongoing attack.</summary>
+    public virtual void ClearTarget()
+    {
+        IsAttacking = false;
     }
 
     #endregion
 
-    #region Debug
+        #region Debug
     private void OnDrawGizmosSelected()
     {
         if (!DebugMode)
