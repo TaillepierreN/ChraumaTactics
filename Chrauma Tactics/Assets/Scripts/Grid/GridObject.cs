@@ -9,46 +9,46 @@ namespace CT.Grid
     {
         private GridSystem _gridSystem;
         private GridPosition _gridPosition;
-        //private List<Unit> _unitList;
+        //private List<Squad> _squadList;
 
         public GridObject(GridSystem gridSystem, GridPosition gridPosition)
         {
             _gridSystem = gridSystem;
             _gridPosition = gridPosition;
-            //_unitList = new List<Unit>();
+            //_squadList = new List<Squad>();
         }
 
         public GridPosition GetGridPosition()
         {
             return _gridPosition;
         }
-        /*public void AddUnit(Unit unit)
+        /*public void AddSquad(Squad squad)
         {
-            _unitList.Add(unit);
+            _squadList.Add(squad);
         }*/
 
-        /*public void RemoveUnit(Unit unit)
+        /*public void RemoveSquad(Squad squad)
         {
-            _unitList.Remove(unit);
+            _squadList.Remove(squad);
         }*/
 
-        /*public List<Unit> GetUnitList()
+        /*public List<Squad> GetSquadList()
         {
-            return _unitList;
+            return _squadList;
         }*/
 
         public override string ToString()
         {
-            string unitString = "";
-            ///foreach (Unit unit in _unitList)
-            ///    unitString += unit + "\n";
-            return _gridPosition.ToString() + "\n" + unitString;
+            string squadString = "";
+            ///foreach (Squad squad in _squadList)
+            ///    squadString += squad + "\n";
+            return _gridPosition.ToString() + "\n" + squadString;
 
         }
 
-        /*public bool HasAnyUnit()
+        /*public bool HasAnySquad()
         {
-            return _unitList.Count > 0;
+            return _squadList.Count > 0;
         }*/
     }
 
