@@ -65,6 +65,15 @@ namespace CT.Grid
         {
             //HideAllGridPosition();
             //Unit selectedUnit = UnitActionSystem.Instance.GetSelectedUnit();
+        
+        // TEMPORARY DEBUG GRID VISUAL 
+        ShowGridPositionList(new List<GridPosition>
+        {
+        new GridPosition(0, 0),
+        new GridPosition(0, 10),
+        new GridPosition(20, 10),
+        new GridPosition(20, 10)
+        });
             //ShowGridPositionList(selectedUnit.GetMoveAction().GetValidGridPositionList());
         }
 
