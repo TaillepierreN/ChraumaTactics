@@ -765,13 +765,21 @@ PrefabInstance:
       value: Btn_BuyUnit
       objectReference: {fileID: 0}
     - target: {fileID: 8067972264092837547, guid: badba1d56008fed4ca2a0db6a5991323, type: 3}
+      propertyPath: unitNum
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8067972264092837547, guid: badba1d56008fed4ca2a0db6a5991323, type: 3}
       propertyPath: unitIcon
       value: 
       objectReference: {fileID: 21300000, guid: 729a429202855534694f2871530debe6, type: 3}
     - target: {fileID: 8067972264092837547, guid: badba1d56008fed4ca2a0db6a5991323, type: 3}
       propertyPath: unitPrefab
       value: 
-      objectReference: {fileID: 7501969136943843807, guid: 0a82cb82bad24f149987325bf5d8395b, type: 3}
+      objectReference: {fileID: 7841054442095230265, guid: 530fcc000a1fdcd438cba87f8a7c88aa, type: 3}
+    - target: {fileID: 8205866542742875319, guid: badba1d56008fed4ca2a0db6a5991323, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnButtonClicked
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

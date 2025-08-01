@@ -9,6 +9,7 @@ namespace CT.UI.UnitSelectionUI
         [SerializeField] private GameObject unitPrefab;
         [SerializeField] private Image unitImage;
         [SerializeField] private Sprite unitIcon;
+        [SerializeField] private int unitNum;
 
         void Start()
         {
@@ -17,7 +18,7 @@ namespace CT.UI.UnitSelectionUI
 
         public void OnButtonClicked()
         {
-            UnitPlacer.Instance.StartPlacingUnit(unitPrefab);
+            UnitPlacer.Instance.StartPlacingUnit(unitPrefab, unitNum);
         }
     }
 }
