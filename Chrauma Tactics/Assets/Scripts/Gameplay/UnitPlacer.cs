@@ -39,7 +39,8 @@ namespace CT.Gameplay
             if (Physics.Raycast(ray, out RaycastHit hit, 100f))
             {
                 GridPosition gridPos = LevelGrid.Instance.GetGridPosition(hit.point);
-                bool isValid = LevelGrid.Instance.IsValidGridPosition(gridPos);
+                bool isValid = LevelGrid.Instance.IsValidGridPosition(gridPos) &&
+                    !LevelGrid.Instance.HasAnySquadOnGridPosition(gridPos);
 
                 ghostUnit.transform.position = LevelGrid.Instance.GetWorldPosition(gridPos);
                 GridSystemVisual.Instance.ShowOverlay(gridPos, isValid ? Color.green : Color.red);
@@ -59,8 +60,8 @@ namespace CT.Gameplay
             for (int i = 0; i < numberOfUnits; i++)
             {
                 Transform spawnPos = ghostUnit.transform.GetChild(i);
-                Debug.Log("Spawning ghost unit at: " + spawnPos.position);
                 GameObject ghostUnitObj = Instantiate(unitPrefab, spawnPos.position, Quaternion.identity, spawnPos);
+
                 DestroyImmediate(ghostUnitObj.GetComponent<Unit>());
                 DestroyImmediate(ghostUnitObj.GetComponent<UnityEngine.AI.NavMeshAgent>());
                 DestroyImmediate(ghostUnitObj.GetComponent<Animator>());
@@ -83,6 +84,9 @@ namespace CT.Gameplay
             squad.unitPrefab = unitPrefab;
             squad.SpawnUnit();
 
+            LevelGrid.Instance.AddSquadAtGridPosition(pos, squad);
+
+            GridSystemVisual.Instance.HideAllOverlays();
             Destroy(ghostUnit);
             ghostUnit = null;
         }
