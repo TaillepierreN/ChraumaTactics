@@ -9,33 +9,33 @@ namespace CT.Grid
     {
         private GridSystem _gridSystem;
         private GridPosition _gridPosition;
-        //private List<Squad> _squadList;
+        private List<Squad> _squadList;
 
         public GridObject(GridSystem gridSystem, GridPosition gridPosition)
         {
             _gridSystem = gridSystem;
             _gridPosition = gridPosition;
-            //_squadList = new List<Squad>();
+            _squadList = new List<Squad>();
         }
 
         public GridPosition GetGridPosition()
         {
             return _gridPosition;
         }
-        /*public void AddSquad(Squad squad)
+        public void AddSquad(Squad squad)
         {
             _squadList.Add(squad);
-        }*/
+        }
 
-        /*public void RemoveSquad(Squad squad)
+        public void RemoveSquad(Squad squad)
         {
             _squadList.Remove(squad);
-        }*/
+        }
 
-        /*public List<Squad> GetSquadList()
+        public List<Squad> GetSquadList()
         {
             return _squadList;
-        }*/
+        }
 
         public override string ToString()
         {
@@ -46,10 +46,10 @@ namespace CT.Grid
 
         }
 
-        /*public bool HasAnySquad()
+        public bool HasAnySquad()
         {
             return _squadList.Count > 0;
-        }*/
+        }
     }
 
 }

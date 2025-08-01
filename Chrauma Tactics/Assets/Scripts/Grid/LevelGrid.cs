@@ -27,7 +27,7 @@ namespace CT.Grid
             _gridSystem.CreateDebugObjects(_gridDebugObjectPrefab);
         }
 
-        /*public void AddSquadAtGridPosition(GridPosition gridPosition, Squad squad)
+        public void AddSquadAtGridPosition(GridPosition gridPosition, Squad squad)
         {
             _gridSystem.GetGridObject(gridPosition).AddSquad(squad);
         }
@@ -44,7 +44,7 @@ namespace CT.Grid
         {
             RemoveSquadAtGridPosition(fromGridPosition, squad);
             AddSquadAtGridPosition(toGridPosition, squad);
-        }*/
+        }
 
         public GridPosition GetGridPosition(Vector3 worldPosition) => _gridSystem.GetGridPosition(worldPosition);
         public bool IsValidGridPosition(GridPosition gridPosition) => _gridSystem.isValidGridPosition(gridPosition);
@@ -52,10 +52,10 @@ namespace CT.Grid
         public int GetWidth() => _gridSystem.GetWidth();
         public int GetHeight() => _gridSystem.GetHeight();
 
-        /*public bool HasAnySquadOnGridPosition(GridPosition gridPosition)
+        public bool HasAnySquadOnGridPosition(GridPosition gridPosition)
         {
             GridObject gridObject = _gridSystem.GetGridObject(gridPosition);
             return gridObject.HasAnySquad();
-        }*/
+        }
     }
 }
