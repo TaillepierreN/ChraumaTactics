@@ -30,8 +30,7 @@ public class Squad : MonoBehaviour
     [Header("Squad Properties")]
     /// <summary>The list of units in the squad.</summary>
     private List<Unit> units = new List<Unit>();
-    /// <summary>The current target of the squad.</summary>
-    private Unit squadCurrentTarget = null;
+
 
 
     #region Squad creation
@@ -64,36 +63,6 @@ public class Squad : MonoBehaviour
         foreach (Unit unit in units)
         {
             unit.MoveTo(destination);
-        }
-    }
-
-    #endregion
-
-    #region Squad Combat
-
-    /// <summary>Reports a target to the squad, allowing units to engage it.</summary>
-    /// <param name="enemy"></param>
-    public void ReportTarget(Unit enemy)
-    {
-        if (squadCurrentTarget != null)
-            return;
-        squadCurrentTarget = enemy;
-        enemy.OnUnitDeath += ClearTarget;
-        foreach (Unit unit in units)
-        {
-            if (!unit.IsAttacking)
-                unit.EngageTarget(enemy);
-        }
-    }
-
-    /// <summary>Clears the current target of the squad and stops all units from attacking.</summary>
-    public void ClearTarget(Unit target)
-    {
-        target.OnUnitDeath -= ClearTarget;
-        squadCurrentTarget = null;
-        foreach (Unit unit in units)
-        {
-            unit.ClearTarget();
         }
     }
 

@@ -33,7 +33,7 @@ public abstract class Unit : MonoBehaviour
     protected int currentAtk;
     protected float currentMoveSpeed;
     protected float currentAtkSpeed;
-    protected float currentRange;
+    protected float currentAtkRange;
 
 
     [Header("Unit Spawn Position")]
@@ -50,10 +50,13 @@ public abstract class Unit : MonoBehaviour
 
 
     [Header("Unit Detection settings")]
+    [SerializeField] private float detectionRadius = 100f;
     private float detectionInterval = 0.2f;
     private float detectionTimer = 0f;
-    private HashSet<Unit> knownFriendlies = new();
+    private HashSet<Unit> knownFriendlies = new(); // if we never use it for anything else than detect enemies, we should be able to remove it without performance issues(maybe gain even)
     private LayerMask detectionMask = ~0; // all layers for now, TODO: set to only units layer
+    private Unit currentTarget = null;
+
 
 
     [Header("State")]
@@ -66,7 +69,7 @@ public abstract class Unit : MonoBehaviour
     #region Unit Events
 
     /// <summary>Event triggered when the unit dies.</summary>
-    public event System.Action<Unit> OnUnitDeath;
+    public event System.Action OnUnitDeath;
 
     #endregion
 
@@ -92,8 +95,10 @@ public abstract class Unit : MonoBehaviour
 
     private void Update()
     {
+        if (DebugMode)
+            RoundStarted = true;
         if (!RoundStarted)
-            return;
+                return;
         detectionTimer += Time.deltaTime;
         if (detectionTimer >= detectionInterval)
         {
@@ -136,7 +141,7 @@ public abstract class Unit : MonoBehaviour
         currentAtk = atk;
         currentMoveSpeed = moveSpeed;
         currentAtkSpeed = atkSpeed;
-        currentRange = range;
+        currentAtkRange = range;
         agent.speed = currentMoveSpeed;
     }
 
@@ -158,6 +163,9 @@ public abstract class Unit : MonoBehaviour
         SetCurrentStats(boostedHealth, boostedAtk, boostedMoveSpeed, boostedAtkSpeed, boostedRange);
         transform.position = spawnPosition;
         RoundStarted = false;
+        IsAttacking = false;
+        currentTarget = null;
+        IsMoving = false;
     }
     #endregion
 
@@ -169,6 +177,7 @@ public abstract class Unit : MonoBehaviour
     {
         if (agent != null && agent.isActiveAndEnabled)
         {
+            Debug.Log("Moving to " + destination);
             agent.SetDestination(destination);
             IsMoving = true;
         }
@@ -177,9 +186,11 @@ public abstract class Unit : MonoBehaviour
     /// <summary>Stops the unit's movement.</summary>
     public void StopMovement()
     {
-        if (agent != null && agent.isActiveAndEnabled)
+        if (agent != null && agent.isActiveAndEnabled && IsMoving)
         {
+            Debug.Log("Stopping movement");
             agent.ResetPath();
+            agent.velocity = Vector3.zero;
             IsMoving = false;
         }
     }
@@ -199,7 +210,7 @@ public abstract class Unit : MonoBehaviour
         currentHealth -= damage;
         if (currentHealth <= 0)
         {
-            OnUnitDeath?.Invoke(this);
+            OnUnitDeath?.Invoke();
             // Explosion animation
             this.gameObject.SetActive(false);
         }
@@ -208,13 +219,17 @@ public abstract class Unit : MonoBehaviour
     /// <summary>Detects enemies within range and engages them if found.</summary>
     private void DetectEnemies()
     {
-        Collider[] hits = Physics.OverlapSphere(transform.position, currentRange/*, detectionMask*/);
+        Collider[] hits = Physics.OverlapSphere(transform.position, detectionRadius/*, detectionMask*/);
+
+        float closestDistanceSqr = float.MaxValue;
+        Unit closestEnemy = null;
 
         foreach (Collider hit in hits)
         {
             if (hit.gameObject == this.gameObject)
                 continue;
 
+            
             Unit otherUnit = hit.GetComponent<Unit>();
 
             if (otherUnit == null || knownFriendlies.Contains(otherUnit))
@@ -226,11 +241,24 @@ public abstract class Unit : MonoBehaviour
                 continue;
             }
 
-            if (otherUnit != null && otherUnit.team != this.team)
+            float distSqr = (otherUnit.transform.position - transform.position).sqrMagnitude;
+            if (distSqr < closestDistanceSqr)
+            {
+                closestDistanceSqr = distSqr;
+                closestEnemy = otherUnit;
+            }
+        }
+        if (closestEnemy != null)
+        {
+            float distanceToEnemy = Vector3.Distance(transform.position, closestEnemy.transform.position);
+            if (distanceToEnemy <= currentAtkRange)
             {
                 StopMovement();
-                squad?.ReportTarget(otherUnit);
-                break;
+                EngageTarget(closestEnemy);
+            }
+            else
+            {
+                MoveTo(closestEnemy.transform.position);
             }
         }
     }
@@ -238,27 +266,37 @@ public abstract class Unit : MonoBehaviour
     /// <summary>Engages the target unit in combat.</summary>
     public virtual void EngageTarget(Unit target)
     {
+        if (currentTarget == target)
+            return;
         IsAttacking = true;
+        currentTarget = target;
         Debug.Log($"piou piou piou");
+        currentTarget.OnUnitDeath += ClearTarget;
         /* TODO */
-        // when enemy unit dies ClearTarget();
+        // actual attack loop/ coroutine?
     }
 
     /// <summary>Clears the current target of the unit, stopping any ongoing attack.</summary>
     public virtual void ClearTarget()
     {
+        if (currentTarget != null)
+            currentTarget.OnUnitDeath -= ClearTarget;
+
         IsAttacking = false;
+        currentTarget = null;
     }
 
     #endregion
 
-        #region Debug
+    #region Debug
     private void OnDrawGizmosSelected()
     {
         if (!DebugMode)
             return;
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, currentRange);
+        Gizmos.DrawWireSphere(transform.position, currentAtkRange);
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, detectionRadius);
     }
     #endregion
 
