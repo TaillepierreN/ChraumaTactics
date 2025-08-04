@@ -48,14 +48,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   DebugMode: 0
-  unitType: 1
   team: 0
+  unitType: 1
   baseHealth: 150
   baseAtk: 25
   baseMoveSpeed: 20
   baseAtkSpeed: 20
   baseRange: 20
   spawnPosition: {x: 0, y: 0, z: 0}
+  hasSmoothStop: 1
+  decelerationRate: 4
   detectionRadius: 60
   RoundStarted: 0
   IsMoving: 0
