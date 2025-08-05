@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -6,17 +7,17 @@ public abstract class Unit : MonoBehaviour
 {
     #region Unit Properties
     public bool DebugMode = false;
-    public UnitType unitType;
     public Team team;
     protected Squad squad;
+    [SerializeField] protected UnitType unitType;
 
 
     [Header("Unit Base Stats")]
-    public int baseHealth;
-    public int baseAtk;
-    public float baseMoveSpeed;
-    public float baseAtkSpeed;
-    public float baseRange;
+    [SerializeField] protected int baseHealth;
+    [SerializeField] protected int baseAtk;
+    [SerializeField] protected float baseMoveSpeed;
+    [SerializeField] protected float baseAtkSpeed;
+    [SerializeField] protected float baseRange;
 
 
     [Header("Unit Boosted Stats")]
@@ -33,7 +34,7 @@ public abstract class Unit : MonoBehaviour
     protected int currentAtk;
     protected float currentMoveSpeed;
     protected float currentAtkSpeed;
-    protected float currentRange;
+    protected float currentAtkRange;
 
 
     [Header("Unit Spawn Position")]
@@ -43,6 +44,9 @@ public abstract class Unit : MonoBehaviour
 
     [Header("Unit NavMesh Agent")]
     protected NavMeshAgent agent;
+    [SerializeField] protected bool hasSmoothStop = false;
+    [SerializeField] protected float decelerationRate = 2.5f;
+    private bool waitingForStop = false;
 
 
     [Header("Unit Animator")]
@@ -50,23 +54,33 @@ public abstract class Unit : MonoBehaviour
 
 
     [Header("Unit Detection settings")]
+    [SerializeField] private float detectionRadius = 100f;
     private float detectionInterval = 0.2f;
     private float detectionTimer = 0f;
-    private HashSet<Unit> knownFriendlies = new();
+    /// <summary>Dictionary to keep track of known friendly units to skip repeated Getcomponent check.</summary>
+    private Dictionary<GameObject, Unit> knownFriendlies = new();
+    /// <summary>Dictionary to keep track of known enemy units to skip repeated GetComponent check.</summary>
+    private Dictionary<GameObject, Unit> knownEnemies = new();
     private LayerMask detectionMask = ~0; // all layers for now, TODO: set to only units layer
+    private Unit currentTarget = null;
+
 
 
     [Header("State")]
     public bool RoundStarted = false;
+    [HideInInspector]
     public bool IsMoving = false;
+    [HideInInspector]
     public bool IsAttacking = false;
+    [HideInInspector]
+    public bool IsDead = false;
 
     #endregion
 
     #region Unit Events
 
     /// <summary>Event triggered when the unit dies.</summary>
-    public event System.Action<Unit> OnUnitDeath;
+    public event Action OnUnitDeath;
 
     #endregion
 
@@ -94,13 +108,40 @@ public abstract class Unit : MonoBehaviour
     {
         if (!RoundStarted)
             return;
+
         detectionTimer += Time.deltaTime;
         if (detectionTimer >= detectionInterval)
         {
             detectionTimer = 0f;
             DetectEnemies();
         }
+
+        if (hasSmoothStop && waitingForStop)
+        {
+            if (agent.velocity.magnitude > 0.01f)
+                agent.velocity = Vector3.Lerp(agent.velocity, Vector3.zero, Time.deltaTime * decelerationRate);
+            else
+            {
+                agent.ResetPath();
+                waitingForStop = false;
+            }
+        }
     }
+
+    private void OnEnable()
+    {
+        IsDead = false;
+    }
+
+    void OnDisable()
+    {
+        if (!IsDead)
+        {
+            IsDead = true;
+            OnUnitDeath?.Invoke();
+        }
+    }
+
     #endregion
 
     #region Stats
@@ -109,6 +150,7 @@ public abstract class Unit : MonoBehaviour
     public virtual void Initialize()
     {
         SetCurrentStats(baseHealth, baseAtk, baseMoveSpeed, baseAtkSpeed, baseRange);
+        agent.isStopped = false;
     }
 
     /// <summary>Sets the team of the unit.</summary>
@@ -136,7 +178,7 @@ public abstract class Unit : MonoBehaviour
         currentAtk = atk;
         currentMoveSpeed = moveSpeed;
         currentAtkSpeed = atkSpeed;
-        currentRange = range;
+        currentAtkRange = range;
         agent.speed = currentMoveSpeed;
     }
 
@@ -158,6 +200,10 @@ public abstract class Unit : MonoBehaviour
         SetCurrentStats(boostedHealth, boostedAtk, boostedMoveSpeed, boostedAtkSpeed, boostedRange);
         transform.position = spawnPosition;
         RoundStarted = false;
+        IsAttacking = false;
+        currentTarget = null;
+        IsMoving = false;
+        IsDead = false;
     }
     #endregion
 
@@ -169,25 +215,35 @@ public abstract class Unit : MonoBehaviour
     {
         if (agent != null && agent.isActiveAndEnabled)
         {
+            Debug.Log("Moving to " + destination);
             agent.SetDestination(destination);
             IsMoving = true;
+            agent.isStopped = false;
         }
     }
 
-    /// <summary>Stops the unit's movement.</summary>
+    /// <summary>Stops the unit's movement, either instant or smoothed.</summary>
     public void StopMovement()
     {
-        if (agent != null && agent.isActiveAndEnabled)
+        if (agent != null && agent.isActiveAndEnabled && IsMoving)
         {
-            agent.ResetPath();
+            Debug.Log("Stopping movement");
             IsMoving = false;
+            agent.isStopped = true;
+            if (!hasSmoothStop)
+            {
+                agent.ResetPath();
+                agent.velocity = Vector3.zero;
+            }
+            else
+                waitingForStop = true;
         }
     }
     #endregion
 
     #region Battle mecanics
 
-    /// <summary>Starts the round for the unit, allowing it to engage in combat.</summary>
+    /// <summary>Starts the round for the unit, allowing it to engage in combat and move.</summary>
     public virtual void StartRound()
     {
         RoundStarted = true;
@@ -199,38 +255,76 @@ public abstract class Unit : MonoBehaviour
         currentHealth -= damage;
         if (currentHealth <= 0)
         {
-            OnUnitDeath?.Invoke(this);
+            IsDead = true;
+            OnUnitDeath?.Invoke();
             // Explosion animation
             this.gameObject.SetActive(false);
         }
     }
 
-    /// <summary>Detects enemies within range and engages them if found.</summary>
+    /// <summary>
+    /// Detects units within range check with known friendlies and enemies.
+    /// if unknown, add them to the correct dictionnary.
+    /// Check closest enemy, move to attack range and engage
+    /// </summary>
     private void DetectEnemies()
     {
-        Collider[] hits = Physics.OverlapSphere(transform.position, currentRange/*, detectionMask*/);
+        if (currentTarget != null && currentTarget.gameObject.activeInHierarchy)
+            return;
+
+        Collider[] hits = Physics.OverlapSphere(transform.position, detectionRadius/*, detectionMask*/);
+
+        float closestDistanceSqr = float.MaxValue;
+        Unit closestEnemy = null;
 
         foreach (Collider hit in hits)
         {
             if (hit.gameObject == this.gameObject)
                 continue;
 
-            Unit otherUnit = hit.GetComponent<Unit>();
-
-            if (otherUnit == null || knownFriendlies.Contains(otherUnit))
+            //skip if friendly and already known
+            if (knownFriendlies.TryGetValue(hit.gameObject, out Unit friendUnit))
                 continue;
 
-            if (otherUnit.team == this.team)
+            Unit enemyUnit;
+
+            //if not known enemy, check which team it is on
+            // if it is an ally, add to known friendlies
+            // if it is an enemy, add to known enemies
+            if (!knownEnemies.TryGetValue(hit.gameObject, out enemyUnit))
             {
-                knownFriendlies.Add(otherUnit);
-                continue;
+                enemyUnit = hit.GetComponent<Unit>();
+
+                if (enemyUnit == null)
+                    continue;
+
+                if (enemyUnit.team == this.team)
+                {
+                    knownFriendlies.Add(hit.gameObject, enemyUnit);
+                    continue;
+                }
+                knownEnemies.Add(hit.gameObject, enemyUnit);
             }
 
-            if (otherUnit != null && otherUnit.team != this.team)
+            float distSqr = (enemyUnit.transform.position - transform.position).sqrMagnitude;
+            if (distSqr < closestDistanceSqr)
+            {
+                closestDistanceSqr = distSqr;
+                closestEnemy = enemyUnit;
+            }
+        }
+
+        if (closestEnemy != null)
+        {
+            float distanceToEnemy = Vector3.Distance(transform.position, closestEnemy.transform.position);
+            if (distanceToEnemy <= currentAtkRange)
             {
                 StopMovement();
-                squad?.ReportTarget(otherUnit);
-                break;
+                EngageTarget(closestEnemy);
+            }
+            else
+            {
+                MoveTo(closestEnemy.transform.position);
             }
         }
     }
@@ -238,27 +332,37 @@ public abstract class Unit : MonoBehaviour
     /// <summary>Engages the target unit in combat.</summary>
     public virtual void EngageTarget(Unit target)
     {
+        if (currentTarget == target)
+            return;
         IsAttacking = true;
+        currentTarget = target;
         Debug.Log($"piou piou piou");
+        currentTarget.OnUnitDeath += ClearTarget;
         /* TODO */
-        // when enemy unit dies ClearTarget();
+        // actual attack loop/ coroutine?
     }
 
     /// <summary>Clears the current target of the unit, stopping any ongoing attack.</summary>
     public virtual void ClearTarget()
     {
+        if (currentTarget != null)
+            currentTarget.OnUnitDeath -= ClearTarget;
+
         IsAttacking = false;
+        currentTarget = null;
     }
 
     #endregion
 
-        #region Debug
+    #region Debug
     private void OnDrawGizmosSelected()
     {
         if (!DebugMode)
             return;
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, currentRange);
+        Gizmos.DrawWireSphere(transform.position, currentAtkRange);
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, detectionRadius);
     }
     #endregion
 
