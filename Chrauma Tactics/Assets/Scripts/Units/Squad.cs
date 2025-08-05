@@ -32,7 +32,6 @@ public class Squad : MonoBehaviour
     private List<Unit> units = new List<Unit>();
 
 
-
     #region Squad creation
     /// <summary>Spawns the units in the squad at their designated spawn positions.</summary>
     public void SpawnUnit()
