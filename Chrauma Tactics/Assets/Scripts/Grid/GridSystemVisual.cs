@@ -65,9 +65,9 @@ namespace CT.Grid
         {
             //HideAllGridPosition();
             //Unit selectedUnit = UnitActionSystem.Instance.GetSelectedUnit();
-        
-        // TEMPORARY DEBUG GRID VISUAL 
-        ShowGridPositionList(new List<GridPosition>
+
+            // TEMPORARY DEBUG GRID VISUAL 
+            ShowGridPositionList(new List<GridPosition>
         {
         new GridPosition(0, 0),
         new GridPosition(0, 10),
@@ -76,7 +76,23 @@ namespace CT.Grid
         });
             //ShowGridPositionList(selectedUnit.GetMoveAction().GetValidGridPositionList());
         }
+        public void HideAllOverlays()
+        {
+            for (int x = 0; x < LevelGrid.Instance.GetWidth(); x++)
+            {
+                for (int z = 0; z < LevelGrid.Instance.GetHeight(); z++)
+                {
+                    _gridSystemVisualSingleArray[x, z].HideOverlay();
+                }
+            }
+        }
 
+        public void ShowOverlay(GridPosition gridPosition, Color color)
+        {
+            if (!LevelGrid.Instance.IsValidGridPosition(gridPosition))
+                return;
+            _gridSystemVisualSingleArray[gridPosition.x, gridPosition.z].ShowOverlay(color);
+        }
         void Update()
         {
             UpdateGridVisual();

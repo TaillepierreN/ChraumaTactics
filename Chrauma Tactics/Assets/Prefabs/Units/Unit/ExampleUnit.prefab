@@ -48,17 +48,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   DebugMode: 0
-  unitType: 1
   team: 0
+  unitType: 1
   baseHealth: 150
   baseAtk: 25
   baseMoveSpeed: 20
   baseAtkSpeed: 20
   baseRange: 20
   spawnPosition: {x: 0, y: 0, z: 0}
+  hasSmoothStop: 1
+  decelerationRate: 4
+  detectionRadius: 60
   RoundStarted: 0
   IsMoving: 0
   IsAttacking: 0
+  IsDead: 0
 --- !u!195 &3097943012908374767
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -252,7 +256,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: c54bc877b077538459ea7285e34193ed, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.09
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: c54bc877b077538459ea7285e34193ed, type: 3}
       propertyPath: m_LocalPosition.z
@@ -264,11 +268,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: c54bc877b077538459ea7285e34193ed, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: c54bc877b077538459ea7285e34193ed, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: c54bc877b077538459ea7285e34193ed, type: 3}
       propertyPath: m_LocalRotation.z
@@ -291,10 +295,10 @@ PrefabInstance:
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 400002, guid: c54bc877b077538459ea7285e34193ed, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 7175038933339933782}
+      addedObject: {fileID: 3372696460923542289}
     - targetCorrespondingSourceObject: {fileID: 400002, guid: c54bc877b077538459ea7285e34193ed, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 3372696460923542289}
+      addedObject: {fileID: 7175038933339933782}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c54bc877b077538459ea7285e34193ed, type: 3}
 --- !u!4 &5071035299718674884 stripped
