@@ -4,6 +4,7 @@ public enum UnitType
     Mechanized,
     Aerial,
     Ranged,
-    Support
+    Support,
+    None
 
 }

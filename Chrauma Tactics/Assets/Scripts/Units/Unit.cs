@@ -10,6 +10,7 @@ public abstract class Unit : MonoBehaviour
     public Team team;
     protected Squad squad;
     [SerializeField] protected UnitType unitType;
+    [SerializeField] protected UnitType unitType2;
 
 
     [Header("Unit Base Stats")]
@@ -360,7 +361,7 @@ public abstract class Unit : MonoBehaviour
         if (!DebugMode)
             return;
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, currentAtkRange);
+        Gizmos.DrawWireSphere(transform.position, baseRange);
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, detectionRadius);
     }
