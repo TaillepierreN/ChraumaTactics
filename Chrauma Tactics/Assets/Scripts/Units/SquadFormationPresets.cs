@@ -13,15 +13,15 @@ public static class SquadFormationPresets
                 };
             case 2:
                 return new List<Vector3> {
-                    new Vector3(-0.5f, 0, 0),
-                    new Vector3(0.5f, 0, 0)
+                    new Vector3(-2.5f, 0, 0),
+                    new Vector3(2.5f, 0, 0)
                 };
             case 4:
                 return new List<Vector3> {
-                    new Vector3(-0.5f, 0, 0.5f),
-                    new Vector3(0.5f, 0, 0.5f),
-                    new Vector3(-0.5f, 0, -0.5f),
-                    new Vector3(0.5f, 0, -0.5f)
+                    new Vector3(-2.5f, 0, 2.5f),
+                    new Vector3(2.5f, 0, 2.5f),
+                    new Vector3(-2.5f, 0, -2.5f),
+                    new Vector3(2.5f, 0, -2.5f)
                 };
             case 8:
                 return new List<Vector3> {

@@ -63,13 +63,15 @@ public class Squad : MonoBehaviour
         {
             Vector3 spawnPos = formation[i];
 
-            GameObject newUnitObj = Instantiate(unitPrefab, spawnPos, Quaternion.identity, this.transform);
+            GameObject newUnitObj = Instantiate(unitPrefab, transform);
+            newUnitObj.transform.localPosition = spawnPos;
+
             Unit unit = newUnitObj.GetComponent<Unit>();
 
             if (unit != null)
             {
                 unit.SetTeam(team);
-                unit.spawnPosition = spawnPos;
+                unit.spawnPosition = newUnitObj.transform.position;
                 unit.Initialize();
                 unit.SetSquad(this);
                 units.Add(unit);
