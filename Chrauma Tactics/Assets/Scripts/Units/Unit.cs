@@ -11,6 +11,7 @@ public abstract class Unit : MonoBehaviour
     protected Squad squad;
     [SerializeField] protected UnitType unitType;
     [SerializeField] protected UnitType unitType2;
+    [SerializeField] protected string unitDescription;
 
 
     [Header("Unit Base Stats")]
