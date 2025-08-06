@@ -25,8 +25,6 @@ public class Squad : MonoBehaviour
     /// 4     5
     /// </summary>
     public List<Transform> SpawnPositions = new List<Transform>();
-
-
     [Header("Squad Properties")]
     /// <summary>The list of units in the squad.</summary>
     private List<Unit> units = new List<Unit>();
@@ -34,16 +32,46 @@ public class Squad : MonoBehaviour
 
     #region Squad creation
     /// <summary>Spawns the units in the squad at their designated spawn positions.</summary>
+    // public void SpawnUnit()
+    // {
+    //     for (int i = 0; i < nbrOfUnits; i++)
+    //     {
+    //         GameObject newUnitObj = Instantiate(unitPrefab, SpawnPositions[i]);
+    //         Unit unit = newUnitObj.GetComponent<Unit>();
+    //         if (unit != null)
+    //         {
+    //             unit.SetTeam(team);
+    //             unit.spawnPosition = SpawnPositions[i].position;
+    //             unit.Initialize();
+    //             unit.SetSquad(this);
+    //             units.Add(unit);
+    //         }
+    //     }
+    // }
+
     public void SpawnUnit()
     {
+        List<Vector3> formation = SquadFormationPresets.GetFormation(nbrOfUnits);
+
+        if (formation == null || formation.Count < nbrOfUnits)
+        {
+            Debug.LogError($"Pas de formation disponible pour {nbrOfUnits} unités.");
+            return;
+        }
+
         for (int i = 0; i < nbrOfUnits; i++)
         {
-            GameObject newUnitObj = Instantiate(unitPrefab, SpawnPositions[i]);
+            Vector3 spawnPos = formation[i];
+
+            GameObject newUnitObj = Instantiate(unitPrefab, transform);
+            newUnitObj.transform.localPosition = spawnPos;
+
             Unit unit = newUnitObj.GetComponent<Unit>();
+
             if (unit != null)
             {
                 unit.SetTeam(team);
-                unit.spawnPosition = SpawnPositions[i].position;
+                unit.spawnPosition = newUnitObj.transform.position;
                 unit.Initialize();
                 unit.SetSquad(this);
                 units.Add(unit);

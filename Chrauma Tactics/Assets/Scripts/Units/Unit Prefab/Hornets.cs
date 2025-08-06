@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Ants : Unit
+public class Hornets : Unit
 {
     // Potential Skill options for Ants
     // 1. Range Enhancement: Increases the range of Ants' attacks.
