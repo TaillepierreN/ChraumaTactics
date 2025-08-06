@@ -307,7 +307,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   roundText: {fileID: 494501981067138062}
-  prepTime: 15
+  prepTime: 120
   battleTime: 10
   prepTimerText: {fileID: 2670868902047074590}
   battleTimerText: {fileID: 3391258630644484037}
@@ -766,7 +766,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8067972264092837547, guid: badba1d56008fed4ca2a0db6a5991323, type: 3}
       propertyPath: unitNum
-      value: 3
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 8067972264092837547, guid: badba1d56008fed4ca2a0db6a5991323, type: 3}
       propertyPath: unitIcon
@@ -775,7 +775,7 @@ PrefabInstance:
     - target: {fileID: 8067972264092837547, guid: badba1d56008fed4ca2a0db6a5991323, type: 3}
       propertyPath: unitPrefab
       value: 
-      objectReference: {fileID: 7841054442095230265, guid: 530fcc000a1fdcd438cba87f8a7c88aa, type: 3}
+      objectReference: {fileID: 9187776853955451205, guid: 3b699e3f4688e4847a6b692fae3922ef, type: 3}
     - target: {fileID: 8205866542742875319, guid: badba1d56008fed4ca2a0db6a5991323, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: OnButtonClicked
@@ -1263,6 +1263,18 @@ PrefabInstance:
     - target: {fileID: 5357815076271946244, guid: badba1d56008fed4ca2a0db6a5991323, type: 3}
       propertyPath: m_Name
       value: Btn_BuyUnit (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8067972264092837547, guid: badba1d56008fed4ca2a0db6a5991323, type: 3}
+      propertyPath: unitNum
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 8067972264092837547, guid: badba1d56008fed4ca2a0db6a5991323, type: 3}
+      propertyPath: unitPrefab
+      value: 
+      objectReference: {fileID: 8210559173043192065, guid: 248f99515d5b34fc9bfe00b05a0c1635, type: 3}
+    - target: {fileID: 8205866542742875319, guid: badba1d56008fed4ca2a0db6a5991323, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnButtonClicked
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2164,6 +2176,18 @@ PrefabInstance:
     - target: {fileID: 5357815076271946244, guid: badba1d56008fed4ca2a0db6a5991323, type: 3}
       propertyPath: m_Name
       value: Btn_BuyUnit (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8067972264092837547, guid: badba1d56008fed4ca2a0db6a5991323, type: 3}
+      propertyPath: unitNum
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8067972264092837547, guid: badba1d56008fed4ca2a0db6a5991323, type: 3}
+      propertyPath: unitPrefab
+      value: 
+      objectReference: {fileID: 1732825375848570203, guid: 481fbc7c36d3540c4af03509d02c6f86, type: 3}
+    - target: {fileID: 8205866542742875319, guid: badba1d56008fed4ca2a0db6a5991323, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnButtonClicked
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

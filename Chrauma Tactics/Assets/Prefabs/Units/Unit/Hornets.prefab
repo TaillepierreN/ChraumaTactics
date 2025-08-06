@@ -10,10 +10,10 @@ GameObject:
   m_Component:
   - component: {fileID: 53979408792989501}
   - component: {fileID: 210771807186765151}
-  - component: {fileID: 8567642577291840289}
   - component: {fileID: 4145833107781905773}
+  - component: {fileID: 6663524098148133853}
   m_Layer: 0
-  m_Name: Ants
+  m_Name: Hornets
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -57,35 +57,6 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &8567642577291840289
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7526224258789276705}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3223fa8daa08d4b6e8d6b34c778dccf3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  DebugMode: 0
-  team: 0
-  unitType: 2
-  unitType2: 5
-  baseHealth: 50
-  baseAtk: 35
-  baseMoveSpeed: 4.2
-  baseAtkSpeed: 1.5
-  baseRange: 15
-  spawnPosition: {x: 0, y: 0, z: 0}
-  hasSmoothStop: 0
-  decelerationRate: 2.5
-  detectionRadius: 100
-  RoundStarted: 0
-  IsMoving: 0
-  IsAttacking: 0
-  IsDead: 0
 --- !u!65 &4145833107781905773
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -107,6 +78,35 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &6663524098148133853
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7526224258789276705}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a33a89f9430d947799e007098205541a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DebugMode: 0
+  team: 0
+  unitType: 2
+  unitType2: 5
+  baseHealth: 50
+  baseAtk: 35
+  baseMoveSpeed: 4.2
+  baseAtkSpeed: 1.5
+  baseRange: 15
+  spawnPosition: {x: 0, y: 0, z: 0}
+  hasSmoothStop: 0
+  decelerationRate: 2.5
+  detectionRadius: 100
+  RoundStarted: 0
+  IsMoving: 0
+  IsAttacking: 0
+  IsDead: 0
 --- !u!1001 &5237858608116404582
 PrefabInstance:
   m_ObjectHideFlags: 0
