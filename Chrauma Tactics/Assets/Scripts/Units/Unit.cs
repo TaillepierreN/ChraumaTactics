@@ -55,7 +55,7 @@ public abstract class Unit : MonoBehaviour
 
     [Header("Unit Animation")]
     [SerializeField] protected Animator animatorBody;
-    [SerializeField] protected Animator animatorWeap;
+    [SerializeField] protected Animator[] animatorWeap;
     [SerializeField] protected TurretAim turretAim;
     [SerializeField] private Renderer leftTrackRenderer;
     [SerializeField] private Renderer left2TrackRenderer;
@@ -225,7 +225,9 @@ public abstract class Unit : MonoBehaviour
         if (animatorBody != null)
             animatorBody.SetFloat("MoveSpeed", currentMoveSpeed / 5f);
         if (animatorWeap != null)
-            animatorWeap.SetFloat("AtkSpeed", currentAtkSpeed);
+            foreach (Animator weap in animatorWeap)
+                if (weap != null)
+                    weap.SetFloat("AtkSpeed", currentAtkSpeed);
     }
 
     //TODO 
@@ -390,7 +392,9 @@ public abstract class Unit : MonoBehaviour
         currentTarget.OnUnitDeath += ClearTarget;
         /* TODO */
         if (animatorWeap != null)
-            animatorWeap.SetBool("IsAttacking", true);
+            foreach (Animator weap in animatorWeap)
+                if (weap != null)
+                    weap.SetBool("IsAttacking", true);
         // actual attack loop/ coroutine?
     }
 
@@ -403,7 +407,9 @@ public abstract class Unit : MonoBehaviour
 
         IsAttacking = false;
         if (animatorWeap != null)
-            animatorWeap.SetBool("IsAttacking", false);
+            foreach (Animator weap in animatorWeap)
+                if (weap != null)
+                    weap.SetBool("IsAttacking", false);
         currentTarget = null;
     }
 
