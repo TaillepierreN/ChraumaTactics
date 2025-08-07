@@ -56,7 +56,7 @@ public abstract class Unit : MonoBehaviour
     [Header("Unit Animation")]
     [SerializeField] protected Animator animatorBody;
     [SerializeField] protected Animator[] animatorWeap;
-    [SerializeField] protected TurretAim turretAim;
+    [SerializeField] protected TurretAim[] turretAim;
     [SerializeField] private Renderer leftTrackRenderer;
     [SerializeField] private Renderer left2TrackRenderer;
     [SerializeField] private Renderer rightTrackRenderer;
@@ -368,7 +368,9 @@ public abstract class Unit : MonoBehaviour
         {
             float distanceToEnemy = Vector3.Distance(transform.position, closestEnemy.transform.position);
             if (turretAim != null)
-                turretAim.SetLookAtTarget(closestEnemy);
+                foreach (TurretAim turret in turretAim)
+                    if (turret != null)
+                        turret.SetLookAtTarget(closestEnemy);
             if (distanceToEnemy <= currentAtkRange)
             {
                 StopMovement();

@@ -85,7 +85,8 @@ MonoBehaviour:
   animatorBody: {fileID: 8645001326845988488}
   animatorWeap:
   - {fileID: 3000498689667082876}
-  turretAim: {fileID: 4596834397601302580}
+  turretAim:
+  - {fileID: 4596834397601302580}
   leftTrackRenderer: {fileID: 72794035074096269}
   left2TrackRenderer: {fileID: 0}
   rightTrackRenderer: {fileID: 72794035074096271}
@@ -138,7 +139,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4662453460073007896, guid: 1ecd12168d54e4efcad85f14ee702f50, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -0.1
       objectReference: {fileID: 0}
     - target: {fileID: 4662453460073007896, guid: 1ecd12168d54e4efcad85f14ee702f50, type: 3}
       propertyPath: m_LocalPosition.z

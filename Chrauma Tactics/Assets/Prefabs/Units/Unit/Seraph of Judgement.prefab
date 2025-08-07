@@ -82,6 +82,13 @@ MonoBehaviour:
   spawnPosition: {x: 0, y: 0, z: 0}
   hasSmoothStop: 0
   decelerationRate: 2.5
+  animatorBody: {fileID: 0}
+  animatorWeap: []
+  turretAim: []
+  leftTrackRenderer: {fileID: 0}
+  left2TrackRenderer: {fileID: 0}
+  rightTrackRenderer: {fileID: 0}
+  right2TrackRenderer: {fileID: 0}
   detectionRadius: 100
   RoundStarted: 0
   IsMoving: 0
@@ -126,7 +133,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9035965668854190070, guid: d2e5e38f019b348698337423a6148950, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 3.52
+      value: 5.21
       objectReference: {fileID: 0}
     - target: {fileID: 9035965668854190070, guid: d2e5e38f019b348698337423a6148950, type: 3}
       propertyPath: m_LocalPosition.z
