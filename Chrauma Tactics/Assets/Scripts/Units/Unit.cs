@@ -53,10 +53,20 @@ public abstract class Unit : MonoBehaviour
     private bool waitingForStop = false;
 
 
-    [Header("Unit Animator")]
+    [Header("Unit Animation")]
     [SerializeField] protected Animator animatorBody;
     [SerializeField] protected Animator animatorWeap;
     [SerializeField] protected TurretAim turretAim;
+    [SerializeField] private Renderer leftTrackRenderer;
+    [SerializeField] private Renderer left2TrackRenderer;
+    [SerializeField] private Renderer rightTrackRenderer;
+    [SerializeField] private Renderer right2TrackRenderer;
+    private Material leftTrackMaterial;
+    private Material rightTrackMaterial;
+    private Material left2TrackMaterial;
+    private Material right2TrackMaterial;
+    private float leftOffset = 0f;
+    private float rightOffset = 0f;
 
 
     [Header("Unit Detection settings")]
@@ -101,6 +111,14 @@ public abstract class Unit : MonoBehaviour
     protected virtual void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
+        if (leftTrackRenderer != null)
+            leftTrackMaterial = leftTrackRenderer.material;
+        if (rightTrackRenderer != null)
+            rightTrackMaterial = rightTrackRenderer.material;
+        if (left2TrackRenderer != null)
+            left2TrackMaterial = left2TrackRenderer.material;
+        if (right2TrackRenderer != null)
+            right2TrackMaterial = right2TrackRenderer.material;
         //spawnPosition = transform.position;
     }
 
@@ -121,10 +139,27 @@ public abstract class Unit : MonoBehaviour
             DetectEnemies();
         }
 
+        /*Wheel handling*/
+        if (IsMoving && agent.velocity.magnitude > 0.01f)
+        {
+            leftOffset -= 0.5f * Time.deltaTime;
+            rightOffset -= 0.5f * Time.deltaTime;
+            if (leftTrackMaterial != null)
+                leftTrackMaterial.SetTextureOffset("_BaseMap", new Vector2(0, leftOffset));
+            if (rightTrackMaterial != null)
+                rightTrackMaterial.SetTextureOffset("_BaseMap", new Vector2(0, rightOffset));
+            if (left2TrackMaterial != null)
+                left2TrackMaterial.SetTextureOffset("_BaseMap", new Vector2(0, -leftOffset));
+            if (right2TrackMaterial != null)
+                right2TrackMaterial.SetTextureOffset("_BaseMap", new Vector2(0, -rightOffset));
+        }
+
         if (hasSmoothStop && waitingForStop)
         {
             if (agent.velocity.magnitude > 0.01f)
+            {
                 agent.velocity = Vector3.Lerp(agent.velocity, Vector3.zero, Time.deltaTime * decelerationRate);
+            }
             else
             {
                 agent.ResetPath();

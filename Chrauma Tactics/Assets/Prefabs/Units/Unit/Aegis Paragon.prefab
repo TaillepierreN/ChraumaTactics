@@ -85,6 +85,10 @@ MonoBehaviour:
   animatorBody: {fileID: 2748436343337227958}
   animatorWeap: {fileID: 8184411888464759163}
   turretAim: {fileID: 7338906265108606850}
+  leftTrackRenderer: {fileID: 4098036436605173420}
+  left2TrackRenderer: {fileID: 1606585829242631970}
+  rightTrackRenderer: {fileID: 2435129664546614279}
+  right2TrackRenderer: {fileID: 960952585675199195}
   detectionRadius: 100
   RoundStarted: 0
   IsMoving: 0
@@ -175,6 +179,21 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 7338906265108606850}
   m_SourcePrefab: {fileID: 100100000, guid: 4dd39e3a38e8f4a8e9920990d0b078b4, type: 3}
+--- !u!23 &960952585675199195 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 1249159280312954268, guid: 4dd39e3a38e8f4a8e9920990d0b078b4, type: 3}
+  m_PrefabInstance: {fileID: 2017642278164004679}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &1606585829242631970 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 741870985181431909, guid: 4dd39e3a38e8f4a8e9920990d0b078b4, type: 3}
+  m_PrefabInstance: {fileID: 2017642278164004679}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &2435129664546614279 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 4452735606976893760, guid: 4dd39e3a38e8f4a8e9920990d0b078b4, type: 3}
+  m_PrefabInstance: {fileID: 2017642278164004679}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &2462525668639477216 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4480163512199410343, guid: 4dd39e3a38e8f4a8e9920990d0b078b4, type: 3}
@@ -183,6 +202,11 @@ Transform:
 --- !u!95 &2748436343337227958 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 4189599707651500529, guid: 4dd39e3a38e8f4a8e9920990d0b078b4, type: 3}
+  m_PrefabInstance: {fileID: 2017642278164004679}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &4098036436605173420 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 2656908941752205803, guid: 4dd39e3a38e8f4a8e9920990d0b078b4, type: 3}
   m_PrefabInstance: {fileID: 2017642278164004679}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &4472614531453000824 stripped
