@@ -1,6 +1,7 @@
 using UnityEngine;
 using System;
 using System.Numerics;
+using Unity.VisualScripting;
 
 namespace CT.Grid
 {
@@ -56,7 +57,7 @@ namespace CT.Grid
 			);
 		}
 
-		public void CreateDebugObjects(Transform debugPrefab)
+		public void CreateDebugObjects(Transform debugPrefab,GameObject LevelGrid)
 		{
 			for (int x = 0; x < _width; x++)
 			{
@@ -65,6 +66,7 @@ namespace CT.Grid
 					GridPosition gridPosition = new GridPosition(x, z);
 
 					Transform debugTransform = GameObject.Instantiate(debugPrefab, GetWorldPosition(gridPosition), UnityEngine.Quaternion.identity);
+					debugTransform.SetParent(LevelGrid.transform);
 					GridDebugObject gridDebugObject = debugTransform.GetComponent<GridDebugObject>();
 					gridDebugObject.SetGridObject(GetGridObject(gridPosition));
 				}

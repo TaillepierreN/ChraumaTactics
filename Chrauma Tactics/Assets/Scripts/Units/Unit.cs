@@ -395,6 +395,13 @@ public abstract class Unit : MonoBehaviour
             foreach (Animator weap in animatorWeap)
                 if (weap != null)
                     weap.SetBool("IsAttacking", true);
+        if (unitType == UnitType.Aerial
+        && animatorBody != null
+        && Vector3.Distance(transform.position, target.transform.position) < 2)
+        {
+            Debug.Log("is aerial and attacking");
+            animatorBody.SetBool("IsAttacking", true);
+        }
         // actual attack loop/ coroutine?
     }
 
@@ -410,6 +417,8 @@ public abstract class Unit : MonoBehaviour
             foreach (Animator weap in animatorWeap)
                 if (weap != null)
                     weap.SetBool("IsAttacking", false);
+        if (unitType == UnitType.Aerial && animatorBody != null)
+            animatorBody.SetBool("IsAttacking", false);
         currentTarget = null;
     }
 
