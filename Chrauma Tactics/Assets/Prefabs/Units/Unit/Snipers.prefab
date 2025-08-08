@@ -82,6 +82,14 @@ MonoBehaviour:
   spawnPosition: {x: 0, y: 0, z: 0}
   hasSmoothStop: 0
   decelerationRate: 2.5
+  animatorBody: {fileID: 7748428808782258001}
+  animatorWeap:
+  - {fileID: 7748428808782258001}
+  turretAim: []
+  leftTrackRenderer: {fileID: 0}
+  left2TrackRenderer: {fileID: 0}
+  rightTrackRenderer: {fileID: 0}
+  right2TrackRenderer: {fileID: 0}
   detectionRadius: 100
   RoundStarted: 0
   IsMoving: 0
@@ -164,6 +172,10 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 95677257111660662, guid: 71a352736c966044a9b1ef34b1c3a2f3, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: db09fc4f173b48949ad81a76d027df78, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -172,5 +184,10 @@ PrefabInstance:
 --- !u!4 &7699750904283854145 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4250301870834278, guid: 71a352736c966044a9b1ef34b1c3a2f3, type: 3}
+  m_PrefabInstance: {fileID: 7697807382141204263}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &7748428808782258001 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 95677257111660662, guid: 71a352736c966044a9b1ef34b1c3a2f3, type: 3}
   m_PrefabInstance: {fileID: 7697807382141204263}
   m_PrefabAsset: {fileID: 0}
