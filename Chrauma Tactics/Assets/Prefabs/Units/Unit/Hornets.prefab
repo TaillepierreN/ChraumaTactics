@@ -103,6 +103,13 @@ MonoBehaviour:
   spawnPosition: {x: 0, y: 0, z: 0}
   hasSmoothStop: 0
   decelerationRate: 2.5
+  animatorBody: {fileID: 3027549083328798156}
+  animatorWeap: []
+  turretAim: {fileID: 0}
+  leftTrackRenderer: {fileID: 0}
+  left2TrackRenderer: {fileID: 0}
+  rightTrackRenderer: {fileID: 0}
+  right2TrackRenderer: {fileID: 0}
   detectionRadius: 100
   RoundStarted: 0
   IsMoving: 0
@@ -122,7 +129,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1171445551457965445, guid: be4739c48be024a379c3d438208698b8, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 18.03
       objectReference: {fileID: 0}
     - target: {fileID: 1171445551457965445, guid: be4739c48be024a379c3d438208698b8, type: 3}
       propertyPath: m_LocalPosition.z
@@ -160,11 +167,20 @@ PrefabInstance:
       propertyPath: m_Name
       value: Anim_Flyer
       objectReference: {fileID: 0}
+    - target: {fileID: 7112485078720007338, guid: be4739c48be024a379c3d438208698b8, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: be4739c48be024a379c3d438208698b8, type: 3}
+--- !u!95 &3027549083328798156 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 7112485078720007338, guid: be4739c48be024a379c3d438208698b8, type: 3}
+  m_PrefabInstance: {fileID: 5237858608116404582}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &6408995153857283299 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1171445551457965445, guid: be4739c48be024a379c3d438208698b8, type: 3}

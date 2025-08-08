@@ -34,7 +34,7 @@ namespace CT.Grid
                 for (int z = 0; z < LevelGrid.Instance.GetHeight(); z++)
                 {
                     GridPosition gridPosition = new GridPosition(x, z);
-                    Transform gridSystemSingleTransform = Instantiate(_gridSystemVisualSinglePrefab, LevelGrid.Instance.GetWorldPosition(gridPosition), Quaternion.identity);
+                    Transform gridSystemSingleTransform = Instantiate(_gridSystemVisualSinglePrefab, LevelGrid.Instance.GetWorldPosition(gridPosition), Quaternion.identity, this.transform);
                     _gridSystemVisualSingleArray[x, z] = gridSystemSingleTransform.GetComponent<GridSystemVisualSingle>();
                 }
             }

@@ -82,6 +82,14 @@ MonoBehaviour:
   spawnPosition: {x: 0, y: 0, z: 0}
   hasSmoothStop: 0
   decelerationRate: 2.5
+  animatorBody: {fileID: 0}
+  animatorWeap:
+  - {fileID: 4619630571069128845}
+  turretAim: {fileID: 0}
+  leftTrackRenderer: {fileID: 0}
+  left2TrackRenderer: {fileID: 0}
+  rightTrackRenderer: {fileID: 0}
+  right2TrackRenderer: {fileID: 0}
   detectionRadius: 100
   RoundStarted: 0
   IsMoving: 0
@@ -168,5 +176,10 @@ PrefabInstance:
 --- !u!4 &953123594838843372 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4608887963296144165, guid: caa94222638c94f6c8acb1b47cde9b27, type: 3}
+  m_PrefabInstance: {fileID: 3660340124077425865}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &4619630571069128845 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 8273141602518746180, guid: caa94222638c94f6c8acb1b47cde9b27, type: 3}
   m_PrefabInstance: {fileID: 3660340124077425865}
   m_PrefabAsset: {fileID: 0}

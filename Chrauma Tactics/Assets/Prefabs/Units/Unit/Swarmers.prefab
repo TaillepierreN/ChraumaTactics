@@ -82,6 +82,13 @@ MonoBehaviour:
   spawnPosition: {x: 0, y: 0, z: 0}
   hasSmoothStop: 0
   decelerationRate: 2.5
+  animatorBody: {fileID: 7575004350995205837}
+  animatorWeap: []
+  turretAim: []
+  leftTrackRenderer: {fileID: 0}
+  left2TrackRenderer: {fileID: 0}
+  rightTrackRenderer: {fileID: 0}
+  right2TrackRenderer: {fileID: 0}
   detectionRadius: 100
   RoundStarted: 0
   IsMoving: 0
@@ -122,7 +129,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3005044784365262630, guid: 954d56170bb274ee09d24290df472ced, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -0.13
       objectReference: {fileID: 0}
     - target: {fileID: 3005044784365262630, guid: 954d56170bb274ee09d24290df472ced, type: 3}
       propertyPath: m_LocalPosition.z
@@ -160,6 +167,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Legs_Spider_Lt
       objectReference: {fileID: 0}
+    - target: {fileID: 5824488442387723704, guid: 954d56170bb274ee09d24290df472ced, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -168,5 +179,10 @@ PrefabInstance:
 --- !u!4 &1188809001996102739 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3005044784365262630, guid: 954d56170bb274ee09d24290df472ced, type: 3}
+  m_PrefabInstance: {fileID: 4164544542180703093}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &7575004350995205837 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 5824488442387723704, guid: 954d56170bb274ee09d24290df472ced, type: 3}
   m_PrefabInstance: {fileID: 4164544542180703093}
   m_PrefabAsset: {fileID: 0}
