@@ -10,11 +10,19 @@ namespace CT.UI.UnitSelectionUI
         [SerializeField] private GameObject unitPrefab;
         [SerializeField] private TMP_Text unitCost;
         [SerializeField] private int unitNum;
-        [SerializeField] private string UnitCost;
+
+
 
         void Start()
         {
-            unitCost.text = UnitCost.ToString();
+            if (unitPrefab != null)
+            {
+                Unit unit = unitPrefab.GetComponent<Unit>();
+                if (unit != null)
+                {
+                    unitCost.text = unit.UnitCost;
+                }
+            }
         }
 
         public void OnButtonClicked()

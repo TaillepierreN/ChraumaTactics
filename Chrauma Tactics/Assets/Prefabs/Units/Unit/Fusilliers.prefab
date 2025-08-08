@@ -74,6 +74,7 @@ MonoBehaviour:
   unitType: 3
   unitType2: 5
   unitDescription: 'Anti Air cheap '
+  unitCost: 150
   baseHealth: 200
   baseAtk: 40
   baseMoveSpeed: 3.5
@@ -84,7 +85,8 @@ MonoBehaviour:
   decelerationRate: 2.5
   animatorBody: {fileID: 0}
   animatorWeap: []
-  turretAim: {fileID: 0}
+  turretAim:
+  - {fileID: 0}
   leftTrackRenderer: {fileID: 0}
   left2TrackRenderer: {fileID: 0}
   rightTrackRenderer: {fileID: 0}
