@@ -74,6 +74,7 @@ MonoBehaviour:
   unitType: 3
   unitType2: 5
   unitDescription: Basic AOE cheap
+  unitCost: 150
   baseHealth: 1600
   baseAtk: 55
   baseMoveSpeed: 2.8
@@ -84,7 +85,8 @@ MonoBehaviour:
   decelerationRate: 2.5
   animatorBody: {fileID: 704603701078606063}
   animatorWeap: []
-  turretAim: {fileID: 1388992636193033227}
+  turretAim:
+  - {fileID: 0}
   leftTrackRenderer: {fileID: 2217088812197166119}
   left2TrackRenderer: {fileID: 0}
   rightTrackRenderer: {fileID: 8435041894105412227}

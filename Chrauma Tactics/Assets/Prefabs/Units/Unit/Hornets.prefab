@@ -95,6 +95,7 @@ MonoBehaviour:
   unitType: 2
   unitType2: 5
   unitDescription: Aerial swarm
+  unitCost: 150
   baseHealth: 50
   baseAtk: 35
   baseMoveSpeed: 4.2
@@ -105,7 +106,8 @@ MonoBehaviour:
   decelerationRate: 2.5
   animatorBody: {fileID: 3027549083328798156}
   animatorWeap: []
-  turretAim: {fileID: 0}
+  turretAim:
+  - {fileID: 0}
   leftTrackRenderer: {fileID: 0}
   left2TrackRenderer: {fileID: 0}
   rightTrackRenderer: {fileID: 0}
