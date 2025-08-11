@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Squad : MonoBehaviour
 {
@@ -61,10 +62,19 @@ public class Squad : MonoBehaviour
 
         for (int i = 0; i < nbrOfUnits; i++)
         {
-            Vector3 spawnPos = formation[i];
+            Vector3 desiredWorldPos = transform.TransformPoint(formation[i]);
 
-            GameObject newUnitObj = Instantiate(unitPrefab, transform);
-            newUnitObj.transform.localPosition = spawnPos;
+            TrySnapToNavMesh(desiredWorldPos, out Vector3 spawnPos);
+
+            GameObject newUnitObj = Instantiate(unitPrefab, spawnPos, transform.rotation, transform);
+
+            NavMeshAgent agent = newUnitObj.GetComponent<NavMeshAgent>();
+            if (agent != null)
+            {
+                if (!agent.enabled)
+                    agent.enabled = true;
+                agent.Warp(spawnPos);
+            }
 
             Unit unit = newUnitObj.GetComponent<Unit>();
 
@@ -106,6 +116,26 @@ public class Squad : MonoBehaviour
         }
     }
 
+    #endregion
+
+    #region Helper
+    /// <summary>
+    /// Snap to navmesh, avoid error when placing agent
+    /// </summary>
+    /// <param name="desired"></param>
+    /// <param name="snapped"></param>
+    /// <param name="maxDist"></param>
+    /// <returns></returns>
+    private bool TrySnapToNavMesh(Vector3 desired, out Vector3 snapped, float maxDist = 2f)
+    {
+        if (NavMesh.SamplePosition(desired, out NavMeshHit hit, maxDist, NavMesh.AllAreas))
+        {
+            snapped = hit.position;
+            return true;
+        }
+        snapped = desired;
+        return false;
+    }
     #endregion
 
     #region Debug Methods
