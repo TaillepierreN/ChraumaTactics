@@ -148,6 +148,7 @@ GameObject:
   - component: {fileID: 7822743980815226065}
   - component: {fileID: 1313900919738513073}
   - component: {fileID: 4922357699582216699}
+  - component: {fileID: -5068398860689226647}
   m_Layer: 5
   m_Name: LargeButton05Yellow
   m_TagString: Untagged
@@ -257,3 +258,16 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &-5068398860689226647
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8786514608460648982}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c51e2f186609ac645bbd68375b0a1430, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  buttonComponent: {fileID: 4922357699582216699}
