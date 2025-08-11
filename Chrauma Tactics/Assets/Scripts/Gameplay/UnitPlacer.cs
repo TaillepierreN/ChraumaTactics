@@ -1,6 +1,7 @@
 using UnityEngine;
 using CT.Grid;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace CT.Gameplay
 {
@@ -56,11 +57,18 @@ namespace CT.Gameplay
 
             ghostUnit = Instantiate(ghostSquadPrefab, Vector3.zero, Quaternion.identity);
 
+            List<Vector3> formation = SquadFormationPresets.GetFormation(nbrOfUnits);
+
+            if (formation == null || formation.Count < nbrOfUnits)
+            {
+                Debug.LogError($"Pas de formation disponible pour {nbrOfUnits} unités.");
+                return;
+            }
 
             for (int i = 0; i < numberOfUnits; i++)
             {
-                Transform spawnPos = ghostUnit.transform.GetChild(i);
-                GameObject ghostUnitObj = Instantiate(unitPrefab, spawnPos.position, Quaternion.identity, spawnPos);
+                Vector3 spawnPos = formation[i];
+                GameObject ghostUnitObj = Instantiate(unitPrefab, spawnPos, Quaternion.identity, ghostUnit.transform);
 
                 DestroyImmediate(ghostUnitObj.GetComponent<Unit>());
                 DestroyImmediate(ghostUnitObj.GetComponent<UnityEngine.AI.NavMeshAgent>());
