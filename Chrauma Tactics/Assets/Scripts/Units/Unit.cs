@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using CT.Units.Animations;
 using UnityEngine;
 using UnityEngine.AI;
+
 
 public abstract class Unit : MonoBehaviour
 {
@@ -10,7 +12,10 @@ public abstract class Unit : MonoBehaviour
     public Team team;
     protected Squad squad;
     [SerializeField] protected UnitType unitType;
-
+    [SerializeField] protected UnitType unitType2;
+    [SerializeField] protected string unitDescription;
+    [SerializeField] protected string unitCost;
+    public string UnitCost => unitCost;
 
     [Header("Unit Base Stats")]
     [SerializeField] protected int baseHealth;
@@ -49,8 +54,20 @@ public abstract class Unit : MonoBehaviour
     private bool waitingForStop = false;
 
 
-    [Header("Unit Animator")]
-    protected Animator animator;
+    [Header("Unit Animation")]
+    [SerializeField] protected Animator animatorBody;
+    [SerializeField] protected Animator[] animatorWeap;
+    [SerializeField] protected TurretAim[] turretAim;
+    [SerializeField] private Renderer leftTrackRenderer;
+    [SerializeField] private Renderer left2TrackRenderer;
+    [SerializeField] private Renderer rightTrackRenderer;
+    [SerializeField] private Renderer right2TrackRenderer;
+    private Material leftTrackMaterial;
+    private Material rightTrackMaterial;
+    private Material left2TrackMaterial;
+    private Material right2TrackMaterial;
+    private float leftOffset = 0f;
+    private float rightOffset = 0f;
 
 
     [Header("Unit Detection settings")]
@@ -80,7 +97,7 @@ public abstract class Unit : MonoBehaviour
     #region Unit Events
 
     /// <summary>Event triggered when the unit dies.</summary>
-    public event Action OnUnitDeath;
+    public event Action<Unit> OnUnitDeath;
 
     #endregion
 
@@ -95,7 +112,14 @@ public abstract class Unit : MonoBehaviour
     protected virtual void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
-        //animator = GetComponent<Animator>();
+        if (leftTrackRenderer != null)
+            leftTrackMaterial = leftTrackRenderer.material;
+        if (rightTrackRenderer != null)
+            rightTrackMaterial = rightTrackRenderer.material;
+        if (left2TrackRenderer != null)
+            left2TrackMaterial = left2TrackRenderer.material;
+        if (right2TrackRenderer != null)
+            right2TrackMaterial = right2TrackRenderer.material;
         //spawnPosition = transform.position;
     }
 
@@ -116,14 +140,33 @@ public abstract class Unit : MonoBehaviour
             DetectEnemies();
         }
 
+        /*Wheel handling*/
+        if (IsMoving && agent.velocity.magnitude > 0.01f)
+        {
+            leftOffset -= 0.5f * Time.deltaTime;
+            rightOffset -= 0.5f * Time.deltaTime;
+            if (leftTrackMaterial != null)
+                leftTrackMaterial.SetTextureOffset("_BaseMap", new Vector2(0, leftOffset));
+            if (rightTrackMaterial != null)
+                rightTrackMaterial.SetTextureOffset("_BaseMap", new Vector2(0, rightOffset));
+            if (left2TrackMaterial != null)
+                left2TrackMaterial.SetTextureOffset("_BaseMap", new Vector2(0, -leftOffset));
+            if (right2TrackMaterial != null)
+                right2TrackMaterial.SetTextureOffset("_BaseMap", new Vector2(0, -rightOffset));
+        }
+
         if (hasSmoothStop && waitingForStop)
         {
             if (agent.velocity.magnitude > 0.01f)
+            {
                 agent.velocity = Vector3.Lerp(agent.velocity, Vector3.zero, Time.deltaTime * decelerationRate);
+            }
             else
             {
                 agent.ResetPath();
                 waitingForStop = false;
+                if (animatorBody != null)
+                    animatorBody.SetBool("IsMoving", false);
             }
         }
     }
@@ -138,7 +181,7 @@ public abstract class Unit : MonoBehaviour
         if (!IsDead)
         {
             IsDead = true;
-            OnUnitDeath?.Invoke();
+            OnUnitDeath?.Invoke(this);
         }
     }
 
@@ -180,6 +223,12 @@ public abstract class Unit : MonoBehaviour
         currentAtkSpeed = atkSpeed;
         currentAtkRange = range;
         agent.speed = currentMoveSpeed;
+        if (animatorBody != null)
+            animatorBody.SetFloat("MoveSpeed", currentMoveSpeed / 5f);
+        if (animatorWeap != null)
+            foreach (Animator weap in animatorWeap)
+                if (weap != null)
+                    weap.SetFloat("AtkSpeed", currentAtkSpeed);
     }
 
     //TODO 
@@ -215,9 +264,10 @@ public abstract class Unit : MonoBehaviour
     {
         if (agent != null && agent.isActiveAndEnabled)
         {
-            Debug.Log("Moving to " + destination);
             agent.SetDestination(destination);
             IsMoving = true;
+            if (animatorBody != null)
+                animatorBody.SetBool("IsMoving", true);
             agent.isStopped = false;
         }
     }
@@ -227,13 +277,14 @@ public abstract class Unit : MonoBehaviour
     {
         if (agent != null && agent.isActiveAndEnabled && IsMoving)
         {
-            Debug.Log("Stopping movement");
             IsMoving = false;
             agent.isStopped = true;
             if (!hasSmoothStop)
             {
                 agent.ResetPath();
                 agent.velocity = Vector3.zero;
+                if (animatorBody != null)
+                    animatorBody.SetBool("IsMoving", false);
             }
             else
                 waitingForStop = true;
@@ -256,7 +307,7 @@ public abstract class Unit : MonoBehaviour
         if (currentHealth <= 0)
         {
             IsDead = true;
-            OnUnitDeath?.Invoke();
+            OnUnitDeath?.Invoke(this);
             // Explosion animation
             this.gameObject.SetActive(false);
         }
@@ -317,6 +368,10 @@ public abstract class Unit : MonoBehaviour
         if (closestEnemy != null)
         {
             float distanceToEnemy = Vector3.Distance(transform.position, closestEnemy.transform.position);
+            if (turretAim != null)
+                foreach (TurretAim turret in turretAim)
+                    if (turret != null)
+                        turret.SetLookAtTarget(closestEnemy);
             if (distanceToEnemy <= currentAtkRange)
             {
                 StopMovement();
@@ -339,16 +394,34 @@ public abstract class Unit : MonoBehaviour
         Debug.Log($"piou piou piou");
         currentTarget.OnUnitDeath += ClearTarget;
         /* TODO */
+        if (animatorWeap != null)
+            foreach (Animator weap in animatorWeap)
+                if (weap != null)
+                    weap.SetBool("IsAttacking", true);
+        if (unitType == UnitType.Aerial
+        && animatorBody != null
+        && Vector3.Distance(transform.position, target.transform.position) < 2)
+        {
+            Debug.Log("is aerial and attacking");
+            animatorBody.SetBool("IsAttacking", true);
+        }
         // actual attack loop/ coroutine?
     }
 
     /// <summary>Clears the current target of the unit, stopping any ongoing attack.</summary>
-    public virtual void ClearTarget()
+    public virtual void ClearTarget(Unit unit)
     {
-        if (currentTarget != null)
-            currentTarget.OnUnitDeath -= ClearTarget;
+        Debug.Log("Clearing target");
+        if (unit != null)
+            unit.OnUnitDeath -= ClearTarget;
 
         IsAttacking = false;
+        if (animatorWeap != null)
+            foreach (Animator weap in animatorWeap)
+                if (weap != null)
+                    weap.SetBool("IsAttacking", false);
+        if (unitType == UnitType.Aerial && animatorBody != null)
+            animatorBody.SetBool("IsAttacking", false);
         currentTarget = null;
     }
 
@@ -360,10 +433,11 @@ public abstract class Unit : MonoBehaviour
         if (!DebugMode)
             return;
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, currentAtkRange);
+        Gizmos.DrawWireSphere(transform.position, baseRange);
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, detectionRadius);
     }
     #endregion
 
 }
+

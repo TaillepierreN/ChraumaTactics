@@ -1,3 +1,4 @@
+using CT.UI;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -13,12 +14,12 @@ public class GameMenuUI : MonoBehaviour
 
     public void OnPlay()
     {
-        SceneManager.LoadScene("GameLobby");
+        SceneLoader.Load("LobbyPreGame");
     }
 
     public void OnSolo()
     {
-        Debug.Log("Solo Mode");
+        SceneLoader.Load("SampleScene");
     }
 
     public void OnAboutUs()

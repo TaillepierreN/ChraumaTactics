@@ -3654,6 +3654,7 @@ GameObject:
   - component: {fileID: 2431727959847220777}
   - component: {fileID: 1457835158853834228}
   - component: {fileID: 4085909438809361597}
+  - component: {fileID: 1061314141567285499}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -3762,6 +3763,19 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &1061314141567285499
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2900652600114960042}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c51e2f186609ac645bbd68375b0a1430, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  buttonComponent: {fileID: 4085909438809361597}
 --- !u!1 &2957900977534670399
 GameObject:
   m_ObjectHideFlags: 0
@@ -9957,6 +9971,7 @@ GameObject:
   - component: {fileID: 8785148296279651386}
   - component: {fileID: 4987984660848903282}
   - component: {fileID: 4565453499402505649}
+  - component: {fileID: 4293778629965992856}
   m_Layer: 5
   m_Name: Btn_GoBack02
   m_TagString: Untagged
@@ -10077,6 +10092,19 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &4293778629965992856
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7046386975148410429}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c51e2f186609ac645bbd68375b0a1430, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  buttonComponent: {fileID: 4565453499402505649}
 --- !u!1 &7106375038996460371
 GameObject:
   m_ObjectHideFlags: 0

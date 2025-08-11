@@ -33,7 +33,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.000030517578}
+  m_AnchoredPosition: {x: 0, y: 0.000011444092}
   m_SizeDelta: {x: 0, y: 46}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!1 &414675954602126919
@@ -1252,6 +1252,7 @@ GameObject:
   - component: {fileID: 3935881490953433941}
   - component: {fileID: 8579554941915661821}
   - component: {fileID: 3278483314399549205}
+  - component: {fileID: 7350552103178663088}
   m_Layer: 5
   m_Name: Btn_SettingsMenuYellow
   m_TagString: Untagged
@@ -1361,6 +1362,19 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &7350552103178663088
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2311774843337615659}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c51e2f186609ac645bbd68375b0a1430, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  buttonComponent: {fileID: 3278483314399549205}
 --- !u!1 &2367972015801736777
 GameObject:
   m_ObjectHideFlags: 0
@@ -3335,6 +3349,7 @@ GameObject:
   - component: {fileID: 4846434931903444449}
   - component: {fileID: 1716280800908786087}
   - component: {fileID: 6631483941354237150}
+  - component: {fileID: 4470953137189476624}
   m_Layer: 5
   m_Name: Btn_ClosePopup
   m_TagString: Untagged
@@ -3455,6 +3470,19 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &4470953137189476624
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5100502839197421589}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c51e2f186609ac645bbd68375b0a1430, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  buttonComponent: {fileID: 6631483941354237150}
 --- !u!1 &5723380547737067103
 GameObject:
   m_ObjectHideFlags: 0
@@ -5456,7 +5484,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 3209553522988614245}
   m_Direction: 2
   m_Value: 0
-  m_Size: 0
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:

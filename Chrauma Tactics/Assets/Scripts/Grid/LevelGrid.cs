@@ -24,7 +24,7 @@ namespace CT.Grid
             Instance = this;
 
             _gridSystem = new GridSystem(gridX, gridZ, 10f);
-            _gridSystem.CreateDebugObjects(_gridDebugObjectPrefab);
+            _gridSystem.CreateDebugObjects(_gridDebugObjectPrefab, this.gameObject);
         }
 
         public void AddSquadAtGridPosition(GridPosition gridPosition, Squad squad)

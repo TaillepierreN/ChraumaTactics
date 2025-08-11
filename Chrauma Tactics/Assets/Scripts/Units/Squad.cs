@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Squad : MonoBehaviour
 {
@@ -25,8 +26,6 @@ public class Squad : MonoBehaviour
     /// 4     5
     /// </summary>
     public List<Transform> SpawnPositions = new List<Transform>();
-
-
     [Header("Squad Properties")]
     /// <summary>The list of units in the squad.</summary>
     private List<Unit> units = new List<Unit>();
@@ -34,16 +33,55 @@ public class Squad : MonoBehaviour
 
     #region Squad creation
     /// <summary>Spawns the units in the squad at their designated spawn positions.</summary>
+    // public void SpawnUnit()
+    // {
+    //     for (int i = 0; i < nbrOfUnits; i++)
+    //     {
+    //         GameObject newUnitObj = Instantiate(unitPrefab, SpawnPositions[i]);
+    //         Unit unit = newUnitObj.GetComponent<Unit>();
+    //         if (unit != null)
+    //         {
+    //             unit.SetTeam(team);
+    //             unit.spawnPosition = SpawnPositions[i].position;
+    //             unit.Initialize();
+    //             unit.SetSquad(this);
+    //             units.Add(unit);
+    //         }
+    //     }
+    // }
+
     public void SpawnUnit()
     {
+        List<Vector3> formation = SquadFormationPresets.GetFormation(nbrOfUnits);
+
+        if (formation == null || formation.Count < nbrOfUnits)
+        {
+            Debug.LogError($"Pas de formation disponible pour {nbrOfUnits} unités.");
+            return;
+        }
+
         for (int i = 0; i < nbrOfUnits; i++)
         {
-            GameObject newUnitObj = Instantiate(unitPrefab, SpawnPositions[i]);
+            Vector3 desiredWorldPos = transform.TransformPoint(formation[i]);
+
+            TrySnapToNavMesh(desiredWorldPos, out Vector3 spawnPos);
+
+            GameObject newUnitObj = Instantiate(unitPrefab, spawnPos, transform.rotation, transform);
+
+            NavMeshAgent agent = newUnitObj.GetComponent<NavMeshAgent>();
+            if (agent != null)
+            {
+                if (!agent.enabled)
+                    agent.enabled = true;
+                agent.Warp(spawnPos);
+            }
+
             Unit unit = newUnitObj.GetComponent<Unit>();
+
             if (unit != null)
             {
                 unit.SetTeam(team);
-                unit.spawnPosition = SpawnPositions[i].position;
+                unit.spawnPosition = newUnitObj.transform.position;
                 unit.Initialize();
                 unit.SetSquad(this);
                 units.Add(unit);
@@ -78,6 +116,26 @@ public class Squad : MonoBehaviour
         }
     }
 
+    #endregion
+
+    #region Helper
+    /// <summary>
+    /// Snap to navmesh, avoid error when placing agent
+    /// </summary>
+    /// <param name="desired"></param>
+    /// <param name="snapped"></param>
+    /// <param name="maxDist"></param>
+    /// <returns></returns>
+    private bool TrySnapToNavMesh(Vector3 desired, out Vector3 snapped, float maxDist = 2f)
+    {
+        if (NavMesh.SamplePosition(desired, out NavMeshHit hit, maxDist, NavMesh.AllAreas))
+        {
+            snapped = hit.position;
+            return true;
+        }
+        snapped = desired;
+        return false;
+    }
     #endregion
 
     #region Debug Methods
