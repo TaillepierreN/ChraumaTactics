@@ -1,3 +1,4 @@
+using CT.UI;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -51,7 +52,7 @@ public class MainMenuUI : MonoBehaviour
 
     public void OnPlay()
     {
-        SceneManager.LoadScene("GameMenu");
+        SceneLoader.Load("GameMenu");
     }
 
     public void OnSettings()
