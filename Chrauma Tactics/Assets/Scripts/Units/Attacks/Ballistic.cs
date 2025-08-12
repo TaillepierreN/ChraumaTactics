@@ -7,7 +7,7 @@ namespace CT.Units.Attacks
     public class Ballistic : Attack
     {
         [SerializeField] private GameObject _projectilePrefab;
-        [SerializeField] private GameObject _impactVFXPrefab;
+        [SerializeField] private GameObject[] _impactVFXPrefab;
         [SerializeField] private float _projectileSpeed;
         [SerializeField] private float _aoeRadius = 3f;
         [SerializeField] private float _impactLifeTime = 0.5f;
@@ -19,6 +19,7 @@ namespace CT.Units.Attacks
 
         private ObjectPool<GameObject> _projectilePool;
         private ObjectPool<GameObject> _impactPool;
+        private ObjectPool<GameObject> _impactAoEPool;
 
 
         /// <summary>
@@ -46,7 +47,22 @@ namespace CT.Units.Attacks
                 _impactPool = new ObjectPool<GameObject>(
                     createFunc: () =>
                     {
-                        GameObject go = Instantiate(_impactVFXPrefab);
+                        GameObject go = Instantiate(_impactVFXPrefab[0], _poolContainer);
+                        go.SetActive(false);
+                        return go;
+                    },
+                    actionOnGet: go => go.SetActive(true),
+                    actionOnRelease: go => go.SetActive(false),
+                    actionOnDestroy: go => Destroy(go),
+                    defaultCapacity: 32, maxSize: 256
+                );
+            }
+            if (_impactVFXPrefab != null)
+            {
+                _impactAoEPool = new ObjectPool<GameObject>(
+                    createFunc: () =>
+                    {
+                        GameObject go = Instantiate(_impactVFXPrefab[1], _poolContainer);
                         go.SetActive(false);
                         return go;
                     },
@@ -60,6 +76,8 @@ namespace CT.Units.Attacks
             {
                 _projectilePool.Release(_projectilePool.Get());
                 _impactPool.Release(_impactPool.Get());
+                _impactAoEPool.Release(_impactAoEPool.Get());
+
             }
         }
 
@@ -67,6 +85,7 @@ namespace CT.Units.Attacks
         {
             _projectilePool?.Clear();
             _impactPool?.Clear();
+            _impactAoEPool?.Clear();
         }
 
         /// <summary>
@@ -118,6 +137,28 @@ namespace CT.Units.Attacks
                     GameObject impactVFX = _impactPool.Get();
                     impactVFX.transform.SetPositionAndRotation(pos, Quaternion.LookRotation(normal));
                     StartCoroutine(ReturnAfter(impactVFX, _impactPool, _impactLifeTime));
+                },
+                impactVFXAoE: (pos, normal) =>
+                {
+                    int count = 0;
+                    foreach (Vector3 p in pos)
+                    {
+                        if (count == 0)
+                        {
+                            Debug.Log("first impact");
+                            GameObject impactVFX = _impactPool.Get();
+                            impactVFX.transform.SetPositionAndRotation(p, Quaternion.LookRotation(normal));
+                            StartCoroutine(ReturnAfter(impactVFX, _impactPool, _impactLifeTime));
+                        }
+                        else
+                        {
+                            Debug.Log("AoE impact");
+                            GameObject impactVFXAoE = _impactAoEPool.Get();
+                            impactVFXAoE.transform.SetPositionAndRotation(p, Quaternion.LookRotation(normal));
+                            StartCoroutine(ReturnAfter(impactVFXAoE, _impactAoEPool, _impactLifeTime));
+                        }
+                        count++;
+                    }
                 },
                 onDone: () => _projectilePool.Release(projectile)
             );
