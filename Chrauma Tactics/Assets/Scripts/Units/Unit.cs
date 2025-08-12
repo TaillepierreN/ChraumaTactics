@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using CT.Units.Animations;
+using CT.Units.Attacks;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -15,7 +16,12 @@ public abstract class Unit : MonoBehaviour
     [SerializeField] protected UnitType unitType2;
     [SerializeField] protected string unitDescription;
     [SerializeField] protected string unitCost;
+    [SerializeField] protected Attack attack;
     public string UnitCost => unitCost;
+    /// <summary>
+    /// Where the enemy should aim
+    /// </summary>
+    [SerializeField] protected Transform ownHitbox;
 
     [Header("Unit Base Stats")]
     [SerializeField] protected int baseHealth;
@@ -105,6 +111,9 @@ public abstract class Unit : MonoBehaviour
     /// <summary>
     /// Gets the current health of the unit.
     public int CurrentHealth => currentHealth;
+    public int CurrentAtk => currentAtk;
+    public Unit CurrentTarget => currentTarget;
+    public Transform Hitbox => ownHitbox;
 
     #endregion
 
@@ -194,6 +203,7 @@ public abstract class Unit : MonoBehaviour
     {
         SetCurrentStats(baseHealth, baseAtk, baseMoveSpeed, baseAtkSpeed, baseRange);
         agent.isStopped = false;
+        attack?.Initialize(this);
     }
 
     /// <summary>Sets the team of the unit.</summary>
