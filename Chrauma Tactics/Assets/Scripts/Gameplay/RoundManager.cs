@@ -39,7 +39,7 @@ public class RoundManager : MonoBehaviour
             UpdateCreditsUI();
             return true;
         }
-        return false;
+        return false; // Not enough credits
     }
 
     private void UpdateCreditsUI()
