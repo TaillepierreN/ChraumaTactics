@@ -72,11 +72,11 @@ namespace CT.Units.Attacks
             }
             for (int i = 0; i < _nbrOfPooledProjectile; i++)
             {
-                if(_projectilePool != null)
+                if (_projectilePool != null)
                     _projectilePool.Release(_projectilePool.Get());
-                if(_impactPool != null)
+                if (_impactPool != null)
                     _impactPool.Release(_impactPool.Get());
-                if(_impactAoEPool != null)
+                if (_impactAoEPool != null)
                     _impactAoEPool.Release(_impactAoEPool.Get());
 
             }
@@ -130,6 +130,16 @@ namespace CT.Units.Attacks
                 return;
             GameObject projectile = _projectilePool.Get();
             projectile.transform.SetPositionAndRotation(BarrelEnd[2].position, BarrelEnd[2].rotation);
+            Projectile proj = projectile.GetComponent<Projectile>();
+
+            Firing(target, projectile, proj);
+        }
+        public override void OnFire4(Unit target)
+        {
+            if (_owner == null || BarrelEnd[3] == null)
+                return;
+            GameObject projectile = _projectilePool.Get();
+            projectile.transform.SetPositionAndRotation(BarrelEnd[3].position, BarrelEnd[3].rotation);
             Projectile proj = projectile.GetComponent<Projectile>();
 
             Firing(target, projectile, proj);

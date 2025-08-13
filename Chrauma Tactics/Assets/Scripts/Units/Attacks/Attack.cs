@@ -48,6 +48,12 @@ namespace CT.Units.Attacks
         public abstract void OnFire3(Unit target);
 
         /// <summary>
+        /// handle the attack logic of a third weapon
+        /// </summary>
+        /// <param name="target"></param>
+        public abstract void OnFire4(Unit target);
+
+        /// <summary>
         /// Handle the end of attack logic if needed
         /// </summary>
         public virtual void OnStop() { }

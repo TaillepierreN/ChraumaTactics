@@ -39,6 +39,16 @@ namespace CT.Units.Attacks
                 attack.OnFire3(ownerUnit.CurrentTarget);
             }
         }
+        /// <summary>
+        /// Forward the animation event to the unit attack script for tertiary weapon
+        /// </summary>
+        public void Anim_Fire4()
+        {
+            if (attack != null && ownerUnit != null && ownerUnit.IsAttacking)
+            {
+                attack.OnFire4(ownerUnit.CurrentTarget);
+            }
+        }
     }
 
 }
