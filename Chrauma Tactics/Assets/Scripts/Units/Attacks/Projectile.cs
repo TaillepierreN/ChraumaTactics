@@ -115,7 +115,7 @@ namespace CT.Units.Attacks
                 if (count > 1)
                     _spawnAoEImpact?.Invoke(_aoeTargetPos, normal);
                 else
-                    Debug.Log("no valid target");
+                    _spawnImpact?.Invoke(pos, normal);
 
 
             }

@@ -12,8 +12,6 @@ namespace CT.Units.Attacks
         [SerializeField] private float _aoeRadius = 3f;
         [SerializeField] private float _impactLifeTime = 0.5f;
         [SerializeField] private int _nbrOfPooledProjectile = 5;
-        [SerializeField] private AudioClip _audioClip;
-        [SerializeField] private AudioSource _audioSource;
         [SerializeField] private Transform _poolContainer;
         private int _damage;
 
@@ -145,14 +143,12 @@ namespace CT.Units.Attacks
                     {
                         if (count == 0)
                         {
-                            Debug.Log("first impact");
                             GameObject impactVFX = _impactPool.Get();
                             impactVFX.transform.SetPositionAndRotation(p, Quaternion.LookRotation(normal));
                             StartCoroutine(ReturnAfter(impactVFX, _impactPool, _impactLifeTime));
                         }
                         else
                         {
-                            Debug.Log("AoE impact");
                             GameObject impactVFXAoE = _impactAoEPool.Get();
                             impactVFXAoE.transform.SetPositionAndRotation(p, Quaternion.LookRotation(normal));
                             StartCoroutine(ReturnAfter(impactVFXAoE, _impactAoEPool, _impactLifeTime));

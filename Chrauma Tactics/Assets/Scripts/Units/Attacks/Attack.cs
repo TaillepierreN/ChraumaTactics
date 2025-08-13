@@ -10,6 +10,8 @@ namespace CT.Units.Attacks
         public Transform CanonTransform;
         protected private Unit _owner;
         [SerializeField] protected private bool _isAoe;
+        [SerializeField] protected private AudioClip _audioClip;
+        [SerializeField] protected private AudioSource _audioSource;
 
 
         #region Initialisation
