@@ -10,6 +10,7 @@ namespace CT.UI.UnitSelectionUI
         [SerializeField] private GameObject unitPrefab;
         [SerializeField] private TMP_Text unitCost;
         [SerializeField] private int unitNum;
+        [SerializeField] private RoundManager roundManager;
 
 
 
@@ -20,14 +21,22 @@ namespace CT.UI.UnitSelectionUI
                 Unit unit = unitPrefab.GetComponent<Unit>();
                 if (unit != null)
                 {
-                    unitCost.text = unit.UnitCost;
+                    unitCost.text = unit.UnitCost.ToString();
                 }
             }
         }
 
         public void OnButtonClicked()
         {
-            UnitPlacer.Instance.StartPlacingUnit(unitPrefab, unitNum);
+            if (roundManager.SpendCredits(unitPrefab.GetComponent<Unit>().UnitCost))
+            {
+                Debug.Log($"Placing unit: {unitPrefab.name}");
+                UnitPlacer.Instance.StartPlacingUnit(unitPrefab, unitNum);
+            }
+            else
+            {
+                return;
+            }
         }
     }
 }

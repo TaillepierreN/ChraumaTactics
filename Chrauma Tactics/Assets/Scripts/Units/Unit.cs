@@ -14,8 +14,8 @@ public abstract class Unit : MonoBehaviour
     [SerializeField] protected UnitType unitType;
     [SerializeField] protected UnitType unitType2;
     [SerializeField] protected string unitDescription;
-    [SerializeField] protected string unitCost;
-    public string UnitCost => unitCost;
+    [SerializeField] protected int unitCost;
+    public int UnitCost => unitCost;
 
     [Header("Unit Base Stats")]
     [SerializeField] protected int baseHealth;
