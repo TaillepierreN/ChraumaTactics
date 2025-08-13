@@ -8,7 +8,7 @@ namespace CT.Units.Attacks
     {
         [SerializeField] private GameObject _projectilePrefab;
         [SerializeField] private GameObject[] _impactVFXPrefab;
-        [SerializeField] private float _projectileSpeed;
+        [SerializeField] private float _projectileSpeed = 30f;
         [SerializeField] private float _aoeRadius = 3f;
         [SerializeField] private float _impactLifeTime = 0.5f;
         [SerializeField] private int _nbrOfPooledProjectile = 5;

@@ -96,6 +96,8 @@ MonoBehaviour:
   unitType2: 5
   unitDescription: Aerial swarm
   unitCost: 150
+  attack: {fileID: 0}
+  ownHitbox: {fileID: 5787113637798228253}
   baseHealth: 50
   baseAtk: 35
   baseMoveSpeed: 4.2
@@ -181,6 +183,11 @@ PrefabInstance:
 --- !u!95 &3027549083328798156 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 7112485078720007338, guid: be4739c48be024a379c3d438208698b8, type: 3}
+  m_PrefabInstance: {fileID: 5237858608116404582}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &5787113637798228253 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1801274469864972411, guid: be4739c48be024a379c3d438208698b8, type: 3}
   m_PrefabInstance: {fileID: 5237858608116404582}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &6408995153857283299 stripped

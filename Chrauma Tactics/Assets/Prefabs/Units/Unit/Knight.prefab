@@ -74,6 +74,9 @@ MonoBehaviour:
   unitType: 0
   unitType2: 5
   unitDescription: Melee fighter
+  unitCost: 
+  attack: {fileID: 0}
+  ownHitbox: {fileID: 8795931856667047231}
   baseHealth: 2400
   baseAtk: 180
   baseMoveSpeed: 3.8
@@ -213,6 +216,11 @@ Animator:
 --- !u!95 &5790181244478450836 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 1323370202695249278, guid: a352e0af7d6d54a5ebb2c1e7aaa98377, type: 3}
+  m_PrefabInstance: {fileID: 4757865101828604394}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &8795931856667047231 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4041479776456062165, guid: a352e0af7d6d54a5ebb2c1e7aaa98377, type: 3}
   m_PrefabInstance: {fileID: 4757865101828604394}
   m_PrefabAsset: {fileID: 0}
 --- !u!23 &9041441490220275851 stripped
