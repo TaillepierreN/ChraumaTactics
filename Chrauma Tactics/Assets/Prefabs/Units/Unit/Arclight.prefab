@@ -75,6 +75,8 @@ MonoBehaviour:
   unitType2: 5
   unitDescription: Basic AOE cheap
   unitCost: 150
+  attack: {fileID: 0}
+  ownHitbox: {fileID: 4851606304275321876}
   baseHealth: 1600
   baseAtk: 55
   baseMoveSpeed: 2.8
@@ -193,6 +195,11 @@ Animator:
 --- !u!23 &2217088812197166119 stripped
 MeshRenderer:
   m_CorrespondingSourceObject: {fileID: 1611070041240055329, guid: 04f2a88dbdf1c452099d9609a55dddf4, type: 3}
+  m_PrefabInstance: {fileID: 621220966627938822}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &4851606304275321876 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5461559127836870162, guid: 04f2a88dbdf1c452099d9609a55dddf4, type: 3}
   m_PrefabInstance: {fileID: 621220966627938822}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &5249337132201991014 stripped

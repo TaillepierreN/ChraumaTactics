@@ -75,6 +75,8 @@ MonoBehaviour:
   unitType2: 5
   unitDescription: 'Anti Air cheap '
   unitCost: 150
+  attack: {fileID: 0}
+  ownHitbox: {fileID: 2262906927538051928}
   baseHealth: 200
   baseAtk: 40
   baseMoveSpeed: 3.5
@@ -264,6 +266,11 @@ PrefabInstance:
       addedObject: {fileID: 7101653757207502882}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: aebc28a524ea04557afb54708517e3d4, type: 3}
+--- !u!4 &2262906927538051928 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5796438813737095384, guid: aebc28a524ea04557afb54708517e3d4, type: 3}
+  m_PrefabInstance: {fileID: 5698852052902022016}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &8442957064620868813 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4196522557339406157, guid: aebc28a524ea04557afb54708517e3d4, type: 3}
