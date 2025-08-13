@@ -267,7 +267,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8bd227c1cc7a45a48bf7262ccc3deaaf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BarrelEnd: []
+  BarrelEnd:
+  - {fileID: 4184418217265503929}
+  - {fileID: 3162855477493581756}
   _isAoe: 0
   _audioClip: {fileID: 8300000, guid: 0d763e4d2c65c574fa67111609aef024, type: 3}
   _audioSource: {fileID: 8237813325125759632}
@@ -486,6 +488,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attack: {fileID: 3955929253313295273}
   ownerUnit: {fileID: 7721724142260285114}
+--- !u!4 &3162855477493581756 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3723610772923313085, guid: 87e51ea1e18d748ad9489b82389978c0, type: 3}
+  m_PrefabInstance: {fileID: 1749740850215005185}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &4184418217265503929 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2475394551444320952, guid: 87e51ea1e18d748ad9489b82389978c0, type: 3}
+  m_PrefabInstance: {fileID: 1749740850215005185}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &4997879495804421060 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6707087877432389573, guid: 87e51ea1e18d748ad9489b82389978c0, type: 3}
