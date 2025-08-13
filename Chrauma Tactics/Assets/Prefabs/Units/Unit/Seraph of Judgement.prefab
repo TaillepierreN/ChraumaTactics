@@ -74,6 +74,9 @@ MonoBehaviour:
   unitType: 2
   unitType2: 1
   unitDescription: Titan Aerial
+  unitCost: 
+  attack: {fileID: 0}
+  ownHitbox: {fileID: 4574697091061392200}
   baseHealth: 4500
   baseAtk: 140
   baseMoveSpeed: 2.8
@@ -172,6 +175,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d2e5e38f019b348698337423a6148950, type: 3}
+--- !u!4 &4574697091061392200 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1049617199243070132, guid: d2e5e38f019b348698337423a6148950, type: 3}
+  m_PrefabInstance: {fileID: 3597368452152306172}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &5515319008054863370 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 9035965668854190070, guid: d2e5e38f019b348698337423a6148950, type: 3}

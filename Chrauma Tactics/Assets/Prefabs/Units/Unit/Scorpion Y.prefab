@@ -74,6 +74,9 @@ MonoBehaviour:
   unitType: 3
   unitType2: 5
   unitDescription: AOE high cost
+  unitCost: 
+  attack: {fileID: 0}
+  ownHitbox: {fileID: 1315353569355022977}
   baseHealth: 1500
   baseAtk: 120
   baseMoveSpeed: 3
@@ -180,6 +183,11 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 2776214135809421003}
   m_SourcePrefab: {fileID: 100100000, guid: cd8058a92ff2d49ff8260541ef6e7634, type: 3}
+--- !u!4 &1315353569355022977 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4479036628634318550, guid: cd8058a92ff2d49ff8260541ef6e7634, type: 3}
+  m_PrefabInstance: {fileID: 3200281489699042391}
+  m_PrefabAsset: {fileID: 0}
 --- !u!95 &1746039809796746031 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 3770219856308526968, guid: cd8058a92ff2d49ff8260541ef6e7634, type: 3}

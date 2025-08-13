@@ -75,6 +75,8 @@ MonoBehaviour:
   unitType2: 5
   unitDescription: sniper
   unitCost: 150
+  attack: {fileID: 0}
+  ownHitbox: {fileID: 7693596060302568515}
   baseHealth: 500
   baseAtk: 120
   baseMoveSpeed: 2.8
@@ -182,6 +184,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 71a352736c966044a9b1ef34b1c3a2f3, type: 3}
+--- !u!4 &7693596060302568515 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4855294002338660, guid: 71a352736c966044a9b1ef34b1c3a2f3, type: 3}
+  m_PrefabInstance: {fileID: 7697807382141204263}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &7699750904283854145 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4250301870834278, guid: 71a352736c966044a9b1ef34b1c3a2f3, type: 3}

@@ -75,6 +75,8 @@ MonoBehaviour:
   unitType2: 5
   unitDescription: All round swarm
   unitCost: 100
+  attack: {fileID: 0}
+  ownHitbox: {fileID: 8652991568671610897}
   baseHealth: 100
   baseAtk: 18
   baseMoveSpeed: 3.3
@@ -185,6 +187,11 @@ PrefabInstance:
 --- !u!4 &8652858702904010827 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4774041545375190, guid: 0d0607f3d6e989742a573ba5f4173669, type: 3}
+  m_PrefabInstance: {fileID: 8648552658183509405}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &8652991568671610897 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4588461257837964, guid: 0d0607f3d6e989742a573ba5f4173669, type: 3}
   m_PrefabInstance: {fileID: 8648552658183509405}
   m_PrefabAsset: {fileID: 0}
 --- !u!95 &8741907818351441991 stripped

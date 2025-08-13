@@ -75,6 +75,8 @@ MonoBehaviour:
   unitType2: 5
   unitDescription: Anti tank medium
   unitCost: 
+  attack: {fileID: 0}
+  ownHitbox: {fileID: 4658983289474937923}
   baseHealth: 1200
   baseAtk: 60
   baseMoveSpeed: 3.7
@@ -179,6 +181,11 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 4098888891663064982}
   m_SourcePrefab: {fileID: 100100000, guid: 47370a4e88bfa40b4ba6c5f379b3b980, type: 3}
+--- !u!4 &4658983289474937923 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1047276041991200514, guid: 47370a4e88bfa40b4ba6c5f379b3b980, type: 3}
+  m_PrefabInstance: {fileID: 5629680528413944641}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &5922534909247314929 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2022598377203740848, guid: 47370a4e88bfa40b4ba6c5f379b3b980, type: 3}
