@@ -55,7 +55,7 @@ namespace CT.Units.Attacks
                     defaultCapacity: 32, maxSize: 256
                 );
             }
-            if (_impactVFXPrefab != null)
+            if (_impactVFXPrefab != null && _impactVFXPrefab.Length > 1)
             {
                 _impactAoEPool = new ObjectPool<GameObject>(
                     createFunc: () =>
@@ -72,9 +72,12 @@ namespace CT.Units.Attacks
             }
             for (int i = 0; i < _nbrOfPooledProjectile; i++)
             {
-                _projectilePool.Release(_projectilePool.Get());
-                _impactPool.Release(_impactPool.Get());
-                _impactAoEPool.Release(_impactAoEPool.Get());
+                if(_projectilePool != null)
+                    _projectilePool.Release(_projectilePool.Get());
+                if(_impactPool != null)
+                    _impactPool.Release(_impactPool.Get());
+                if(_impactAoEPool != null)
+                    _impactAoEPool.Release(_impactAoEPool.Get());
 
             }
         }
