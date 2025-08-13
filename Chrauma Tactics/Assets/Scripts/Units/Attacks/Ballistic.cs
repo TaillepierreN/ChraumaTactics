@@ -102,17 +102,43 @@ namespace CT.Units.Attacks
         /// <param name="target"></param>
         public override void OnFire(Unit target)
         {
-            if (_owner == null || CanonTransform == null)
+            if (_owner == null || BarrelEnd[0] == null)
                 return;
             GameObject projectile = _projectilePool.Get();
-            projectile.transform.SetPositionAndRotation(CanonTransform.position, CanonTransform.rotation);
+            projectile.transform.SetPositionAndRotation(BarrelEnd[0].position, BarrelEnd[0].rotation);
             Projectile proj = projectile.GetComponent<Projectile>();
 
+            Firing(target, projectile, proj);
+        }
+
+        public override void OnFire2(Unit target)
+        {
+            if (_owner == null || BarrelEnd[1] == null)
+                return;
+            GameObject projectile = _projectilePool.Get();
+            projectile.transform.SetPositionAndRotation(BarrelEnd[1].position, BarrelEnd[1].rotation);
+            Projectile proj = projectile.GetComponent<Projectile>();
+
+            Firing(target, projectile, proj);
+        }
+        public override void OnFire3(Unit target)
+        {
+            if (_owner == null || BarrelEnd[2] == null)
+                return;
+            GameObject projectile = _projectilePool.Get();
+            projectile.transform.SetPositionAndRotation(BarrelEnd[2].position, BarrelEnd[2].rotation);
+            Projectile proj = projectile.GetComponent<Projectile>();
+
+            Firing(target, projectile, proj);
+        }
+
+        private bool Firing(Unit target, GameObject projectile, Projectile proj)
+        {
             if (proj == null)
             {
                 Debug.Log("Prefab doesn't have a projectile script");
                 _projectilePool.Release(projectile);
-                return;
+                return false;
             }
             if (_audioSource && _audioClip)
                 _audioSource.PlayOneShot(_audioClip);
@@ -158,6 +184,7 @@ namespace CT.Units.Attacks
                 },
                 onDone: () => _projectilePool.Release(projectile)
             );
+            return true;
         }
 
         /// <summary>
