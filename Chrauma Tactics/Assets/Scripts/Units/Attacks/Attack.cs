@@ -11,6 +11,7 @@ namespace CT.Units.Attacks
         public Transform[] BarrelEnd;
         protected private Unit _owner;
         [SerializeField] protected private bool _isAoe;
+        [SerializeField] protected private float _aoeRadius = 3f;
         [SerializeField] protected private AudioClip _audioClip;
         [SerializeField] protected private AudioSource _audioSource;
 
@@ -22,9 +23,13 @@ namespace CT.Units.Attacks
         /// <param name="owner"></param>
         public virtual void Initialize(Unit owner)
         {
-            _owner = owner ?? GetComponent<Unit>();
-            if (BarrelEnd == null)
-                BarrelEnd[0] = transform;
+            _owner = owner!= null ? owner : GetComponent<Unit>();
+
+            if (_audioSource == null)
+                _audioSource = GetComponent<AudioSource>();
+            
+            if (BarrelEnd == null || BarrelEnd.Length == 0)
+                    BarrelEnd = new[] { transform };
         }
         #endregion
 

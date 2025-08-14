@@ -9,7 +9,6 @@ namespace CT.Units.Attacks
         [SerializeField] private GameObject _projectilePrefab;
         [SerializeField] private GameObject[] _impactVFXPrefab;
         [SerializeField] private float _projectileSpeed = 30f;
-        [SerializeField] private float _aoeRadius = 3f;
         [SerializeField] private float _impactLifeTime = 0.5f;
         [SerializeField] private int _nbrOfPooledProjectile = 5;
         [SerializeField] private Transform _poolContainer;
@@ -105,42 +104,43 @@ namespace CT.Units.Attacks
         /// <param name="target"></param>
         public override void OnFire(Unit target)
         {
-            if (_owner == null || BarrelEnd[0] == null)
+            if (CheckOwnerAndBarrelEnd(0))
                 return;
-            GameObject projectile = _projectilePool.Get();
-            projectile.transform.SetPositionAndRotation(BarrelEnd[0].position, BarrelEnd[0].rotation);
-            Projectile proj = projectile.GetComponent<Projectile>();
+
+            GameObject projectile;
+            Projectile proj;
+            GetAndSetProjectile(0, out projectile, out proj);
 
             Firing(target, projectile, proj);
         }
 
         public override void OnFire2(Unit target)
         {
-            if (_owner == null || BarrelEnd[1] == null)
+            if (CheckOwnerAndBarrelEnd(1))
                 return;
-            GameObject projectile = _projectilePool.Get();
-            projectile.transform.SetPositionAndRotation(BarrelEnd[1].position, BarrelEnd[1].rotation);
-            Projectile proj = projectile.GetComponent<Projectile>();
+            GameObject projectile;
+            Projectile proj;
+            GetAndSetProjectile(1, out projectile, out proj);
 
             Firing(target, projectile, proj);
         }
         public override void OnFire3(Unit target)
         {
-            if (_owner == null || BarrelEnd[2] == null)
+            if (CheckOwnerAndBarrelEnd(2))
                 return;
-            GameObject projectile = _projectilePool.Get();
-            projectile.transform.SetPositionAndRotation(BarrelEnd[2].position, BarrelEnd[2].rotation);
-            Projectile proj = projectile.GetComponent<Projectile>();
+            GameObject projectile;
+            Projectile proj;
+            GetAndSetProjectile(2, out projectile, out proj);
 
             Firing(target, projectile, proj);
         }
         public override void OnFire4(Unit target)
         {
-            if (_owner == null || BarrelEnd[3] == null)
+            if (CheckOwnerAndBarrelEnd(3))
                 return;
-            GameObject projectile = _projectilePool.Get();
-            projectile.transform.SetPositionAndRotation(BarrelEnd[3].position, BarrelEnd[3].rotation);
-            Projectile proj = projectile.GetComponent<Projectile>();
+            GameObject projectile;
+            Projectile proj;
+            GetAndSetProjectile(3, out projectile, out proj);
 
             Firing(target, projectile, proj);
         }
@@ -212,6 +212,20 @@ namespace CT.Units.Attacks
             yield return new WaitForSeconds(t);
             if (go != null)
                 pool.Release(go);
+        }
+
+        private bool CheckOwnerAndBarrelEnd(int barrelIndex)
+        {
+            if (_owner == null || BarrelEnd[barrelIndex] == null)
+                return false;
+            return true;
+        }
+
+        private void GetAndSetProjectile(int index, out GameObject projectile, out Projectile proj)
+        {
+            projectile = _projectilePool.Get();
+            projectile.transform.SetPositionAndRotation(BarrelEnd[index].position, BarrelEnd[index].rotation);
+            proj = projectile.GetComponent<Projectile>();
         }
     }
 
