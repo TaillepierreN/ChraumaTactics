@@ -32,9 +32,9 @@ public class AugmentSelectionMenu : MonoBehaviour
     private AugmentRarity GetRandomRarity()
     {
         float roll = Random.value * 100f;
-        if (roll < 50f)
+        if (roll < 40f)
             return AugmentRarity.Silver;
-        else if (roll < 85f)
+        else if (roll < 75f)
             return AugmentRarity.Gold; 
         else
             return AugmentRarity.Quantum; 
