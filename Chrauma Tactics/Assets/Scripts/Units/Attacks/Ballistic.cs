@@ -104,7 +104,6 @@ namespace CT.Units.Attacks
         /// <param name="target"></param>
         public override void OnFire(Unit target)
         {
-            Debug.Log($"checking owner and barrel 0: {CheckOwnerAndBarrelEnd(0)}");
             if (CheckOwnerAndBarrelEnd(0))
                 return;
 

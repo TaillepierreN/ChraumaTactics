@@ -1,18 +1,13 @@
 using UnityEngine;
 
-public class CustomRocketLauncher : MonoBehaviour
+namespace CT.Units.Attacks
 {
-    [SerializeField] private GameObject[] RocketLauncher;
-
-    public void ShootRocket(int slot)
+    public class CustomRocketLauncher : MonoBehaviour
     {
-        Debug.Log($"shooting {slot}");
-        RocketLauncher[slot].SetActive(false);
-    }
+        [SerializeField] private GameObject[] RocketLauncher;
 
-    public void ReloadRocker(int slot)
-    {
-        RocketLauncher[slot].SetActive(true);
-    }
+        public void ShootRocket(int slot) => RocketLauncher[slot].SetActive(false);
+        public void ReloadRocker(int slot) => RocketLauncher[slot].SetActive(true);
 
+    }
 }

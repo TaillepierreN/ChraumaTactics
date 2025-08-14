@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using CT.Units.Animations;
 using CT.Units.Attacks;
@@ -77,17 +78,23 @@ public abstract class Unit : MonoBehaviour
 
 
     [Header("Unit Detection settings")]
-    [SerializeField] private float detectionRadius = 100f;
-    private float detectionInterval = 0.2f;
-    private float detectionTimer = 0f;
+    [SerializeField] private float _detectionRadius = 100f;
+    private float _detectionInterval = 0.2f;
+    private float _detectionTimer = 0f;
     /// <summary>Dictionary to keep track of known friendly units to skip repeated Getcomponent check.</summary>
-    private Dictionary<GameObject, Unit> knownFriendlies = new();
+    private Dictionary<GameObject, Unit> _knownFriendlies = new();
     /// <summary>Dictionary to keep track of known enemy units to skip repeated GetComponent check.</summary>
-    private Dictionary<GameObject, Unit> knownEnemies = new();
-    private LayerMask detectionMask = ~0; // all layers for now, TODO: set to only units layer
-    private Unit currentTarget = null;
-    private bool targetHasMovedAway = false;
+    private Dictionary<GameObject, Unit> _knownEnemies = new();
+    private LayerMask _detectionMask = ~0; // all layers for now, TODO: set to only units layer
+    private Unit _currentTarget = null;
+    private bool _targetHasMovedAway = false;
 
+    [Header("Aiming")]
+    [SerializeField] private bool requierFacingForAttack = false;
+    [SerializeField, Range(0f, 90f)] private float _facingConeDegree = 32f;
+    [SerializeField] private float _facingEpsilonDeg = 1.5f;
+    private float _minFacingDot = 0.85f;
+    private Coroutine _alignRoutine;
 
 
     [Header("State")]
@@ -113,7 +120,7 @@ public abstract class Unit : MonoBehaviour
     /// Gets the current health of the unit.
     public int CurrentHealth => currentHealth;
     public int CurrentAtk => currentAtk;
-    public Unit CurrentTarget => currentTarget;
+    public Unit CurrentTarget => _currentTarget;
     public Transform Hitbox => ownHitbox;
 
     #endregion
@@ -130,7 +137,8 @@ public abstract class Unit : MonoBehaviour
             left2TrackMaterial = left2TrackRenderer.material;
         if (right2TrackRenderer != null)
             right2TrackMaterial = right2TrackRenderer.material;
-        //spawnPosition = transform.position;
+        spawnPosition = transform.position;
+        _minFacingDot = DotFromDegrees(_facingConeDegree);
     }
 
     protected virtual void Start()
@@ -143,10 +151,10 @@ public abstract class Unit : MonoBehaviour
         if (!RoundStarted)
             return;
 
-        detectionTimer += Time.deltaTime;
-        if (detectionTimer >= detectionInterval)
+        _detectionTimer += Time.deltaTime;
+        if (_detectionTimer >= _detectionInterval)
         {
-            detectionTimer = 0f;
+            _detectionTimer = 0f;
             DetectEnemies();
         }
 
@@ -179,46 +187,58 @@ public abstract class Unit : MonoBehaviour
                     animatorBody.SetBool("IsMoving", false);
             }
         }
-        if (IsAttacking && currentTarget != null)
+        if (IsAttacking && _currentTarget != null)
         {
-            if (!currentTarget.gameObject.activeInHierarchy)
+            if (!_currentTarget.gameObject.activeInHierarchy)
             {
-                ClearTarget(currentTarget);
+                ClearTarget(_currentTarget);
                 return;
             }
-            float dist = Vector3.Distance(transform.position, currentTarget.transform.position);
+            float dist = Vector3.Distance(transform.position, _currentTarget.transform.position);
             if (dist > currentAtkRange)
             {
                 if (attack != null && attack.IsContinuous)
                     attack.StopAutoFire();
 
-                targetHasMovedAway = true;
+                _targetHasMovedAway = true;
+
                 if (animatorWeap != null)
                     foreach (Animator weap in animatorWeap)
                         if (weap != null)
                             weap.SetBool("IsAttacking", false);
+
                 if (unitType == UnitType.Aerial && animatorBody != null)
                     animatorBody.SetBool("IsAttacking", false);
-                MoveTo(currentTarget.transform.position);
+
+                MoveTo(_currentTarget.transform.position);
             }
-            else if (targetHasMovedAway)
+            else if (_targetHasMovedAway)
             {
-                if (attack != null && attack.IsContinuous)
-                    attack.StartAutoFire(currentTarget);
-
-                if (animatorWeap != null)
-                    foreach (Animator weap in animatorWeap)
-                        if (weap != null)
-                            weap.SetBool("IsAttacking", true);
-
-                if (unitType == UnitType.Aerial
-                && animatorBody != null
-                && Vector3.Distance(transform.position, currentTarget.transform.position) < 2)
+                if (requierFacingForAttack && !IsFacing(_currentTarget.transform))
                 {
-                    Debug.Log("is aerial and attacking");
-                    animatorBody.SetBool("IsAttacking", true);
+                    if (_alignRoutine != null)
+                        StopCoroutine(_alignRoutine);
+                    _alignRoutine = StartCoroutine(AlignAndEngage(_currentTarget));
                 }
-                targetHasMovedAway = false;
+                else
+                {
+                    if (attack != null && attack.IsContinuous)
+                        attack.StartAutoFire(_currentTarget);
+
+                    if (animatorWeap != null)
+                        foreach (Animator weap in animatorWeap)
+                            if (weap != null)
+                                weap.SetBool("IsAttacking", true);
+
+                    if (unitType == UnitType.Aerial
+                    && animatorBody != null
+                    && Vector3.Distance(transform.position, _currentTarget.transform.position) < 2)
+                    {
+                        Debug.Log("is aerial and attacking");
+                        animatorBody.SetBool("IsAttacking", true);
+                    }
+                    _targetHasMovedAway = false;
+                }
             }
         }
     }
@@ -303,9 +323,11 @@ public abstract class Unit : MonoBehaviour
         transform.position = spawnPosition;
         RoundStarted = false;
         IsAttacking = false;
-        currentTarget = null;
+        _currentTarget = null;
         IsMoving = false;
         IsDead = false;
+        _targetHasMovedAway = false;
+        waitingForStop = false;
     }
     #endregion
 
@@ -351,6 +373,13 @@ public abstract class Unit : MonoBehaviour
     public virtual void StartRound()
     {
         RoundStarted = true;
+        //UpdateBoostedStats()
+
+    }
+
+    public virtual void EndRound()
+    {
+        ResetStats();
     }
 
     /// <summary>Applies damage to the unit and checks if it should be dead.</summary>
@@ -373,10 +402,10 @@ public abstract class Unit : MonoBehaviour
     /// </summary>
     private void DetectEnemies()
     {
-        if (currentTarget != null && currentTarget.gameObject.activeInHierarchy)
+        if (_currentTarget != null && _currentTarget.gameObject.activeInHierarchy)
             return;
 
-        Collider[] hits = Physics.OverlapSphere(transform.position, detectionRadius/*, detectionMask*/);
+        Collider[] hits = Physics.OverlapSphere(transform.position, _detectionRadius/*, detectionMask*/);
 
         float closestDistanceSqr = float.MaxValue;
         Unit closestEnemy = null;
@@ -387,7 +416,7 @@ public abstract class Unit : MonoBehaviour
                 continue;
 
             //skip if friendly and already known
-            if (knownFriendlies.TryGetValue(hit.gameObject, out Unit friendUnit))
+            if (_knownFriendlies.TryGetValue(hit.gameObject, out Unit friendUnit))
                 continue;
 
             Unit enemyUnit;
@@ -395,7 +424,7 @@ public abstract class Unit : MonoBehaviour
             //if not known enemy, check which team it is on
             // if it is an ally, add to known friendlies
             // if it is an enemy, add to known enemies
-            if (!knownEnemies.TryGetValue(hit.gameObject, out enemyUnit))
+            if (!_knownEnemies.TryGetValue(hit.gameObject, out enemyUnit))
             {
                 enemyUnit = hit.GetComponent<Unit>();
 
@@ -404,10 +433,10 @@ public abstract class Unit : MonoBehaviour
 
                 if (enemyUnit.team == this.team)
                 {
-                    knownFriendlies.Add(hit.gameObject, enemyUnit);
+                    _knownFriendlies.Add(hit.gameObject, enemyUnit);
                     continue;
                 }
-                knownEnemies.Add(hit.gameObject, enemyUnit);
+                _knownEnemies.Add(hit.gameObject, enemyUnit);
             }
 
             float distSqr = (enemyUnit.transform.position - transform.position).sqrMagnitude;
@@ -440,28 +469,84 @@ public abstract class Unit : MonoBehaviour
     /// <summary>Engages the target unit in combat.</summary>
     public virtual void EngageTarget(Unit target)
     {
-        if (currentTarget == target)
+        if (_currentTarget == target)
             return;
-        IsAttacking = true;
-        currentTarget = target;
-        Debug.Log($"piou piou piou");
-        currentTarget.OnUnitDeath += ClearTarget;
-        /* TODO */
-        if (animatorWeap != null)
-            foreach (Animator weap in animatorWeap)
-                if (weap != null)
-                    weap.SetBool("IsAttacking", true);
-        if (unitType == UnitType.Aerial
-        && animatorBody != null
-        && Vector3.Distance(transform.position, target.transform.position) < 2)
+
+        _currentTarget = target;
+        IsAttacking = false;
+        _currentTarget.OnUnitDeath += ClearTarget;
+
+        if (requierFacingForAttack && Vector3.Distance(transform.position, target.transform.position) <= currentAtkRange && !IsFacing(target.transform))
         {
-            Debug.Log("is aerial and attacking");
-            animatorBody.SetBool("IsAttacking", true);
+            if (_alignRoutine != null)
+                StopCoroutine(_alignRoutine);
+            _alignRoutine = StartCoroutine(AlignAndEngage(target));
+        }
+        else
+            BeginFiring(target);
+    }
+
+    /// <summary>
+    /// Turn the unit toward the target and begin firing
+    /// </summary>
+    /// <param name="target"></param>
+    /// <returns></returns>
+    private IEnumerator AlignAndEngage(Unit target)
+    {
+        if (agent == null || target == null) yield break;
+
+        bool prevUpdateRot = agent.updateRotation;
+        agent.updateRotation = false;
+        agent.isStopped = true;
+
+        while (target != null && target.gameObject.activeInHierarchy)
+        {
+            float dist = Vector3.Distance(transform.position, target.transform.position);
+
+            if (dist > currentAtkRange)
+            {
+                agent.updateRotation = prevUpdateRot;
+                MoveTo(target.transform.position);
+                _alignRoutine = null;
+                yield break;
+            }
+
+            if (IsFacing(target.transform))
+                break;
+
+            Vector3 look = target.transform.position; look.y = transform.position.y;
+            Quaternion wanted = Quaternion.LookRotation((look - transform.position).normalized);
+            float step = Mathf.Max(1f, agent.angularSpeed) * Time.deltaTime;
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, wanted, step);
+
+            if (Quaternion.Angle(transform.rotation, wanted) <= _facingEpsilonDeg)
+                break;
+
+            yield return null;
         }
 
-        if (attack != null && attack.IsContinuous)
-            attack.StartAutoFire(currentTarget);
+        agent.updateRotation = prevUpdateRot;
+        BeginFiring(target);
+        _alignRoutine = null;
+    }
 
+    /// <summary>
+    /// Start the shooting animation / damage dealing
+    /// </summary>
+    /// <param name="target"></param>
+    private void BeginFiring(Unit target)
+    {
+        IsAttacking = true;
+        if (animatorWeap != null)
+            foreach (Animator weap in animatorWeap)
+                if (weap) weap.SetBool("IsAttacking", true);
+
+        if (unitType == UnitType.Aerial && animatorBody != null &&
+            Vector3.Distance(transform.position, target.transform.position) < 2)
+            animatorBody.SetBool("IsAttacking", true);
+
+        if (attack != null && attack.IsContinuous)
+            attack.StartAutoFire(_currentTarget);
     }
 
     /// <summary>Clears the current target of the unit, stopping any ongoing attack.</summary>
@@ -470,18 +555,52 @@ public abstract class Unit : MonoBehaviour
         if (unit != null)
             unit.OnUnitDeath -= ClearTarget;
 
+        if (_alignRoutine != null)
+        {
+            StopCoroutine(_alignRoutine);
+            _alignRoutine = null;
+        }
+
+        if (agent != null)
+            agent.updateRotation = true;
+
         if (attack != null && attack.IsContinuous)
             attack.StopAutoFire();
 
-        IsAttacking = false;
         if (animatorWeap != null)
             foreach (Animator weap in animatorWeap)
                 if (weap != null)
                     weap.SetBool("IsAttacking", false);
+
         if (unitType == UnitType.Aerial && animatorBody != null)
             animatorBody.SetBool("IsAttacking", false);
-        currentTarget = null;
+
+        _targetHasMovedAway = false;
+        IsAttacking = false;
+        _currentTarget = null;
     }
+
+    #endregion
+
+    #region Helpers
+    /// <summary>
+    /// Check if inside the cone in front of the unit
+    /// </summary>
+    /// <param name="t"></param>
+    /// <returns></returns>
+    private bool IsFacing(Transform t)
+    {
+        Vector3 vectorToTarget = t.position - transform.position;
+        vectorToTarget.y = 0f;
+        /*is facing if on top of unit*/
+        if (vectorToTarget.sqrMagnitude < 0.0001f)
+            return true;
+        float dot = Vector3.Dot(transform.forward, vectorToTarget.normalized);
+        return dot >= _minFacingDot;
+    }
+
+    private float DotFromDegrees(float degrees) => Mathf.Cos(degrees * Mathf.Deg2Rad);
+
 
     #endregion
 
@@ -493,7 +612,7 @@ public abstract class Unit : MonoBehaviour
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, baseRange);
         Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, detectionRadius);
+        Gizmos.DrawWireSphere(transform.position, _detectionRadius);
     }
     #endregion
 

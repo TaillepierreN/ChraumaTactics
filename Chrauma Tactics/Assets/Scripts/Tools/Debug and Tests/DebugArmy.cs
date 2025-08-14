@@ -34,7 +34,7 @@ public class DebugArmy : MonoBehaviour
                 list.Add(unit);
         }
         army = list.ToArray();
-        Debug.Log($"Armée team {team} est prêtes");
+        Debug.Log($"Army team {team} is ready");
     }
     [ContextMenu("Start the war")]
     public void StartTheWar()
@@ -44,6 +44,6 @@ public class DebugArmy : MonoBehaviour
             soldier.team = team;
             soldier.StartRound();
         }
-        Debug.Log($"Team {team} lance l'assaut");
+        Debug.Log($"Team {team} is engaging");
     }
 }

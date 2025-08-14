@@ -93,7 +93,10 @@ MonoBehaviour:
   left2TrackRenderer: {fileID: 0}
   rightTrackRenderer: {fileID: 0}
   right2TrackRenderer: {fileID: 0}
-  detectionRadius: 100
+  _detectionRadius: 100
+  requierFacingForAttack: 1
+  _facingConeDegree: 32
+  _facingEpsilonDeg: 1.5
   RoundStarted: 0
   IsMoving: 0
   IsAttacking: 0

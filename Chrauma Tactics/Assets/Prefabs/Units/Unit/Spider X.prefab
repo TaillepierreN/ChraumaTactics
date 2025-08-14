@@ -47,7 +47,7 @@ NavMeshAgent:
   m_GameObject: {fileID: 2219292110629497740}
   m_Enabled: 1
   m_AgentTypeID: 0
-  m_Radius: 0.5
+  m_Radius: 2.08
   m_Speed: 3.5
   m_Acceleration: 8
   avoidancePriority: 50
@@ -97,7 +97,10 @@ MonoBehaviour:
   left2TrackRenderer: {fileID: 0}
   rightTrackRenderer: {fileID: 0}
   right2TrackRenderer: {fileID: 0}
-  detectionRadius: 100
+  _detectionRadius: 100
+  requierFacingForAttack: 0
+  _facingConeDegree: 32
+  _facingEpsilonDeg: 1.5
   RoundStarted: 0
   IsMoving: 0
   IsAttacking: 0
@@ -135,8 +138,8 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 3044922546962268712, guid: a6c63ec223a4c3e4d96da6fd4fd767ce, type: 2}
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
-  m_PlayOnAwake: 1
-  m_Volume: 0.544
+  m_PlayOnAwake: 0
+  m_Volume: 0.2
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -145,7 +148,7 @@ AudioSource:
   Priority: 128
   DopplerLevel: 1
   MinDistance: 1
-  MaxDistance: 500
+  MaxDistance: 80
   Pan2D: 0
   rolloffMode: 0
   BypassEffects: 0
@@ -164,14 +167,23 @@ AudioSource:
       inWeight: 0.33333334
       outWeight: 0.33333334
     - serializedVersion: 3
-      time: 1
-      value: 0
-      inSlope: 0
-      outSlope: 0
+      time: 0.18399817
+      value: 0.15513074
+      inSlope: -0.7735135
+      outSlope: -0.7735135
       tangentMode: 0
       weightedMode: 0
       inWeight: 0.33333334
-      outWeight: 0.33333334
+      outWeight: 0.46272996
+    - serializedVersion: 3
+      time: 0.52199244
+      value: 0
+      inSlope: -0.7014918
+      outSlope: -0.7014918
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33033925
+      outWeight: 0.27359372
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
@@ -180,7 +192,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0
+      value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -236,13 +248,13 @@ MonoBehaviour:
   - {fileID: 8754502125185146233}
   - {fileID: 8754502125185146235}
   _isAoe: 0
+  _aoeRadius: 3
   _audioClip: {fileID: 8300000, guid: 0d763e4d2c65c574fa67111609aef024, type: 3}
   _audioSource: {fileID: 151634162284789907}
   _projectilePrefab: {fileID: 100000, guid: 7e2d264e03fb2fb4fb2b1e559515830a, type: 3}
   _impactVFXPrefab:
   - {fileID: 7484493792602375096, guid: d54af38ad9f3b3e43a8123927165f838, type: 3}
   _projectileSpeed: 30
-  _aoeRadius: 3
   _impactLifeTime: 0.5
   _nbrOfPooledProjectile: 5
   _poolContainer: {fileID: 1129562043465985312}
