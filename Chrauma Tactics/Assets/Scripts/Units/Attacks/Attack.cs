@@ -1,3 +1,4 @@
+using Unity.IO.LowLevel.Unsafe;
 using UnityEngine;
 
 namespace CT.Units.Attacks
@@ -14,7 +15,9 @@ namespace CT.Units.Attacks
         [SerializeField] protected private float _aoeRadius = 3f;
         [SerializeField] protected private AudioClip _audioClip;
         [SerializeField] protected private AudioSource _audioSource;
-
+        
+        [HideInInspector]
+        public virtual bool IsContinuous => false;
 
         #region Initialisation
         /// <summary>
@@ -23,15 +26,16 @@ namespace CT.Units.Attacks
         /// <param name="owner"></param>
         public virtual void Initialize(Unit owner)
         {
-            _owner = owner!= null ? owner : GetComponent<Unit>();
+            _owner = owner != null ? owner : GetComponent<Unit>();
 
             if (_audioSource == null)
                 _audioSource = GetComponent<AudioSource>();
-            
+
             if (BarrelEnd == null || BarrelEnd.Length == 0)
-                    BarrelEnd = new[] { transform };
+                BarrelEnd = new[] { transform };
         }
         #endregion
+
 
         #region Attack logics
         /// <summary>
@@ -62,6 +66,17 @@ namespace CT.Units.Attacks
         /// Handle the end of attack logic if needed
         /// </summary>
         public virtual void OnStop() { }
+
+        /// <summary>
+        /// Continuous specific fire method
+        /// </summary>
+        /// <param name="target"></param>
+        public virtual void StartAutoFire(Unit target) { }
+        /// <summary>
+        /// Continuous specific fire method
+        /// </summary>
+        /// <param name="target"></param>
+        public virtual void StopAutoFire() { }
 
         #endregion
     }

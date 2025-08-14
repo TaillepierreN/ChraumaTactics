@@ -178,6 +178,18 @@ public abstract class Unit : MonoBehaviour
                     animatorBody.SetBool("IsMoving", false);
             }
         }
+        if (IsAttacking && currentTarget != null)
+{
+    float dist = Vector3.Distance(transform.position, currentTarget.transform.position);
+    if (dist > currentAtkRange)
+    {
+        if (attack != null && attack.IsContinuous)
+            attack.StopAutoFire();
+
+        MoveTo(currentTarget.transform.position);
+
+    }
+}
     }
 
     private void OnEnable()
@@ -415,15 +427,20 @@ public abstract class Unit : MonoBehaviour
             Debug.Log("is aerial and attacking");
             animatorBody.SetBool("IsAttacking", true);
         }
-        // actual attack loop/ coroutine?
+
+        if (attack != null && attack.IsContinuous)
+            attack.StartAutoFire(currentTarget);
+            
     }
 
     /// <summary>Clears the current target of the unit, stopping any ongoing attack.</summary>
     public virtual void ClearTarget(Unit unit)
     {
-        Debug.Log("Clearing target");
         if (unit != null)
             unit.OnUnitDeath -= ClearTarget;
+
+        if (attack != null && attack.IsContinuous)
+            attack.StopAutoFire();
 
         IsAttacking = false;
         if (animatorWeap != null)
