@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 2621316063321411395}
   - component: {fileID: 151634162284789907}
   - component: {fileID: 866522883630769176}
+  - component: {fileID: 9131248552732076412}
   m_Layer: 0
   m_Name: Spider X
   m_TagString: Untagged
@@ -86,6 +87,7 @@ MonoBehaviour:
   baseAtkSpeed: 20
   baseRange: 20
   spawnPosition: {x: 0, y: 0, z: 0}
+  obstacle: {fileID: 9131248552732076412}
   hasSmoothStop: 0
   decelerationRate: 2.5
   animatorBody: {fileID: 1697467267939658958}
@@ -258,6 +260,22 @@ MonoBehaviour:
   _impactLifeTime: 0.5
   _nbrOfPooledProjectile: 5
   _poolContainer: {fileID: 1129562043465985312}
+--- !u!208 &9131248552732076412
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2219292110629497740}
+  m_Enabled: 0
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 1.86, y: 1.435, z: 2.02}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0.82, z: 0}
+  m_TimeToStationary: 0.25
 --- !u!1 &3275826690753584470
 GameObject:
   m_ObjectHideFlags: 0

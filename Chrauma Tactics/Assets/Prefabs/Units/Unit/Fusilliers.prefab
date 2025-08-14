@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 5486077790063058784}
   - component: {fileID: 15440284082077293}
   - component: {fileID: 1248385897925284610}
+  - component: {fileID: -228744923853373879}
   m_Layer: 0
   m_Name: Fusilliers
   m_TagString: Untagged
@@ -86,6 +87,7 @@ MonoBehaviour:
   baseAtkSpeed: 2
   baseRange: 21
   spawnPosition: {x: 0, y: 0, z: 0}
+  obstacle: {fileID: -228744923853373879}
   hasSmoothStop: 0
   decelerationRate: 2.5
   animatorBody: {fileID: 0}
@@ -260,6 +262,22 @@ MonoBehaviour:
   _impactLifeTime: 0.5
   _nbrOfPooledProjectile: 5
   _poolContainer: {fileID: 2298080564196017171}
+--- !u!208 &-228744923853373879
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1048969119062683968}
+  m_Enabled: 0
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 1.86, y: 1.435, z: 3.16}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0.32, z: 0.84}
+  m_TimeToStationary: 0.25
 --- !u!1 &1877422930439643760
 GameObject:
   m_ObjectHideFlags: 0

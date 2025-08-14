@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 5138127783593958186}
   - component: {fileID: 1912957263709174951}
   - component: {fileID: 2109097046772065353}
+  - component: {fileID: 2524037185064102227}
   m_Layer: 0
   m_Name: Seraph of Judgement
   m_TagString: Untagged
@@ -86,6 +87,7 @@ MonoBehaviour:
   baseAtkSpeed: 1
   baseRange: 30
   spawnPosition: {x: 0, y: 0, z: 0}
+  obstacle: {fileID: 2524037185064102227}
   hasSmoothStop: 0
   decelerationRate: 2.5
   animatorBody: {fileID: 0}
@@ -253,6 +255,22 @@ MonoBehaviour:
   - {fileID: 4671156070837642387}
   impactMarkers:
   - {fileID: 4130402671462283486}
+--- !u!208 &2524037185064102227
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2986935073786158129}
+  m_Enabled: 0
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 3.58, y: 1.435, z: 3.45}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 3.57, y: 7.42, z: 1.71}
+  m_TimeToStationary: 0.25
 --- !u!1001 &1256437010598871498
 PrefabInstance:
   m_ObjectHideFlags: 0

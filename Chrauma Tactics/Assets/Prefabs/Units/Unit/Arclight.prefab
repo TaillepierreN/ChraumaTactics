@@ -46,6 +46,7 @@ GameObject:
   - component: {fileID: 5382263695842628677}
   - component: {fileID: 4986982964405200662}
   - component: {fileID: 8874892346867197798}
+  - component: {fileID: 3574974438904600448}
   m_Layer: 0
   m_Name: Arclight
   m_TagString: Untagged
@@ -118,6 +119,7 @@ MonoBehaviour:
   baseAtkSpeed: 1.3
   baseRange: 18
   spawnPosition: {x: 0, y: 0, z: 0}
+  obstacle: {fileID: 3574974438904600448}
   hasSmoothStop: 0
   decelerationRate: 2.5
   animatorBody: {fileID: 704603701078606063}
@@ -286,6 +288,22 @@ MonoBehaviour:
   - {fileID: 1554994570407069089}
   impactMarkers:
   - {fileID: 3341558272674926503}
+--- !u!208 &3574974438904600448
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5112724625264564338}
+  m_Enabled: 0
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 1.86, y: 1.435, z: 2.02}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 1.1, z: 0}
+  m_TimeToStationary: 0.25
 --- !u!1001 &621220966627938822
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -298,6 +316,10 @@ PrefabInstance:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: 6ab61da526b50c44287712e911911e16, type: 2}
+    - target: {fileID: 96902677343326953, guid: 04f2a88dbdf1c452099d9609a55dddf4, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3742628300791535116, guid: 04f2a88dbdf1c452099d9609a55dddf4, type: 3}
       propertyPath: m_Name
       value: Chassis_Tank_Lvl2

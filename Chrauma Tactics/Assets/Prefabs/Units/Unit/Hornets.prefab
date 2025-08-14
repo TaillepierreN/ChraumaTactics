@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 6663524098148133853}
   - component: {fileID: 3920531310147560548}
   - component: {fileID: 6493610921395602152}
+  - component: {fileID: 9122565686844881584}
   m_Layer: 0
   m_Name: Hornets
   m_TagString: Untagged
@@ -107,6 +108,7 @@ MonoBehaviour:
   baseAtkSpeed: 1.5
   baseRange: 15
   spawnPosition: {x: 0, y: 0, z: 0}
+  obstacle: {fileID: 9122565686844881584}
   hasSmoothStop: 0
   decelerationRate: 2.5
   animatorBody: {fileID: 3027549083328798156}
@@ -254,6 +256,22 @@ MonoBehaviour:
   - {fileID: 1465430674211642169}
   impactMarkers:
   - {fileID: 9097549735257145967}
+--- !u!208 &9122565686844881584
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7526224258789276705}
+  m_Enabled: 0
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 1.735, y: 0.5, z: 2.02}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 25.07, z: 0.62}
+  m_TimeToStationary: 0.25
 --- !u!1001 &1977173277326899749
 PrefabInstance:
   m_ObjectHideFlags: 0

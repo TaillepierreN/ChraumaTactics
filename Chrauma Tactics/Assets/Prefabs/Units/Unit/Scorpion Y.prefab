@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 5844399747333442983}
   - component: {fileID: 1556980426057000772}
   - component: {fileID: 732240996812903446}
+  - component: {fileID: 4118013909892122749}
   m_Layer: 0
   m_Name: Scorpion Y
   m_TagString: Untagged
@@ -86,6 +87,7 @@ MonoBehaviour:
   baseAtkSpeed: 1
   baseRange: 24
   spawnPosition: {x: 0, y: 0, z: 0}
+  obstacle: {fileID: 4118013909892122749}
   hasSmoothStop: 0
   decelerationRate: 2.5
   animatorBody: {fileID: 1746039809796746031}
@@ -254,6 +256,22 @@ MonoBehaviour:
   - {fileID: 4257830523118253500}
   impactMarkers:
   - {fileID: 7418035312548749139}
+--- !u!208 &4118013909892122749
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1359244389155804338}
+  m_Enabled: 0
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 1.86, y: 1.435, z: 2.11}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0.64, z: -0.48}
+  m_TimeToStationary: 0.25
 --- !u!1001 &1767956869784109094
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -329,6 +347,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 4941957840860349129}
     m_Modifications:
+    - target: {fileID: 3770219856308526968, guid: cd8058a92ff2d49ff8260541ef6e7634, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3993340222640425487, guid: cd8058a92ff2d49ff8260541ef6e7634, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 5161459489899719653}
   - component: {fileID: 8108558575411186369}
   - component: {fileID: 8771786651606285357}
+  - component: {fileID: -4526571731955139451}
   m_Layer: 0
   m_Name: Snipers
   m_TagString: Untagged
@@ -83,6 +84,7 @@ MonoBehaviour:
   baseAtkSpeed: 0.7
   baseRange: 42
   spawnPosition: {x: 0, y: 0, z: 0}
+  obstacle: {fileID: 0}
   hasSmoothStop: 0
   decelerationRate: 2.5
   animatorBody: {fileID: 7748428808782258001}
@@ -122,6 +124,22 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!208 &-4526571731955139451
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1732825375848570203}
+  m_Enabled: 0
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.5, y: 1.04, z: 0.5}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0.9, z: 0}
+  m_TimeToStationary: 0.25
 --- !u!1001 &7697807382141204263
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -182,6 +200,10 @@ PrefabInstance:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: db09fc4f173b48949ad81a76d027df78, type: 2}
+    - target: {fileID: 95677257111660662, guid: 71a352736c966044a9b1ef34b1c3a2f3, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

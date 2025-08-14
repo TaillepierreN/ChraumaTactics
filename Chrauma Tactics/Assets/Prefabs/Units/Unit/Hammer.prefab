@@ -45,6 +45,7 @@ GameObject:
   - component: {fileID: 6103776323230222754}
   - component: {fileID: 6853473791549935702}
   - component: {fileID: 3539410376100132533}
+  - component: {fileID: -3165346217921363626}
   m_Layer: 0
   m_Name: Hammer
   m_TagString: Untagged
@@ -117,6 +118,7 @@ MonoBehaviour:
   baseAtkSpeed: 20
   baseRange: 18
   spawnPosition: {x: 0, y: 0, z: 0}
+  obstacle: {fileID: -3165346217921363626}
   hasSmoothStop: 0
   decelerationRate: 2.5
   animatorBody: {fileID: 8645001326845988488}
@@ -288,6 +290,22 @@ MonoBehaviour:
   _impactLifeTime: 0.5
   _nbrOfPooledProjectile: 5
   _poolContainer: {fileID: 2596778336564414766}
+--- !u!208 &-3165346217921363626
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8013387478697621675}
+  m_Enabled: 0
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 1.86, y: 1.435, z: 2.02}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 1.15, z: 0.34}
+  m_TimeToStationary: 0.25
 --- !u!1001 &5502535194073416484
 PrefabInstance:
   m_ObjectHideFlags: 0

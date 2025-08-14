@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 3476329988123684923}
   - component: {fileID: 4996285490162726068}
   - component: {fileID: 5644876710285584172}
+  - component: {fileID: 5983638003046760124}
   m_Layer: 0
   m_Name: Strikers
   m_TagString: Untagged
@@ -83,6 +84,7 @@ MonoBehaviour:
   baseAtkSpeed: 1.6
   baseRange: 18
   spawnPosition: {x: 0, y: 0, z: 0}
+  obstacle: {fileID: 0}
   hasSmoothStop: 0
   decelerationRate: 2.5
   animatorBody: {fileID: 8741907818351441991}
@@ -122,6 +124,22 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!208 &5983638003046760124
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8210559173043192065}
+  m_Enabled: 0
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.5, y: 1.39, z: 0.5}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0.87, z: 0}
+  m_TimeToStationary: 0.25
 --- !u!1001 &8648552658183509405
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 1789293203761831994}
   - component: {fileID: 4459703387826910808}
   - component: {fileID: 1088603644186741852}
+  - component: {fileID: 5577570381973204823}
   m_Layer: 0
   m_Name: Phoenix
   m_TagString: Untagged
@@ -86,6 +87,7 @@ MonoBehaviour:
   baseAtkSpeed: 10
   baseRange: 36
   spawnPosition: {x: 0, y: 0, z: 0}
+  obstacle: {fileID: 5577570381973204823}
   hasSmoothStop: 1
   decelerationRate: 2.5
   animatorBody: {fileID: 0}
@@ -258,6 +260,22 @@ MonoBehaviour:
   _impactLifeTime: 0.5
   _nbrOfPooledProjectile: 5
   _poolContainer: {fileID: 73603443368320195}
+--- !u!208 &5577570381973204823
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7034277335620731692}
+  m_Enabled: 0
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 1.86, y: 1.435, z: 4.08}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 12.82, z: 0}
+  m_TimeToStationary: 0.25
 --- !u!1 &7402832358749092086
 GameObject:
   m_ObjectHideFlags: 0

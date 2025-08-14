@@ -45,6 +45,7 @@ GameObject:
   - component: {fileID: 4599823427883317199}
   - component: {fileID: 8237813325125759632}
   - component: {fileID: 3955929253313295273}
+  - component: {fileID: 4831681990854132391}
   m_Layer: 0
   m_Name: Sovereign of Ruin
   m_TagString: Untagged
@@ -117,6 +118,7 @@ MonoBehaviour:
   baseAtkSpeed: 20
   baseRange: 18
   spawnPosition: {x: 0, y: 0, z: 0}
+  obstacle: {fileID: 4831681990854132391}
   hasSmoothStop: 0
   decelerationRate: 2.5
   animatorBody: {fileID: 6406604170246761293}
@@ -293,6 +295,22 @@ MonoBehaviour:
   _impactLifeTime: 0.5
   _nbrOfPooledProjectile: 5
   _poolContainer: {fileID: 4013453024005020267}
+--- !u!208 &4831681990854132391
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5152080037567320406}
+  m_Enabled: 0
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 1.86, y: 1.895, z: 2.515}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 1.35, z: 0}
+  m_TimeToStationary: 0.25
 --- !u!1001 &1749740850215005185
 PrefabInstance:
   m_ObjectHideFlags: 0

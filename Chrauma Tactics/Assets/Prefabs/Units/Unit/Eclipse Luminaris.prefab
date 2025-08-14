@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 924686041846709539}
   - component: {fileID: 2599132122210280758}
   - component: {fileID: 8887035024969486775}
+  - component: {fileID: 8991735148503662962}
   m_Layer: 0
   m_Name: Eclipse Luminaris
   m_TagString: Untagged
@@ -86,6 +87,7 @@ MonoBehaviour:
   baseAtkSpeed: 20
   baseRange: 36
   spawnPosition: {x: 0, y: 0, z: 0}
+  obstacle: {fileID: 8991735148503662962}
   hasSmoothStop: 1
   decelerationRate: 2.5
   animatorBody: {fileID: 1040804429301860782}
@@ -261,6 +263,22 @@ MonoBehaviour:
   _impactLifeTime: 0.5
   _nbrOfPooledProjectile: 5
   _poolContainer: {fileID: 5071642900985377165}
+--- !u!208 &8991735148503662962
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3332244837205639787}
+  m_Enabled: 0
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 1.86, y: 1.435, z: 3.395}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0.98, z: 0}
+  m_TimeToStationary: 0.25
 --- !u!1 &8289760232210805836
 GameObject:
   m_ObjectHideFlags: 0
