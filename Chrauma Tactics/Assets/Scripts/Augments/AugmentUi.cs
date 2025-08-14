@@ -27,5 +27,25 @@ public class AugmentUI : MonoBehaviour
         int cost = AugmentCosts.GetCost(augment.rarity);
         costText.text = cost.ToString();
 
+        switch (augment.rarity)
+        {
+            case AugmentRarity.Silver:
+                iconImage.color = new Color(0.75f, 0.75f, 0.75f);
+                rarityText.color = new Color(0.75f, 0.75f, 0.75f);
+                
+                break;
+            case AugmentRarity.Gold:
+                iconImage.color = new Color(1f, 0.84f, 0f);
+                rarityText.color = new Color(1f, 0.84f, 0f);
+                break;
+            case AugmentRarity.Quantum:
+                iconImage.color = new Color(0.5f, 0f, 1f);
+                rarityText.color = new Color(0.5f, 0f, 1f);
+                break;
+            default:
+                iconImage.color = Color.white;
+                break;
+        }
+
     }
 }
