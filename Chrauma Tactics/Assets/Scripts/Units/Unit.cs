@@ -86,6 +86,7 @@ public abstract class Unit : MonoBehaviour
     private Dictionary<GameObject, Unit> knownEnemies = new();
     private LayerMask detectionMask = ~0; // all layers for now, TODO: set to only units layer
     private Unit currentTarget = null;
+    private bool targetHasMovedAway = false;
 
 
 
@@ -179,17 +180,47 @@ public abstract class Unit : MonoBehaviour
             }
         }
         if (IsAttacking && currentTarget != null)
-{
-    float dist = Vector3.Distance(transform.position, currentTarget.transform.position);
-    if (dist > currentAtkRange)
-    {
-        if (attack != null && attack.IsContinuous)
-            attack.StopAutoFire();
+        {
+            if (!currentTarget.gameObject.activeInHierarchy)
+            {
+                ClearTarget(currentTarget);
+                return;
+            }
+            float dist = Vector3.Distance(transform.position, currentTarget.transform.position);
+            if (dist > currentAtkRange)
+            {
+                if (attack != null && attack.IsContinuous)
+                    attack.StopAutoFire();
 
-        MoveTo(currentTarget.transform.position);
+                targetHasMovedAway = true;
+                if (animatorWeap != null)
+                    foreach (Animator weap in animatorWeap)
+                        if (weap != null)
+                            weap.SetBool("IsAttacking", false);
+                if (unitType == UnitType.Aerial && animatorBody != null)
+                    animatorBody.SetBool("IsAttacking", false);
+                MoveTo(currentTarget.transform.position);
+            }
+            else if (targetHasMovedAway)
+            {
+                if (attack != null && attack.IsContinuous)
+                    attack.StartAutoFire(currentTarget);
 
-    }
-}
+                if (animatorWeap != null)
+                    foreach (Animator weap in animatorWeap)
+                        if (weap != null)
+                            weap.SetBool("IsAttacking", true);
+
+                if (unitType == UnitType.Aerial
+                && animatorBody != null
+                && Vector3.Distance(transform.position, currentTarget.transform.position) < 2)
+                {
+                    Debug.Log("is aerial and attacking");
+                    animatorBody.SetBool("IsAttacking", true);
+                }
+                targetHasMovedAway = false;
+            }
+        }
     }
 
     private void OnEnable()
@@ -430,7 +461,7 @@ public abstract class Unit : MonoBehaviour
 
         if (attack != null && attack.IsContinuous)
             attack.StartAutoFire(currentTarget);
-            
+
     }
 
     /// <summary>Clears the current target of the unit, stopping any ongoing attack.</summary>

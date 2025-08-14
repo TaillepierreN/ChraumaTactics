@@ -17,11 +17,11 @@ namespace CT.Units.Attacks
         private float _damage = 10f;
         private Coroutine[] _loops;
         /// <summary>
-        /// 
+        /// Tracks which units have already been hit during this AoE tick to prevent applying damage multiple times.
         /// </summary>
         private readonly HashSet<Unit> _aoeSeen = new();
         /// <summary>
-        /// 
+        /// Reusable buffer for storing colliders hit during AoE detection to avoid memory allocations each tick.
         /// </summary>
         private Collider[] _aoeBuffer = new Collider[50];
 

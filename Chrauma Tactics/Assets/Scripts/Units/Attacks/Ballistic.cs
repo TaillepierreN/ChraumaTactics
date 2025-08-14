@@ -104,6 +104,7 @@ namespace CT.Units.Attacks
         /// <param name="target"></param>
         public override void OnFire(Unit target)
         {
+            Debug.Log($"checking owner and barrel 0: {CheckOwnerAndBarrelEnd(0)}");
             if (CheckOwnerAndBarrelEnd(0))
                 return;
 
@@ -216,9 +217,7 @@ namespace CT.Units.Attacks
 
         private bool CheckOwnerAndBarrelEnd(int barrelIndex)
         {
-            if (_owner == null || BarrelEnd[barrelIndex] == null)
-                return false;
-            return true;
+            return _owner == null || BarrelEnd[barrelIndex] == null;
         }
 
         private void GetAndSetProjectile(int index, out GameObject projectile, out Projectile proj)
