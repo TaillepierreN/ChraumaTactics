@@ -23,6 +23,8 @@ public class RoundUIManager : MonoBehaviour
     private int currentRound = 1;
     private bool isFirstPrep = true;
 
+    [SerializeField] private RoundManager roundManager; //ref
+
     void Start()
     {
         StartPreparation();
@@ -71,6 +73,10 @@ public class RoundUIManager : MonoBehaviour
         if (!isFirstPrep)
         {
             currentRound++;
+
+            // Add creds for new round
+            if (roundManager != null)
+                roundManager.AddRoundCredits(currentRound);
         }
         else
         {

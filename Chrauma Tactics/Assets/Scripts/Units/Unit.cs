@@ -17,9 +17,9 @@ public abstract class Unit : MonoBehaviour
     [SerializeField] protected UnitType _unitType;
     [SerializeField] protected UnitType _unitType2;
     [SerializeField] protected string _unitDescription;
-    [SerializeField] protected string _unitCost;
+    [SerializeField] protected int _unitCost;
     [SerializeField] protected Attack _attack;
-    public string UnitCost => _unitCost;
+    public int UnitCost => _unitCost;
     /// <summary>
     /// Where the enemy should aim
     /// </summary>
