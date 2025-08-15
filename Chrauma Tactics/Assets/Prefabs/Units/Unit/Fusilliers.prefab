@@ -76,30 +76,32 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DebugMode: 0
   team: 0
-  unitType: 3
-  unitType2: 5
-  unitDescription: 'Anti Air cheap '
-  unitCost: 150
-  attack: {fileID: 1248385897925284610}
-  ownHitbox: {fileID: 2262906927538051928}
-  baseHealth: 200
-  baseAtk: 10
-  baseMoveSpeed: 3.5
-  baseAtkSpeed: 2
-  baseRange: 21
-  spawnPosition: {x: 0, y: 0, z: 0}
-  hasSmoothStop: 0
-  decelerationRate: 2.5
-  animatorBody: {fileID: 0}
-  animatorWeap:
+  _unitType: 0
+  _unitType2: 0
+  _unitDescription: 
+  _unitCost: 
+  _attack: {fileID: 1248385897925284610}
+  _ownHitbox: {fileID: 6796178367824239990}
+  _baseHealth: 100
+  _baseAtk: 100
+  _baseMoveSpeed: 20
+  _baseAtkSpeed: 20
+  _baseRange: 20
+  SpawnPosition: {x: 0, y: 0, z: 0}
+  _hasSmoothStop: 0
+  _decelerationRate: 2.5
+  _animatorBody: {fileID: 7101653757217017792}
+  _animatorWeap:
   - {fileID: 1308143226299446122}
-  turretAim: []
-  leftTrackRenderer: {fileID: 0}
-  left2TrackRenderer: {fileID: 0}
-  rightTrackRenderer: {fileID: 0}
-  right2TrackRenderer: {fileID: 0}
+  _turretAim: []
+  _leftTrackRenderer: {fileID: 0}
+  _left2TrackRenderer: {fileID: 0}
+  _rightTrackRenderer: {fileID: 0}
+  _right2TrackRenderer: {fileID: 0}
   _detectionRadius: 100
-  requierFacingForAttack: 1
+  _requierFacingForAttack: 1
+  _canTargetFlying: 0
+  _aerialOnly: 0
   _facingConeDegree: 32
   _facingEpsilonDeg: 1.5
   RoundStarted: 0
@@ -109,7 +111,7 @@ MonoBehaviour:
   _hpBarCanvas: {fileID: 5613287106006912049}
   _hpBar: {fileID: 2053940517735157240}
   _hpBarSpeed: 100
-  delayBeforeFade: 5
+  _delayBeforeFade: 5
 --- !u!65 &5486077790063058784
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -383,6 +385,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4830194865085919492, guid: 87b6d661a41c8c949a8dd3ca8d4f8ee4, type: 3}
   m_PrefabInstance: {fileID: 2415733510501781798}
   m_PrefabAsset: {fileID: 0}
+--- !u!95 &7101653757217017792 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 4830194865093107430, guid: 87b6d661a41c8c949a8dd3ca8d4f8ee4, type: 3}
+  m_PrefabInstance: {fileID: 2415733510501781798}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &5698852052902022016
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -477,11 +484,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 5470522893032032463, guid: aebc28a524ea04557afb54708517e3d4, type: 3}
   m_PrefabInstance: {fileID: 5698852052902022016}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &2262906927538051928 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 5796438813737095384, guid: aebc28a524ea04557afb54708517e3d4, type: 3}
-  m_PrefabInstance: {fileID: 5698852052902022016}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2389489910997888963 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7944156050055472195, guid: aebc28a524ea04557afb54708517e3d4, type: 3}
@@ -544,6 +546,11 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 1242348712102773701, guid: aebc28a524ea04557afb54708517e3d4, type: 3}
   m_PrefabInstance: {fileID: 5698852052902022016}
   m_PrefabAsset: {fileID: 0}
+--- !u!4 &6796178367824239990 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1244826968577316598, guid: aebc28a524ea04557afb54708517e3d4, type: 3}
+  m_PrefabInstance: {fileID: 5698852052902022016}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &6796178367824265558 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1244826968577739478, guid: aebc28a524ea04557afb54708517e3d4, type: 3}
@@ -583,8 +590,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 317feaeea96deba4982391aaeec1941d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attack: {fileID: 1248385897925284610}
-  ownerUnit: {fileID: 7720598506486536747}
+  Attack: {fileID: 1248385897925284610}
+  OwnerUnit: {fileID: 7720598506486536747}
 --- !u!114 &6275077935752988041
 MonoBehaviour:
   m_ObjectHideFlags: 0

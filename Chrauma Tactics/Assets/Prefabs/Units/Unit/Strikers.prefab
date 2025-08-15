@@ -138,32 +138,32 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DebugMode: 0
   team: 0
-  unitType: 3
-  unitType2: 5
-  unitDescription: All round swarm
-  unitCost: 100
-  attack: {fileID: 6842549830650098512}
-  ownHitbox: {fileID: 8652991568671610897}
-  baseHealth: 100
-  baseAtk: 18
-  baseMoveSpeed: 3.3
-  baseAtkSpeed: 16
-  baseRange: 18
-  spawnPosition: {x: 0, y: 0, z: 0}
-  hasSmoothStop: 0
-  decelerationRate: 2.5
-  animatorBody: {fileID: 8741907818351441991}
-  animatorWeap:
+  _unitType: 0
+  _unitType2: 0
+  _unitDescription: 
+  _unitCost: 
+  _attack: {fileID: 6842549830650098512}
+  _ownHitbox: {fileID: 8652858702904010827}
+  _baseHealth: 1000
+  _baseAtk: 100
+  _baseMoveSpeed: 20
+  _baseAtkSpeed: 20
+  _baseRange: 20
+  SpawnPosition: {x: 0, y: 0, z: 0}
+  _hasSmoothStop: 0
+  _decelerationRate: 2.5
+  _animatorBody: {fileID: 8741907818351441991}
+  _animatorWeap:
   - {fileID: 8741907818351441991}
-  turretAim: []
-  leftTrackRenderer: {fileID: 0}
-  left2TrackRenderer: {fileID: 0}
-  rightTrackRenderer: {fileID: 0}
-  right2TrackRenderer: {fileID: 0}
+  _turretAim: []
+  _leftTrackRenderer: {fileID: 0}
+  _left2TrackRenderer: {fileID: 0}
+  _rightTrackRenderer: {fileID: 0}
+  _right2TrackRenderer: {fileID: 0}
   _detectionRadius: 100
-  requierFacingForAttack: 1
-  canTargetFlying: 1
-  aerialOnly: 0
+  _requierFacingForAttack: 1
+  _canTargetFlying: 0
+  _aerialOnly: 0
   _facingConeDegree: 32
   _facingEpsilonDeg: 1.5
   RoundStarted: 0
@@ -173,7 +173,7 @@ MonoBehaviour:
   _hpBarCanvas: {fileID: 6984665222757213025}
   _hpBar: {fileID: 3569651252139106984}
   _hpBarSpeed: 100
-  delayBeforeFade: 5
+  _delayBeforeFade: 5
 --- !u!65 &5644876710285584172
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -495,8 +495,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 317feaeea96deba4982391aaeec1941d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attack: {fileID: 6842549830650098512}
-  ownerUnit: {fileID: 4996285490162726068}
+  Attack: {fileID: 6842549830650098512}
+  OwnerUnit: {fileID: 4996285490162726068}
 --- !u!4 &8652858702904010827 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4774041545375190, guid: 0d0607f3d6e989742a573ba5f4173669, type: 3}
@@ -505,11 +505,6 @@ Transform:
 --- !u!4 &8652959867617324943 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4690471125482002, guid: 0d0607f3d6e989742a573ba5f4173669, type: 3}
-  m_PrefabInstance: {fileID: 8648552658183509405}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &8652991568671610897 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 4588461257837964, guid: 0d0607f3d6e989742a573ba5f4173669, type: 3}
   m_PrefabInstance: {fileID: 8648552658183509405}
   m_PrefabAsset: {fileID: 0}
 --- !u!95 &8741907818351441991 stripped

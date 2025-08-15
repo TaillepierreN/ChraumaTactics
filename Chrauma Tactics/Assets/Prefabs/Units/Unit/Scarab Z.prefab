@@ -76,32 +76,34 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DebugMode: 0
   team: 0
-  unitType: 3
-  unitType2: 5
-  unitDescription: Anti tank medium
-  unitCost: 
-  attack: {fileID: 438450580296194446}
-  ownHitbox: {fileID: 4658983289474937923}
-  baseHealth: 1200
-  baseAtk: 60
-  baseMoveSpeed: 3.7
-  baseAtkSpeed: 1.3
-  baseRange: 20
-  spawnPosition: {x: 0, y: 0, z: 0}
-  hasSmoothStop: 0
-  decelerationRate: 2.5
-  animatorBody: {fileID: 8501739645530380282}
-  animatorWeap:
-  - {fileID: 8431729534240322146}
+  _unitType: 0
+  _unitType2: 0
+  _unitDescription: 
+  _unitCost: 
+  _attack: {fileID: 438450580296194446}
+  _ownHitbox: {fileID: 4658983289474937923}
+  _baseHealth: 1000
+  _baseAtk: 100
+  _baseMoveSpeed: 20
+  _baseAtkSpeed: 20
+  _baseRange: 20
+  SpawnPosition: {x: 0, y: 0, z: 0}
+  _hasSmoothStop: 0
+  _decelerationRate: 2.5
+  _animatorBody: {fileID: 8501739645530380282}
+  _animatorWeap:
   - {fileID: 8916964557793256184}
-  turretAim:
+  - {fileID: 8431729534240322146}
+  _turretAim:
   - {fileID: 4098888891663064982}
-  leftTrackRenderer: {fileID: 0}
-  left2TrackRenderer: {fileID: 0}
-  rightTrackRenderer: {fileID: 0}
-  right2TrackRenderer: {fileID: 0}
+  _leftTrackRenderer: {fileID: 0}
+  _left2TrackRenderer: {fileID: 0}
+  _rightTrackRenderer: {fileID: 0}
+  _right2TrackRenderer: {fileID: 0}
   _detectionRadius: 100
-  requierFacingForAttack: 0
+  _requierFacingForAttack: 0
+  _canTargetFlying: 0
+  _aerialOnly: 0
   _facingConeDegree: 32
   _facingEpsilonDeg: 1.5
   RoundStarted: 0
@@ -111,7 +113,7 @@ MonoBehaviour:
   _hpBarCanvas: {fileID: 8568151125957073667}
   _hpBar: {fileID: 2850575054452333258}
   _hpBarSpeed: 100
-  delayBeforeFade: 5
+  _delayBeforeFade: 5
 --- !u!65 &8798926869553502205
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -258,11 +260,11 @@ MonoBehaviour:
   _aoeRadius: 3
   _audioClip: {fileID: 8300000, guid: de48bd7a8f94aa44cbff92da5aff50bd, type: 3}
   _audioSource: {fileID: 4005735412706850104}
-  tickInterval: 0.2
-  beams:
+  _tickInterval: 0.2
+  _beams:
   - {fileID: 1733730006999974165}
   - {fileID: 563681990774721714}
-  impactMarkers:
+  _impactMarkers:
   - {fileID: 5428114356481753657}
   - {fileID: 6253696998950086678}
 --- !u!208 &-1683825422210305331

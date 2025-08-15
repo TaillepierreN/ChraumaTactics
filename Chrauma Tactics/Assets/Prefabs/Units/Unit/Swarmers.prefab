@@ -76,30 +76,32 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DebugMode: 0
   team: 0
-  unitType: 0
-  unitType2: 5
-  unitDescription: fast melee swarm
-  unitCost: 100
-  attack: {fileID: 3140575608399548660}
-  ownHitbox: {fileID: 5970551025496998052}
-  baseHealth: 50
-  baseAtk: 12
-  baseMoveSpeed: 4.5
-  baseAtkSpeed: 1.1
-  baseRange: 1
-  spawnPosition: {x: 0, y: 0, z: 0}
-  hasSmoothStop: 0
-  decelerationRate: 2.5
-  animatorBody: {fileID: 7575004350995205837}
-  animatorWeap: []
-  turretAim:
+  _unitType: 0
+  _unitType2: 0
+  _unitDescription: 
+  _unitCost: 
+  _attack: {fileID: 3140575608399548660}
+  _ownHitbox: {fileID: 5970551025496998052}
+  _baseHealth: 1000
+  _baseAtk: 100
+  _baseMoveSpeed: 20
+  _baseAtkSpeed: 20
+  _baseRange: 20
+  SpawnPosition: {x: 0, y: 0, z: 0}
+  _hasSmoothStop: 0
+  _decelerationRate: 2.5
+  _animatorBody: {fileID: 7575004350995205837}
+  _animatorWeap: []
+  _turretAim:
   - {fileID: 9081348253824129343}
-  leftTrackRenderer: {fileID: 0}
-  left2TrackRenderer: {fileID: 0}
-  rightTrackRenderer: {fileID: 0}
-  right2TrackRenderer: {fileID: 0}
+  _leftTrackRenderer: {fileID: 0}
+  _left2TrackRenderer: {fileID: 0}
+  _rightTrackRenderer: {fileID: 0}
+  _right2TrackRenderer: {fileID: 0}
   _detectionRadius: 100
-  requierFacingForAttack: 0
+  _requierFacingForAttack: 0
+  _canTargetFlying: 0
+  _aerialOnly: 0
   _facingConeDegree: 32
   _facingEpsilonDeg: 1.5
   RoundStarted: 0
@@ -109,7 +111,7 @@ MonoBehaviour:
   _hpBarCanvas: {fileID: 7112038465425324807}
   _hpBar: {fileID: 3734750353651366606}
   _hpBarSpeed: 100
-  delayBeforeFade: 5
+  _delayBeforeFade: 5
 --- !u!65 &4005164029899217969
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -255,10 +257,10 @@ MonoBehaviour:
   _aoeRadius: 3
   _audioClip: {fileID: 8300000, guid: de48bd7a8f94aa44cbff92da5aff50bd, type: 3}
   _audioSource: {fileID: 7803046195338912296}
-  tickInterval: 0.2
-  beams:
+  _tickInterval: 0.2
+  _beams:
   - {fileID: 2882101954966718910}
-  impactMarkers:
+  _impactMarkers:
   - {fileID: 5831717690382668756}
 --- !u!208 &2855764350740041765
 NavMeshObstacle:

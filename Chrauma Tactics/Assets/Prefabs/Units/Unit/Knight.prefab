@@ -76,32 +76,33 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DebugMode: 1
   team: 0
-  unitType: 0
-  unitType2: 5
-  unitDescription: Melee fighter
-  unitCost: 
-  attack: {fileID: 908046554957684660}
-  ownHitbox: {fileID: 8795931856667047231}
-  baseHealth: 2400
-  baseAtk: 180
-  baseMoveSpeed: 3.8
-  baseAtkSpeed: 1.2
-  baseRange: 3.25
-  spawnPosition: {x: 0, y: 0, z: 0}
-  hasSmoothStop: 0
-  decelerationRate: 2.5
-  animatorBody: {fileID: 5790181244478450836}
-  animatorWeap:
+  _unitType: 0
+  _unitType2: 0
+  _unitDescription: 
+  _unitCost: 
+  _attack: {fileID: 908046554957684660}
+  _ownHitbox: {fileID: 8795931856667047231}
+  _baseHealth: 1000
+  _baseAtk: 100
+  _baseMoveSpeed: 20
+  _baseAtkSpeed: 20
+  _baseRange: 20
+  SpawnPosition: {x: 0, y: 0, z: 0}
+  _hasSmoothStop: 0
+  _decelerationRate: 2.5
+  _animatorBody: {fileID: 5790181244478450836}
+  _animatorWeap:
   - {fileID: 5160815460091307170}
-  turretAim:
+  _turretAim:
   - {fileID: 4237347056310879070}
-  leftTrackRenderer: {fileID: 9041441490220275851}
-  left2TrackRenderer: {fileID: 0}
-  rightTrackRenderer: {fileID: 1056877004657295324}
-  right2TrackRenderer: {fileID: 0}
+  _leftTrackRenderer: {fileID: 9041441490220275851}
+  _left2TrackRenderer: {fileID: 0}
+  _rightTrackRenderer: {fileID: 1056877004657295324}
+  _right2TrackRenderer: {fileID: 0}
   _detectionRadius: 100
-  requierFacingForAttack: 0
-  canTargetFlying: 0
+  _requierFacingForAttack: 0
+  _canTargetFlying: 0
+  _aerialOnly: 0
   _facingConeDegree: 32
   _facingEpsilonDeg: 1.5
   RoundStarted: 0
@@ -111,7 +112,7 @@ MonoBehaviour:
   _hpBarCanvas: {fileID: 2910743291709109762}
   _hpBar: {fileID: 8719672012988774347}
   _hpBarSpeed: 100
-  delayBeforeFade: 5
+  _delayBeforeFade: 5
 --- !u!65 &2239464120954233770
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -257,10 +258,10 @@ MonoBehaviour:
   _aoeRadius: 3
   _audioClip: {fileID: 8300000, guid: de48bd7a8f94aa44cbff92da5aff50bd, type: 3}
   _audioSource: {fileID: 1102974622541689685}
-  tickInterval: 0.2
-  beams:
+  _tickInterval: 0.2
+  _beams:
   - {fileID: 289564510192660318}
-  impactMarkers:
+  _impactMarkers:
   - {fileID: 1880453398700234675}
 --- !u!208 &4278893273050567346
 NavMeshObstacle:

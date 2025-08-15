@@ -97,32 +97,31 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DebugMode: 0
   team: 0
-  unitType: 2
-  unitType2: 5
-  unitDescription: Aerial swarm
-  unitCost: 150
-  attack: {fileID: 6493610921395602152}
-  ownHitbox: {fileID: 5787113637798228253}
-  baseHealth: 50
-  baseAtk: 35
-  baseMoveSpeed: 4.2
-  baseAtkSpeed: 1.5
-  baseRange: 15
-  spawnPosition: {x: 0, y: 0, z: 0}
-  hasSmoothStop: 0
-  decelerationRate: 2.5
-  animatorBody: {fileID: 3027549083328798156}
-  animatorWeap: []
-  turretAim:
-  - {fileID: 0}
-  leftTrackRenderer: {fileID: 0}
-  left2TrackRenderer: {fileID: 0}
-  rightTrackRenderer: {fileID: 0}
-  right2TrackRenderer: {fileID: 0}
+  _unitType: 2
+  _unitType2: 0
+  _unitDescription: 
+  _unitCost: 
+  _attack: {fileID: 6493610921395602152}
+  _ownHitbox: {fileID: 6463571122537059469}
+  _baseHealth: 1000
+  _baseAtk: 100
+  _baseMoveSpeed: 20
+  _baseAtkSpeed: 20
+  _baseRange: 20
+  SpawnPosition: {x: 0, y: 0, z: 0}
+  _hasSmoothStop: 1
+  _decelerationRate: 2.5
+  _animatorBody: {fileID: 3027549083328798156}
+  _animatorWeap: []
+  _turretAim: []
+  _leftTrackRenderer: {fileID: 0}
+  _left2TrackRenderer: {fileID: 0}
+  _rightTrackRenderer: {fileID: 0}
+  _right2TrackRenderer: {fileID: 0}
   _detectionRadius: 100
-  requierFacingForAttack: 1
-  canTargetFlying: 1
-  aerialOnly: 1
+  _requierFacingForAttack: 0
+  _canTargetFlying: 1
+  _aerialOnly: 1
   _facingConeDegree: 32
   _facingEpsilonDeg: 1.5
   RoundStarted: 0
@@ -132,7 +131,7 @@ MonoBehaviour:
   _hpBarCanvas: {fileID: 2216929051250488867}
   _hpBar: {fileID: 5738548946372343786}
   _hpBarSpeed: 100
-  delayBeforeFade: 5
+  _delayBeforeFade: 5
 --- !u!82 &3920531310147560548
 AudioSource:
   m_ObjectHideFlags: 0
@@ -257,10 +256,10 @@ MonoBehaviour:
   _aoeRadius: 3
   _audioClip: {fileID: 8300000, guid: de48bd7a8f94aa44cbff92da5aff50bd, type: 3}
   _audioSource: {fileID: 3920531310147560548}
-  tickInterval: 0.2
-  beams:
+  _tickInterval: 0.2
+  _beams:
   - {fileID: 1465430674211642169}
-  impactMarkers:
+  _impactMarkers:
   - {fileID: 9097549735257145967}
 --- !u!208 &9122565686844881584
 NavMeshObstacle:
@@ -750,14 +749,14 @@ Animator:
   m_CorrespondingSourceObject: {fileID: 7112485078720007338, guid: be4739c48be024a379c3d438208698b8, type: 3}
   m_PrefabInstance: {fileID: 5237858608116404582}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &5787113637798228253 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 1801274469864972411, guid: be4739c48be024a379c3d438208698b8, type: 3}
-  m_PrefabInstance: {fileID: 5237858608116404582}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &6408995153857283299 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1171445551457965445, guid: be4739c48be024a379c3d438208698b8, type: 3}
+  m_PrefabInstance: {fileID: 5237858608116404582}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &6463571122537059469 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1226011642535036395, guid: be4739c48be024a379c3d438208698b8, type: 3}
   m_PrefabInstance: {fileID: 5237858608116404582}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &6232169198634711931

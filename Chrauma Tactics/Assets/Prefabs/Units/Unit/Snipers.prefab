@@ -62,7 +62,7 @@ Transform:
   m_GameObject: {fileID: 1732825375848570203}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 119.28424, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1.21, y: 1.21, z: 1.21}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -107,30 +107,32 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DebugMode: 0
   team: 0
-  unitType: 3
-  unitType2: 5
-  unitDescription: sniper
-  unitCost: 150
-  attack: {fileID: 827844695002358865}
-  ownHitbox: {fileID: 7693596060302568515}
-  baseHealth: 500
-  baseAtk: 120
-  baseMoveSpeed: 2.8
-  baseAtkSpeed: 0.7
-  baseRange: 42
-  spawnPosition: {x: 0, y: 0, z: 0}
-  hasSmoothStop: 0
-  decelerationRate: 2.5
-  animatorBody: {fileID: 7748428808782258001}
-  animatorWeap:
+  _unitType: 0
+  _unitType2: 0
+  _unitDescription: 
+  _unitCost: 
+  _attack: {fileID: 827844695002358865}
+  _ownHitbox: {fileID: 7693329073679866043}
+  _baseHealth: 1000
+  _baseAtk: 100
+  _baseMoveSpeed: 20
+  _baseAtkSpeed: 20
+  _baseRange: 20
+  SpawnPosition: {x: 0, y: 0, z: 0}
+  _hasSmoothStop: 0
+  _decelerationRate: 2.5
+  _animatorBody: {fileID: 7748428808782258001}
+  _animatorWeap:
   - {fileID: 7748428808782258001}
-  turretAim: []
-  leftTrackRenderer: {fileID: 0}
-  left2TrackRenderer: {fileID: 0}
-  rightTrackRenderer: {fileID: 0}
-  right2TrackRenderer: {fileID: 0}
+  _turretAim: []
+  _leftTrackRenderer: {fileID: 0}
+  _left2TrackRenderer: {fileID: 0}
+  _rightTrackRenderer: {fileID: 0}
+  _right2TrackRenderer: {fileID: 0}
   _detectionRadius: 100
-  requierFacingForAttack: 1
+  _requierFacingForAttack: 1
+  _canTargetFlying: 0
+  _aerialOnly: 0
   _facingConeDegree: 32
   _facingEpsilonDeg: 1.5
   RoundStarted: 0
@@ -140,7 +142,7 @@ MonoBehaviour:
   _hpBarCanvas: {fileID: 6850622701330432120}
   _hpBar: {fileID: 1041804764372222385}
   _hpBarSpeed: 100
-  delayBeforeFade: 5
+  _delayBeforeFade: 5
 --- !u!65 &8771786651606285357
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -651,9 +653,9 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 2673108707462671515}
   m_SourcePrefab: {fileID: 100100000, guid: 71a352736c966044a9b1ef34b1c3a2f3, type: 3}
---- !u!4 &7693596060302568515 stripped
+--- !u!4 &7693329073679866043 stripped
 Transform:
-  m_CorrespondingSourceObject: {fileID: 4855294002338660, guid: 71a352736c966044a9b1ef34b1c3a2f3, type: 3}
+  m_CorrespondingSourceObject: {fileID: 4548746465013660, guid: 71a352736c966044a9b1ef34b1c3a2f3, type: 3}
   m_PrefabInstance: {fileID: 7697807382141204263}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &7697153773232297525 stripped
@@ -673,8 +675,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 317feaeea96deba4982391aaeec1941d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attack: {fileID: 827844695002358865}
-  ownerUnit: {fileID: 8108558575411186369}
+  Attack: {fileID: 827844695002358865}
+  OwnerUnit: {fileID: 8108558575411186369}
 --- !u!4 &7699750904283854145 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4250301870834278, guid: 71a352736c966044a9b1ef34b1c3a2f3, type: 3}

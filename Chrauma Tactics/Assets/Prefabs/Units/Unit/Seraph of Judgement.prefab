@@ -31,7 +31,7 @@ Transform:
   m_GameObject: {fileID: 2986935073786158129}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 119.28424, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1.32, y: 1.32, z: 1.32}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -76,31 +76,31 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DebugMode: 0
   team: 0
-  unitType: 2
-  unitType2: 1
-  unitDescription: Titan Aerial
-  unitCost: 
-  attack: {fileID: 2109097046772065353}
-  ownHitbox: {fileID: 4574697091061392200}
-  baseHealth: 4500
-  baseAtk: 140
-  baseMoveSpeed: 2.8
-  baseAtkSpeed: 1
-  baseRange: 30
-  spawnPosition: {x: 0, y: 0, z: 0}
-  hasSmoothStop: 0
-  decelerationRate: 2.5
-  animatorBody: {fileID: 0}
-  animatorWeap: []
-  turretAim: []
-  leftTrackRenderer: {fileID: 0}
-  left2TrackRenderer: {fileID: 0}
-  rightTrackRenderer: {fileID: 0}
-  right2TrackRenderer: {fileID: 0}
+  _unitType: 2
+  _unitType2: 0
+  _unitDescription: 
+  _unitCost: 
+  _attack: {fileID: 2109097046772065353}
+  _ownHitbox: {fileID: 4574697091061392200}
+  _baseHealth: 1000
+  _baseAtk: 100
+  _baseMoveSpeed: 20
+  _baseAtkSpeed: 20
+  _baseRange: 20
+  SpawnPosition: {x: 0, y: 0, z: 0}
+  _hasSmoothStop: 0
+  _decelerationRate: 2.5
+  _animatorBody: {fileID: 0}
+  _animatorWeap: []
+  _turretAim: []
+  _leftTrackRenderer: {fileID: 0}
+  _left2TrackRenderer: {fileID: 0}
+  _rightTrackRenderer: {fileID: 0}
+  _right2TrackRenderer: {fileID: 0}
   _detectionRadius: 100
-  requierFacingForAttack: 1
-  canTargetFlying: 1
-  aerialOnly: 0
+  _requierFacingForAttack: 0
+  _canTargetFlying: 1
+  _aerialOnly: 0
   _facingConeDegree: 32
   _facingEpsilonDeg: 1.5
   RoundStarted: 0
@@ -110,7 +110,7 @@ MonoBehaviour:
   _hpBarCanvas: {fileID: 1796700650209179282}
   _hpBar: {fileID: 5298589818762966875}
   _hpBarSpeed: 100
-  delayBeforeFade: 5
+  _delayBeforeFade: 5
 --- !u!65 &5138127783593958186
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -256,10 +256,10 @@ MonoBehaviour:
   _aoeRadius: 3
   _audioClip: {fileID: 8300000, guid: de48bd7a8f94aa44cbff92da5aff50bd, type: 3}
   _audioSource: {fileID: 1912957263709174951}
-  tickInterval: 0.2
-  beams:
+  _tickInterval: 0.2
+  _beams:
   - {fileID: 4671156070837642387}
-  impactMarkers:
+  _impactMarkers:
   - {fileID: 4130402671462283486}
 --- !u!208 &2524037185064102227
 NavMeshObstacle:

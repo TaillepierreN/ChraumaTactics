@@ -107,31 +107,33 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DebugMode: 0
   team: 0
-  unitType: 0
-  unitType2: 1
-  unitDescription: Titan Tank
-  unitCost: 
-  attack: {fileID: 6629708193565723756}
-  ownHitbox: {fileID: 4179479193543472796}
-  baseHealth: 8000
-  baseAtk: 25
-  baseMoveSpeed: 2.2
-  baseAtkSpeed: 10
-  baseRange: 25
-  spawnPosition: {x: 0, y: 0, z: 0}
-  hasSmoothStop: 0
-  decelerationRate: 2.5
-  animatorBody: {fileID: 2748436343337227958}
-  animatorWeap:
+  _unitType: 0
+  _unitType2: 1
+  _unitDescription: 
+  _unitCost: 700
+  _attack: {fileID: 6629708193565723756}
+  _ownHitbox: {fileID: 3458225438966499674}
+  _baseHealth: 8000
+  _baseAtk: 160
+  _baseMoveSpeed: 22
+  _baseAtkSpeed: 8
+  _baseRange: 30
+  SpawnPosition: {x: 0, y: 0, z: 0}
+  _hasSmoothStop: 1
+  _decelerationRate: 2.5
+  _animatorBody: {fileID: 2748436343337227958}
+  _animatorWeap:
   - {fileID: 8184411888464759163}
-  turretAim:
+  _turretAim:
   - {fileID: 7338906265108606850}
-  leftTrackRenderer: {fileID: 4098036436605173420}
-  left2TrackRenderer: {fileID: 1606585829242631970}
-  rightTrackRenderer: {fileID: 2435129664546614279}
-  right2TrackRenderer: {fileID: 960952585675199195}
+  _leftTrackRenderer: {fileID: 4098036436605173420}
+  _left2TrackRenderer: {fileID: 1606585829242631970}
+  _rightTrackRenderer: {fileID: 2435129664546614279}
+  _right2TrackRenderer: {fileID: 960952585675199195}
   _detectionRadius: 100
-  requierFacingForAttack: 0
+  _requierFacingForAttack: 0
+  _canTargetFlying: 0
+  _aerialOnly: 0
   _facingConeDegree: 32
   _facingEpsilonDeg: 1.5
   RoundStarted: 0
@@ -141,7 +143,7 @@ MonoBehaviour:
   _hpBarCanvas: {fileID: 8578183382421120020}
   _hpBar: {fileID: 2768766762453231069}
   _hpBarSpeed: 100
-  delayBeforeFade: 5
+  _delayBeforeFade: 5
 --- !u!65 &1887093394192124713
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -415,14 +417,14 @@ Animator:
   m_CorrespondingSourceObject: {fileID: 4189599707651500529, guid: 4dd39e3a38e8f4a8e9920990d0b078b4, type: 3}
   m_PrefabInstance: {fileID: 2017642278164004679}
   m_PrefabAsset: {fileID: 0}
+--- !u!4 &3458225438966499674 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3746448710038926877, guid: 4dd39e3a38e8f4a8e9920990d0b078b4, type: 3}
+  m_PrefabInstance: {fileID: 2017642278164004679}
+  m_PrefabAsset: {fileID: 0}
 --- !u!23 &4098036436605173420 stripped
 MeshRenderer:
   m_CorrespondingSourceObject: {fileID: 2656908941752205803, guid: 4dd39e3a38e8f4a8e9920990d0b078b4, type: 3}
-  m_PrefabInstance: {fileID: 2017642278164004679}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &4179479193543472796 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 2738299454675028443, guid: 4dd39e3a38e8f4a8e9920990d0b078b4, type: 3}
   m_PrefabInstance: {fileID: 2017642278164004679}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &4472614531453000824 stripped
@@ -476,8 +478,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 317feaeea96deba4982391aaeec1941d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attack: {fileID: 6629708193565723756}
-  ownerUnit: {fileID: 4326294082231054100}
+  Attack: {fileID: 6629708193565723756}
+  OwnerUnit: {fileID: 4326294082231054100}
 --- !u!1001 &8023667361025233737
 PrefabInstance:
   m_ObjectHideFlags: 0

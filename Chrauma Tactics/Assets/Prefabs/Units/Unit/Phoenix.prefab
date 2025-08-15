@@ -76,33 +76,33 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DebugMode: 0
   team: 0
-  unitType: 2
-  unitType2: 5
-  unitDescription: aerial sniper
-  unitCost: 
-  attack: {fileID: 1088603644186741852}
-  ownHitbox: {fileID: 8476775993225631028}
-  baseHealth: 600
-  baseAtk: 110
-  baseMoveSpeed: 3.8
-  baseAtkSpeed: 10
-  baseRange: 36
-  spawnPosition: {x: 0, y: 0, z: 0}
-  hasSmoothStop: 1
-  decelerationRate: 2.5
-  animatorBody: {fileID: 0}
-  animatorWeap:
+  _unitType: 2
+  _unitType2: 0
+  _unitDescription: 
+  _unitCost: 
+  _attack: {fileID: 1088603644186741852}
+  _ownHitbox: {fileID: 2091779049227784817}
+  _baseHealth: 1000
+  _baseAtk: 100
+  _baseMoveSpeed: 20
+  _baseAtkSpeed: 20
+  _baseRange: 20
+  SpawnPosition: {x: 0, y: 0, z: 0}
+  _hasSmoothStop: 1
+  _decelerationRate: 2.5
+  _animatorBody: {fileID: 0}
+  _animatorWeap:
   - {fileID: 4619630571069128845}
-  turretAim:
+  _turretAim:
   - {fileID: 3886348113675944023}
-  leftTrackRenderer: {fileID: 0}
-  left2TrackRenderer: {fileID: 0}
-  rightTrackRenderer: {fileID: 0}
-  right2TrackRenderer: {fileID: 0}
+  _leftTrackRenderer: {fileID: 0}
+  _left2TrackRenderer: {fileID: 0}
+  _rightTrackRenderer: {fileID: 0}
+  _right2TrackRenderer: {fileID: 0}
   _detectionRadius: 100
-  requierFacingForAttack: 1
-  canTargetFlying: 1
-  aerialOnly: 0
+  _requierFacingForAttack: 0
+  _canTargetFlying: 1
+  _aerialOnly: 0
   _facingConeDegree: 32
   _facingEpsilonDeg: 1.5
   RoundStarted: 0
@@ -112,7 +112,7 @@ MonoBehaviour:
   _hpBarCanvas: {fileID: 6796706695036591306}
   _hpBar: {fileID: 1095982606335122691}
   _hpBarSpeed: 100
-  delayBeforeFade: 5
+  _delayBeforeFade: 5
 --- !u!65 &1789293203761831994
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -398,8 +398,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 317feaeea96deba4982391aaeec1941d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attack: {fileID: 1088603644186741852}
-  ownerUnit: {fileID: 4178899738780450888}
+  Attack: {fileID: 1088603644186741852}
+  OwnerUnit: {fileID: 4178899738780450888}
+--- !u!4 &2091779049227784817 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3443949717727024824, guid: caa94222638c94f6c8acb1b47cde9b27, type: 3}
+  m_PrefabInstance: {fileID: 3660340124077425865}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &2949116684994275636 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1882924713231805949, guid: caa94222638c94f6c8acb1b47cde9b27, type: 3}
@@ -432,11 +437,6 @@ Animator:
 --- !u!4 &6235747651730525653 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7225445611861002524, guid: caa94222638c94f6c8acb1b47cde9b27, type: 3}
-  m_PrefabInstance: {fileID: 3660340124077425865}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &8476775993225631028 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 5147523293002813949, guid: caa94222638c94f6c8acb1b47cde9b27, type: 3}
   m_PrefabInstance: {fileID: 3660340124077425865}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &5044275781186644887

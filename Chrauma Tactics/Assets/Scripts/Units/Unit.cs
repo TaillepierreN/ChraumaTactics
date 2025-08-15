@@ -26,11 +26,11 @@ public abstract class Unit : MonoBehaviour
     [SerializeField] protected Transform _ownHitbox;
 
     [Header("Unit Base Stats")]
-    [SerializeField] protected int _baseHealth;
-    [SerializeField] protected int _baseAtk;
-    [SerializeField] protected float _baseMoveSpeed;
-    [SerializeField] protected float _baseAtkSpeed;
-    [SerializeField] protected float _baseRange;
+    [SerializeField] protected int _baseHealth = 1000;
+    [SerializeField] protected int _baseAtk = 100;
+    [SerializeField] protected float _baseMoveSpeed = 20f;
+    [SerializeField] protected float _baseAtkSpeed = 20f;
+    [SerializeField] protected float _baseRange = 20f;
 
 
     [Header("Unit Boosted Stats")]

@@ -76,31 +76,33 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DebugMode: 0
   team: 0
-  unitType: 3
-  unitType2: 5
-  unitDescription: Cheap + all rounder
-  unitCost: 
-  attack: {fileID: 866522883630769176}
-  ownHitbox: {fileID: 4933457599432106501}
-  baseHealth: 800
-  baseAtk: 4
-  baseMoveSpeed: 2.5
-  baseAtkSpeed: 20
-  baseRange: 20
-  spawnPosition: {x: 0, y: 0, z: 0}
-  hasSmoothStop: 0
-  decelerationRate: 2.5
-  animatorBody: {fileID: 1697467267939658958}
-  animatorWeap:
+  _unitType: 0
+  _unitType2: 0
+  _unitDescription: 
+  _unitCost: 
+  _attack: {fileID: 866522883630769176}
+  _ownHitbox: {fileID: 4933457599432106501}
+  _baseHealth: 1000
+  _baseAtk: 100
+  _baseMoveSpeed: 20
+  _baseAtkSpeed: 20
+  _baseRange: 20
+  SpawnPosition: {x: 0, y: 0, z: 0}
+  _hasSmoothStop: 0
+  _decelerationRate: 2.5
+  _animatorBody: {fileID: 1697467267939658958}
+  _animatorWeap:
   - {fileID: 8754502125192934043}
-  turretAim:
+  _turretAim:
   - {fileID: 580249487567024417}
-  leftTrackRenderer: {fileID: 0}
-  left2TrackRenderer: {fileID: 0}
-  rightTrackRenderer: {fileID: 0}
-  right2TrackRenderer: {fileID: 0}
+  _leftTrackRenderer: {fileID: 0}
+  _left2TrackRenderer: {fileID: 0}
+  _rightTrackRenderer: {fileID: 0}
+  _right2TrackRenderer: {fileID: 0}
   _detectionRadius: 100
-  requierFacingForAttack: 0
+  _requierFacingForAttack: 0
+  _canTargetFlying: 0
+  _aerialOnly: 0
   _facingConeDegree: 32
   _facingEpsilonDeg: 1.5
   RoundStarted: 0
@@ -110,7 +112,7 @@ MonoBehaviour:
   _hpBarCanvas: {fileID: 7930530823664234826}
   _hpBar: {fileID: 4569342868174057603}
   _hpBarSpeed: 100
-  delayBeforeFade: 5
+  _delayBeforeFade: 5
 --- !u!65 &2621316063321411395
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -420,8 +422,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 317feaeea96deba4982391aaeec1941d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attack: {fileID: 866522883630769176}
-  ownerUnit: {fileID: 8550363493372312640}
+  Attack: {fileID: 866522883630769176}
+  OwnerUnit: {fileID: 8550363493372312640}
 --- !u!95 &8754502125192934043 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 3538057521246526724, guid: 7789aad4e407f428c85a34b56fe579de, type: 3}
