@@ -6,6 +6,7 @@ public class DebugArmy : MonoBehaviour
 {
     [SerializeField] private Unit[] army;
     [SerializeField] private Team team;
+    [SerializeField] private bool allDebug;
 
     public event Action StartWar;
 
@@ -32,6 +33,10 @@ public class DebugArmy : MonoBehaviour
             Unit unit = child.GetComponent<Unit>();
             if (unit != null)
                 list.Add(unit);
+            if (allDebug)
+                unit.DebugMode = true;
+            else
+                unit.DebugMode = false;
         }
         army = list.ToArray();
         Debug.Log($"Army team {team} is ready");

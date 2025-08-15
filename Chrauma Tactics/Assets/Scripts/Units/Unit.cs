@@ -5,6 +5,7 @@ using CT.Units.Animations;
 using CT.Units.Attacks;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UI;
 
 
 public abstract class Unit : MonoBehaviour
@@ -105,6 +106,16 @@ public abstract class Unit : MonoBehaviour
     public bool IsAttacking = false;
     [HideInInspector]
     public bool IsDead = false;
+
+    [Header("UI")]
+    [SerializeField] private CanvasGroup _hpBarCanvas;
+    [SerializeField] private Slider _hpBar;
+    [SerializeField] private float _hpBarSpeed = 100f;
+    [SerializeField] private float delayBeforeFade = 5f;
+    private Coroutine _hpDisplayCoroutine;
+    private float _barTargetHp;
+    private float _delayUntil = -1f;
+    const float epsilon = 0.001f;
 
     #endregion
 
@@ -250,6 +261,7 @@ public abstract class Unit : MonoBehaviour
 
     void OnDisable()
     {
+        _hpDisplayCoroutine = null;
         if (!IsDead)
         {
             IsDead = true;
@@ -265,6 +277,7 @@ public abstract class Unit : MonoBehaviour
     public virtual void Initialize()
     {
         SetCurrentStats(baseHealth, baseAtk, baseMoveSpeed, baseAtkSpeed, baseRange);
+        _hpBarCanvas.alpha = 0;
         agent.isStopped = false;
         attack?.Initialize(this);
     }
@@ -302,6 +315,8 @@ public abstract class Unit : MonoBehaviour
             foreach (Animator weap in animatorWeap)
                 if (weap != null)
                     weap.SetFloat("AtkSpeed", currentAtkSpeed);
+        _hpBar.maxValue = currentHealth;
+        _hpBar.value = currentHealth;
     }
 
     //TODO 
@@ -328,6 +343,39 @@ public abstract class Unit : MonoBehaviour
         IsDead = false;
         _targetHasMovedAway = false;
         waitingForStop = false;
+    }
+
+    IEnumerator DisplayHealth()
+    {
+        if (_hpBarCanvas.alpha < 1f)
+            yield return Fade(_hpBarCanvas, 1f, 0.2f);
+
+        while (true)
+        {
+            float dt = Time.unscaledDeltaTime;
+            float diff = Mathf.Abs(_hpBar.value - _barTargetHp);
+            
+            if (diff > epsilon)
+            {
+                // bigger gap ⇒ bigger step
+                float step = (_hpBarSpeed + 10f * diff) * dt;
+                _hpBar.value = Mathf.MoveTowards(_hpBar.value, _barTargetHp, step);
+            }
+            else
+            {
+                _hpBar.value = _barTargetHp;
+            }
+
+            diff = Mathf.Abs(_hpBar.value - _barTargetHp);
+            if (diff <= epsilon && Time.unscaledTime >= _delayUntil)
+            {
+                yield return Fade(_hpBarCanvas, 0f, 0.15f);
+                _hpDisplayCoroutine = null;
+                yield break;
+            }
+
+            yield return null;
+        }
     }
     #endregion
 
@@ -385,11 +433,19 @@ public abstract class Unit : MonoBehaviour
     /// <summary>Applies damage to the unit and checks if it should be dead.</summary>
     public virtual void TakeDamage(int damage)
     {
-        currentHealth -= damage;
+        currentHealth = Mathf.Max(0, currentHealth - damage);
+
+        _barTargetHp = Mathf.Clamp(currentHealth, _hpBar.minValue, _hpBar.maxValue);
+        _delayUntil = Time.unscaledTime + delayBeforeFade;
+
+        if (_hpDisplayCoroutine == null)
+            _hpDisplayCoroutine = StartCoroutine(DisplayHealth());
+
         if (currentHealth <= 0)
         {
             IsDead = true;
             OnUnitDeath?.Invoke(this);
+            _hpBarCanvas.alpha = 0f;
             // Explosion animation
             this.gameObject.SetActive(false);
         }
@@ -599,7 +655,31 @@ public abstract class Unit : MonoBehaviour
         return dot >= _minFacingDot;
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="degrees"></param>
+    /// <returns></returns>
     private float DotFromDegrees(float degrees) => Mathf.Cos(degrees * Mathf.Deg2Rad);
+
+    /// <summary>
+    /// Fade in or out to target alpha
+    /// </summary>
+    /// <param name="targetAlpha">float alpha target</param>
+    /// <returns></returns>
+    private IEnumerator Fade(CanvasGroup targetGroup, float targetAlpha, float fadeDuration)
+    {
+        float start = targetGroup.alpha;
+        float time = 0f;
+        while (time < fadeDuration)
+        {
+            time += Time.unscaledDeltaTime;
+            targetGroup.alpha = Mathf.Lerp(start, targetAlpha, time / fadeDuration);
+            yield return null;
+        }
+        targetGroup.alpha = targetAlpha;
+
+    }
 
 
     #endregion
