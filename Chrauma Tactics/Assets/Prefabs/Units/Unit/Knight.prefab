@@ -74,7 +74,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee2a6fb0f9dfe46be8313ff636a65963, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DebugMode: 0
+  DebugMode: 1
   team: 0
   unitType: 0
   unitType2: 5
@@ -86,7 +86,7 @@ MonoBehaviour:
   baseAtk: 180
   baseMoveSpeed: 3.8
   baseAtkSpeed: 1.2
-  baseRange: 2
+  baseRange: 3.25
   spawnPosition: {x: 0, y: 0, z: 0}
   hasSmoothStop: 0
   decelerationRate: 2.5
@@ -101,6 +101,7 @@ MonoBehaviour:
   right2TrackRenderer: {fileID: 0}
   _detectionRadius: 100
   requierFacingForAttack: 0
+  canTargetFlying: 0
   _facingConeDegree: 32
   _facingEpsilonDeg: 1.5
   RoundStarted: 0

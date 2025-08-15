@@ -6,18 +6,30 @@ namespace CT.Units.Attacks
 {
     public class Ballistic : Attack
     {
+        [Header("Prefabs")]
         [SerializeField] private GameObject _projectilePrefab;
         [SerializeField] private GameObject[] _impactVFXPrefab;
+
+        [Header("Stats")]
         [SerializeField] private float _projectileSpeed = 30f;
         [SerializeField] private float _impactLifeTime = 0.5f;
         [SerializeField] private int _nbrOfPooledProjectile = 5;
-        [SerializeField] private Transform _poolContainer;
         private int _damage;
 
+        [Header("Storage")]
+        /// <summary>
+        /// Empty gameobject, direct child of this gameobject
+        /// used to store pooled projectiles and impacts
+        /// </summary>
+        [SerializeField] private Transform _poolContainer;
+
+
+        [Header("Pools")]
         private ObjectPool<GameObject> _projectilePool;
         private ObjectPool<GameObject> _impactPool;
         private ObjectPool<GameObject> _impactAoEPool;
 
+        #region Unity Callbacks
 
         /// <summary>
         /// Initialize the pools of projectile and impact
@@ -98,8 +110,12 @@ namespace CT.Units.Attacks
             _damage = owner.CurrentAtk;
         }
 
+        #endregion
+
+        #region TriggerPull
+
         /// <summary>
-        /// Triggered by animation event, it handles the firing of a projectile and sound effect
+        /// Triggered by animation event, it handles preparation of the projectile and set to shoot
         /// </summary>
         /// <param name="target"></param>
         public override void OnFire(Unit target)
@@ -114,6 +130,11 @@ namespace CT.Units.Attacks
             Firing(target, projectile, proj);
         }
 
+        /// <summary>
+        /// Triggered by animation event, it handles the  preparation of the projectile and set to shoot
+        /// from a secondary cannon
+        /// </summary>
+        /// <param name="target"></param>
         public override void OnFire2(Unit target)
         {
             if (CheckOwnerAndBarrelEnd(1))
@@ -124,6 +145,12 @@ namespace CT.Units.Attacks
 
             Firing(target, projectile, proj);
         }
+
+        /// <summary>
+        /// Triggered by animation event, it handles the preparation of the projectile and set to shoot
+        /// from a tertiary cannon
+        /// </summary>
+        /// <param name="target"></param>
         public override void OnFire3(Unit target)
         {
             if (CheckOwnerAndBarrelEnd(2))
@@ -134,6 +161,12 @@ namespace CT.Units.Attacks
 
             Firing(target, projectile, proj);
         }
+
+        /// <summary>
+        /// Triggered by animation event, it handles the preparation of the projectile and set to shoot
+        /// from a quaternary cannon
+        /// </summary>
+        /// <param name="target"></param>
         public override void OnFire4(Unit target)
         {
             if (CheckOwnerAndBarrelEnd(3))
@@ -145,13 +178,25 @@ namespace CT.Units.Attacks
             Firing(target, projectile, proj);
         }
 
-        private bool Firing(Unit target, GameObject projectile, Projectile proj)
+        #endregion
+
+        #region Fire handling
+
+        /// <summary>
+        /// load the projectile with payload and launch it
+        /// handle impact spawning
+        /// </summary>
+        /// <param name="target">target</param>
+        /// <param name="projectile">projectile gameobject</param>
+        /// <param name="proj">projectile script</param>
+        /// <returns>bool</returns>
+        private void Firing(Unit target, GameObject projectile, Projectile proj)
         {
             if (proj == null)
             {
                 Debug.Log("Prefab doesn't have a projectile script");
                 _projectilePool.Release(projectile);
-                return false;
+                return;
             }
             if (_audioSource && _audioClip)
                 _audioSource.PlayOneShot(_audioClip);
@@ -197,8 +242,12 @@ namespace CT.Units.Attacks
                 },
                 onDone: () => _projectilePool.Release(projectile)
             );
-            return true;
+            return;
         }
+
+        #endregion
+
+        #region Helpers
 
         /// <summary>
         /// Return the impact to the pool
@@ -214,17 +263,30 @@ namespace CT.Units.Attacks
                 pool.Release(go);
         }
 
+        /// <summary>
+        /// check if owner is set and barrel end exist
+        /// </summary>
+        /// <param name="barrelIndex"></param>
+        /// <returns></returns>
         private bool CheckOwnerAndBarrelEnd(int barrelIndex)
         {
             return _owner == null || BarrelEnd[barrelIndex] == null;
         }
 
+        /// <summary>
+        /// get projectile from pool and set it at right position
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="projectile"></param>
+        /// <param name="proj"></param>
         private void GetAndSetProjectile(int index, out GameObject projectile, out Projectile proj)
         {
             projectile = _projectilePool.Get();
             projectile.transform.SetPositionAndRotation(BarrelEnd[index].position, BarrelEnd[index].rotation);
             proj = projectile.GetComponent<Projectile>();
         }
+
+        #endregion
     }
 
 }

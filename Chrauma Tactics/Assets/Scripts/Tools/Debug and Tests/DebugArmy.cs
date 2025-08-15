@@ -6,6 +6,9 @@ public class DebugArmy : MonoBehaviour
 {
     [SerializeField] private Unit[] army;
     [SerializeField] private Team team;
+    /// <summary>
+    /// set debug mode for all childrens
+    /// </summary>
     [SerializeField] private bool allDebug;
 
     public event Action StartWar;
@@ -24,6 +27,10 @@ public class DebugArmy : MonoBehaviour
         BuildArmy();
 	}
 
+    /// <summary>
+    /// populate the array with children to make an army
+    /// enable or disable debugmode
+    /// </summary>
     private void BuildArmy()
     {
         var list = new List<Unit>(transform.childCount);
@@ -41,6 +48,10 @@ public class DebugArmy : MonoBehaviour
         army = list.ToArray();
         Debug.Log($"Army team {team} is ready");
     }
+
+    /// <summary>
+    /// act as a start round for all children
+    /// </summary>
     [ContextMenu("Start the war")]
     public void StartTheWar()
     {

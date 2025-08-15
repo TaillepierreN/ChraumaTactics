@@ -1,4 +1,3 @@
-using Unity.IO.LowLevel.Unsafe;
 using UnityEngine;
 
 namespace CT.Units.Attacks
@@ -15,7 +14,10 @@ namespace CT.Units.Attacks
         [SerializeField] protected private float _aoeRadius = 3f;
         [SerializeField] protected private AudioClip _audioClip;
         [SerializeField] protected private AudioSource _audioSource;
-        
+
+        /// <summary>
+        /// Toggle to set if attack is continuous(and not ballistic)
+        /// </summary>
         [HideInInspector]
         public virtual bool IsContinuous => false;
 

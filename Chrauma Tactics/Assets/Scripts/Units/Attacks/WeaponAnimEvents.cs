@@ -1,4 +1,3 @@
-using CT.Units.Attacks;
 using UnityEngine;
 
 namespace CT.Units.Attacks
@@ -6,17 +5,17 @@ namespace CT.Units.Attacks
 
     public class WeaponAnimEvents : MonoBehaviour
     {
-        public Attack attack;
-        public Unit ownerUnit;
+        public Attack Attack;
+        public Unit OwnerUnit;
 
         /// <summary>
         /// Forward the animation event to the unit attack script
-        /// </summary>
+        /// </summary> 
         public void Anim_Fire()
         {
-            if (attack != null && ownerUnit != null && ownerUnit.IsAttacking)
+            if (Attack != null && OwnerUnit != null && OwnerUnit.IsAttacking)
             {
-                attack.OnFire(ownerUnit.CurrentTarget);
+                Attack.OnFire(OwnerUnit.CurrentTarget);
             }
         }
         /// <summary>
@@ -24,9 +23,9 @@ namespace CT.Units.Attacks
         /// </summary>
         public void Anim_Fire2()
         {
-            if (attack != null && ownerUnit != null && ownerUnit.IsAttacking)
+            if (Attack != null && OwnerUnit != null && OwnerUnit.IsAttacking)
             {
-                attack.OnFire2(ownerUnit.CurrentTarget);
+                Attack.OnFire2(OwnerUnit.CurrentTarget);
             }
         }
         /// <summary>
@@ -34,9 +33,9 @@ namespace CT.Units.Attacks
         /// </summary>
         public void Anim_Fire3()
         {
-            if (attack != null && ownerUnit != null && ownerUnit.IsAttacking)
+            if (Attack != null && OwnerUnit != null && OwnerUnit.IsAttacking)
             {
-                attack.OnFire3(ownerUnit.CurrentTarget);
+                Attack.OnFire3(OwnerUnit.CurrentTarget);
             }
         }
         /// <summary>
@@ -44,9 +43,9 @@ namespace CT.Units.Attacks
         /// </summary>
         public void Anim_Fire4()
         {
-            if (attack != null && ownerUnit != null && ownerUnit.IsAttacking)
+            if (Attack != null && OwnerUnit != null && OwnerUnit.IsAttacking)
             {
-                attack.OnFire4(ownerUnit.CurrentTarget);
+                Attack.OnFire4(OwnerUnit.CurrentTarget);
             }
         }
     }

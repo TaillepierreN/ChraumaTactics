@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace CT.Units.Attacks
@@ -10,9 +9,13 @@ namespace CT.Units.Attacks
         /// <summary>
         /// May be changed by atkspeed?
         /// </summary>
-        [SerializeField] private float tickInterval = 0.2f;
-        [SerializeField] private LineRenderer[] beams;
-        [SerializeField] private Transform[] impactMarkers;
+        [SerializeField] private float _tickInterval = 0.2f;
+
+        /// <summary>
+        /// Laser visual, may change from linerenderer to vfxgraph
+        /// </summary>
+        [SerializeField] private LineRenderer[] _beams;
+        [SerializeField] private Transform[] _impactMarkers;
 
         private float _damage = 10f;
         private Coroutine[] _loops;
@@ -32,6 +35,8 @@ namespace CT.Units.Attacks
         public override bool IsContinuous => true;
 
 
+        #region Initialisation
+
         /// <summary>
         /// Addon to attack initialisation for the number of weapons,their beams and attack loops
         /// </summary>
@@ -42,21 +47,25 @@ namespace CT.Units.Attacks
 
             /*match the arrays to the number of weapons firing*/
             int numberOfBarrel = BarrelEnd?.Length ?? 1;
-            if (beams == null || beams.Length != numberOfBarrel)
-                System.Array.Resize(ref beams, numberOfBarrel);
-            if (impactMarkers == null || impactMarkers.Length != numberOfBarrel)
-                System.Array.Resize(ref impactMarkers, numberOfBarrel);
+            if (_beams == null || _beams.Length != numberOfBarrel)
+                System.Array.Resize(ref _beams, numberOfBarrel);
+            if (_impactMarkers == null || _impactMarkers.Length != numberOfBarrel)
+                System.Array.Resize(ref _impactMarkers, numberOfBarrel);
             if (_loops == null || _loops.Length != numberOfBarrel)
                 _loops = new Coroutine[numberOfBarrel];
 
-            for (int i = 0; i < beams.Length; i++)
-                if (beams[i] != null)
-                    beams[i].enabled = false;
-            for (int i = 0; i < impactMarkers.Length; i++)
-                if (impactMarkers[i] != null)
-                    impactMarkers[i].gameObject.SetActive(false);
+            for (int i = 0; i < _beams.Length; i++)
+                if (_beams[i] != null)
+                    _beams[i].enabled = false;
+            for (int i = 0; i < _impactMarkers.Length; i++)
+                if (_impactMarkers[i] != null)
+                    _impactMarkers[i].gameObject.SetActive(false);
             _damage = owner.CurrentAtk;
         }
+
+        #endregion
+
+        #region Action
 
         /// <summary>
         /// called by Unit to start shooting
@@ -141,14 +150,18 @@ namespace CT.Units.Attacks
                 _loops[barrelIndex] = null;
             }
 
-            if (beams != null && barrelIndex < beams.Length && beams[barrelIndex] != null)
-                beams[barrelIndex].enabled = false;
+            if (_beams != null && barrelIndex < _beams.Length && _beams[barrelIndex] != null)
+                _beams[barrelIndex].enabled = false;
 
-            if (impactMarkers != null && barrelIndex < impactMarkers.Length && impactMarkers[barrelIndex] != null)
-                impactMarkers[barrelIndex].gameObject.SetActive(false);
+            if (_impactMarkers != null && barrelIndex < _impactMarkers.Length && _impactMarkers[barrelIndex] != null)
+                _impactMarkers[barrelIndex].gameObject.SetActive(false);
 
             StopAudio();
         }
+
+        #endregion
+
+        #region Loop
 
         /// <summary>
         /// Coroutine of the beam lifecycle
@@ -162,9 +175,9 @@ namespace CT.Units.Attacks
         /// <returns></returns>
         IEnumerator BeamLoop(int index, Unit target)
         {
-            LineRenderer beam = (beams != null && index < beams.Length) ? beams[index] : null;
+            LineRenderer beam = (_beams != null && index < _beams.Length) ? _beams[index] : null;
             Transform shootPosition = (BarrelEnd != null && index < BarrelEnd.Length && BarrelEnd[index] != null) ? BarrelEnd[index] : null;
-            Transform marker = (impactMarkers != null && index < impactMarkers.Length) ? impactMarkers[index] : null;
+            Transform marker = (_impactMarkers != null && index < _impactMarkers.Length) ? _impactMarkers[index] : null;
 
             if (beam)
                 beam.enabled = true;
@@ -188,10 +201,10 @@ namespace CT.Units.Attacks
 
                 timeAccumulation += Time.deltaTime;
 
-                while (timeAccumulation >= tickInterval)
+                while (timeAccumulation >= _tickInterval)
                 {
-                    timeAccumulation -= tickInterval;
-                    int dmg = Mathf.RoundToInt(_damage * tickInterval);
+                    timeAccumulation -= _tickInterval;
+                    int dmg = Mathf.RoundToInt(_damage * _tickInterval);
 
                     if (_isAoe)
                     {
@@ -231,6 +244,9 @@ namespace CT.Units.Attacks
 
         }
 
+        #endregion
+
+        #region Helper
 
         /// <summary>
         /// check if loops is null and if barrelindex is within loops length
@@ -279,4 +295,5 @@ namespace CT.Units.Attacks
         }
 
     }
+    #endregion
 }

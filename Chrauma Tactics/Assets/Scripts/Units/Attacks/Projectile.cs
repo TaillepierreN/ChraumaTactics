@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace CT.Units.Attacks
@@ -10,6 +8,9 @@ namespace CT.Units.Attacks
     public class Projectile : MonoBehaviour
     {
         public bool DebugMode;
+        private Vector3 _debugPos;
+
+
         /// <summary>
         /// The payload has all relevant data for the projectile to do it's job
         /// Source: the unit that fired,
@@ -37,24 +38,8 @@ namespace CT.Units.Attacks
         private List<Vector3> _aoeTargetPos = new List<Vector3>();
         private Action _onDone;
 
-        private Vector3 debugPos;
 
-        /// <summary>
-        /// Load the payload and set the projectile as launched
-        /// </summary>
-        /// <param name="payload"></param>
-        /// <param name="impactVFX"></param>
-        /// <param name="onDone"></param>
-        public void Launch(PayLoad payload, Action<Vector3, Vector3> impactVFX, Action<List<Vector3>, Vector3> impactVFXAoE, Action onDone)
-        {
-            _owner = payload.Source;
-            _payload = payload;
-            _spawnImpact = impactVFX;
-            _spawnAoEImpact = impactVFXAoE;
-            _onDone = onDone;
-            _isActive = true;
-        }
-
+        #region Unity Callback
         /// <summary>
         /// Handle the movement of the projectile and what to do once enemy is hit
         /// </summary>
@@ -84,6 +69,28 @@ namespace CT.Units.Attacks
             transform.forward = direction.normalized;
         }
 
+        #endregion
+
+        #region Actions
+
+
+        /// <summary>
+        /// Load the payload and set the projectile as launched
+        /// </summary>
+        /// <param name="payload"></param>
+        /// <param name="impactVFX"></param>
+        /// <param name="onDone"></param>
+        public void Launch(PayLoad payload, Action<Vector3, Vector3> impactVFX, Action<List<Vector3>, Vector3> impactVFXAoE, Action onDone)
+        {
+            _owner = payload.Source;
+            _payload = payload;
+            _spawnImpact = impactVFX;
+            _spawnAoEImpact = impactVFXAoE;
+            _onDone = onDone;
+            _isActive = true;
+        }
+
+
         /// <summary>
         /// Handle what to do once the projectile was close enough to hit
         /// </summary>
@@ -91,7 +98,7 @@ namespace CT.Units.Attacks
         /// <param name="normal">normal to be able to orient the impact</param>
         private void Hit(Vector3 pos, Vector3 normal)
         {
-            debugPos = pos;
+            _debugPos = pos;
             if (_payload.IsAoe)
             {
                 Collider[] hits = Physics.OverlapSphere(pos, _payload.Radius);
@@ -116,8 +123,6 @@ namespace CT.Units.Attacks
                     _spawnAoEImpact?.Invoke(_aoeTargetPos, normal);
                 else
                     _spawnImpact?.Invoke(pos, normal);
-
-
             }
             else
             {
@@ -125,18 +130,24 @@ namespace CT.Units.Attacks
                 _spawnImpact?.Invoke(pos, normal);
             }
 
-
             _isActive = false;
             _onDone?.Invoke();
         }
+
+        #endregion
+
+        #region Debug
+
         private void OnDrawGizmosSelected()
         {
-            if (DebugMode && debugPos != null)
+            if (DebugMode && _debugPos != null)
             {
                 Gizmos.color = Color.red;
                 Gizmos.DrawWireSphere(transform.position, _payload.Radius);
             }
         }
+
+        #endregion
     }
 
 }
