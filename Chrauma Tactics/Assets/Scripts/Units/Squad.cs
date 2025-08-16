@@ -81,7 +81,7 @@ public class Squad : MonoBehaviour
             if (unit != null)
             {
                 unit.SetTeam(team);
-                unit.spawnPosition = newUnitObj.transform.position;
+                unit.SpawnPosition = newUnitObj.transform.position;
                 unit.Initialize();
                 unit.SetSquad(this);
                 units.Add(unit);

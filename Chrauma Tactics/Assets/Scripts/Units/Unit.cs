@@ -1,8 +1,11 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using CT.Units.Animations;
+using CT.Units.Attacks;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UI;
 
 
 public abstract class Unit : MonoBehaviour
@@ -10,77 +13,95 @@ public abstract class Unit : MonoBehaviour
     #region Unit Properties
     public bool DebugMode = false;
     public Team team;
-    protected Squad squad;
-    [SerializeField] protected UnitType unitType;
-    [SerializeField] protected UnitType unitType2;
-    [SerializeField] protected string unitDescription;
-    [SerializeField] protected int unitCost;
-    public int UnitCost => unitCost;
+    protected Squad _squad;
+    [SerializeField] protected UnitType _unitType;
+    [SerializeField] protected UnitType _unitType2;
+    [SerializeField] protected string _unitDescription;
+    [SerializeField] protected int _unitCost;
+    [SerializeField] protected Attack _attack;
+    public int UnitCost => _unitCost;
+    /// <summary>
+    /// Where the enemy should aim
+    /// </summary>
+    [SerializeField] protected Transform _ownHitbox;
 
     [Header("Unit Base Stats")]
-    [SerializeField] protected int baseHealth;
-    [SerializeField] protected int baseAtk;
-    [SerializeField] protected float baseMoveSpeed;
-    [SerializeField] protected float baseAtkSpeed;
-    [SerializeField] protected float baseRange;
+    [SerializeField] protected int _baseHealth = 1000;
+    [SerializeField] protected int _baseAtk = 100;
+    [SerializeField] protected float _baseMoveSpeed = 20f;
+    [SerializeField] protected float _baseAtkSpeed = 20f;
+    [SerializeField] protected float _baseRange = 20f;
 
 
     [Header("Unit Boosted Stats")]
     // These stats will be modified by bonuses or boosts during the game.
-    protected int boostedHealth;
-    protected int boostedAtk;
-    protected float boostedMoveSpeed;
-    protected float boostedAtkSpeed;
-    protected float boostedRange;
+    protected int _boostedHealth;
+    protected int _boostedAtk;
+    protected float _boostedMoveSpeed;
+    protected float _boostedAtkSpeed;
+    protected float _boostedRange;
 
 
     [Header("Unit Current Stats")]
-    protected int currentHealth;
-    protected int currentAtk;
-    protected float currentMoveSpeed;
-    protected float currentAtkSpeed;
-    protected float currentAtkRange;
+    protected int _currentHealth;
+    protected int _currentAtk;
+    protected float _currentMoveSpeed;
+    protected float _currentAtkSpeed;
+    protected float _currentAtkRange;
 
 
     [Header("Unit Spawn Position")]
     /// <summary>The position where the unit spawns at the start of the game or round.</summary>
-    public Vector3 spawnPosition;
+    public Vector3 SpawnPosition;
 
 
     [Header("Unit NavMesh Agent")]
-    protected NavMeshAgent agent;
-    [SerializeField] protected bool hasSmoothStop = false;
-    [SerializeField] protected float decelerationRate = 2.5f;
-    private bool waitingForStop = false;
+    protected NavMeshAgent _agent;
+    [SerializeField] protected bool _hasSmoothStop = false;
+    [SerializeField] protected float _decelerationRate = 2.5f;
+    private bool _waitingForStop = false;
 
 
     [Header("Unit Animation")]
-    [SerializeField] protected Animator animatorBody;
-    [SerializeField] protected Animator[] animatorWeap;
-    [SerializeField] protected TurretAim[] turretAim;
-    [SerializeField] private Renderer leftTrackRenderer;
-    [SerializeField] private Renderer left2TrackRenderer;
-    [SerializeField] private Renderer rightTrackRenderer;
-    [SerializeField] private Renderer right2TrackRenderer;
-    private Material leftTrackMaterial;
-    private Material rightTrackMaterial;
-    private Material left2TrackMaterial;
-    private Material right2TrackMaterial;
-    private float leftOffset = 0f;
-    private float rightOffset = 0f;
+    [SerializeField] protected Animator _animatorBody;
+    [SerializeField] protected Animator[] _animatorWeap;
+    [SerializeField] protected TurretAim[] _turretAim;
+    [SerializeField] private Renderer _leftTrackRenderer;
+    [SerializeField] private Renderer _left2TrackRenderer;
+    [SerializeField] private Renderer _rightTrackRenderer;
+    [SerializeField] private Renderer _right2TrackRenderer;
+    private Material _leftTrackMaterial;
+    private Material _rightTrackMaterial;
+    private Material _left2TrackMaterial;
+    private Material _right2TrackMaterial;
+    private float _leftOffset = 0f;
+    private float _rightOffset = 0f;
 
 
     [Header("Unit Detection settings")]
-    [SerializeField] private float detectionRadius = 100f;
-    private float detectionInterval = 0.2f;
-    private float detectionTimer = 0f;
+    [SerializeField] private float _detectionRadius = 100f;
+    private float _detectionInterval = 0.2f;
+    private float _detectionTimer = 0f;
     /// <summary>Dictionary to keep track of known friendly units to skip repeated Getcomponent check.</summary>
-    private Dictionary<GameObject, Unit> knownFriendlies = new();
+    private Dictionary<GameObject, Unit> _knownFriendlies = new();
     /// <summary>Dictionary to keep track of known enemy units to skip repeated GetComponent check.</summary>
-    private Dictionary<GameObject, Unit> knownEnemies = new();
-    private LayerMask detectionMask = ~0; // all layers for now, TODO: set to only units layer
-    private Unit currentTarget = null;
+    private Dictionary<GameObject, Unit> _knownEnemies = new();
+    /// <summary>Dictionary to keep track of know untargetable unit to skip if can't hit them</summary>
+    private Dictionary<GameObject, Unit> _knownUntargetable = new();
+    private readonly Collider[] _hits = new Collider[258];
+    private LayerMask _detectionMask = ~0; // all layers for now, TODO: set to only units layer
+    private Unit _currentTarget = null;
+    private bool _targetHasMovedAway = false;
 
+    [Header("Aiming")]
+    [SerializeField] private bool _requierFacingForAttack = false;
+    [SerializeField] private bool _canTargetFlying;
+    [SerializeField] private bool _aerialOnly = false;
+
+    [SerializeField, Range(0f, 90f)] private float _facingConeDegree = 32f;
+    [SerializeField] private float _facingEpsilonDeg = 1.5f;
+    private float _minFacingDot = 0.85f;
+    private Coroutine _alignRoutine;
 
 
     [Header("State")]
@@ -91,6 +112,16 @@ public abstract class Unit : MonoBehaviour
     public bool IsAttacking = false;
     [HideInInspector]
     public bool IsDead = false;
+
+    [Header("UI")]
+    [SerializeField] private CanvasGroup _hpBarCanvas;
+    [SerializeField] private Slider _hpBar;
+    [SerializeField] private float _hpBarSpeed = 100f;
+    [SerializeField] private float _delayBeforeFade = 5f;
+    private Coroutine _hpDisplayCoroutine;
+    private float _barTargetHp;
+    private float _delayUntil = -1f;
+    const float EPSILON = 0.001f;
 
     #endregion
 
@@ -104,23 +135,29 @@ public abstract class Unit : MonoBehaviour
     #region Unit Getters
     /// <summary>
     /// Gets the current health of the unit.
-    public int CurrentHealth => currentHealth;
+    public int CurrentHealth => _currentHealth;
+    public int CurrentAtk => _currentAtk;
+    public Unit CurrentTarget => _currentTarget;
+    public Transform Hitbox => _ownHitbox;
 
     #endregion
 
     #region Unity callbacks
     protected virtual void Awake()
     {
-        agent = GetComponent<NavMeshAgent>();
-        if (leftTrackRenderer != null)
-            leftTrackMaterial = leftTrackRenderer.material;
-        if (rightTrackRenderer != null)
-            rightTrackMaterial = rightTrackRenderer.material;
-        if (left2TrackRenderer != null)
-            left2TrackMaterial = left2TrackRenderer.material;
-        if (right2TrackRenderer != null)
-            right2TrackMaterial = right2TrackRenderer.material;
-        //spawnPosition = transform.position;
+        _agent = GetComponent<NavMeshAgent>();
+        if (_leftTrackRenderer != null)
+            _leftTrackMaterial = _leftTrackRenderer.material;
+        if (_rightTrackRenderer != null)
+            _rightTrackMaterial = _rightTrackRenderer.material;
+        if (_left2TrackRenderer != null)
+            _left2TrackMaterial = _left2TrackRenderer.material;
+        if (_right2TrackRenderer != null)
+            _right2TrackMaterial = _right2TrackRenderer.material;
+        SpawnPosition = transform.position;
+        _minFacingDot = DotFromDegrees(_facingConeDegree);
+        if (_aerialOnly)
+            _canTargetFlying = true;
     }
 
     protected virtual void Start()
@@ -133,40 +170,95 @@ public abstract class Unit : MonoBehaviour
         if (!RoundStarted)
             return;
 
-        detectionTimer += Time.deltaTime;
-        if (detectionTimer >= detectionInterval)
+        _detectionTimer += Time.deltaTime;
+        if (_detectionTimer >= _detectionInterval)
         {
-            detectionTimer = 0f;
+            _detectionTimer = 0f;
             DetectEnemies();
         }
 
         /*Wheel handling*/
-        if (IsMoving && agent.velocity.magnitude > 0.01f)
+        if (IsMoving && _agent.velocity.magnitude > 0.01f)
         {
-            leftOffset -= 0.5f * Time.deltaTime;
-            rightOffset -= 0.5f * Time.deltaTime;
-            if (leftTrackMaterial != null)
-                leftTrackMaterial.SetTextureOffset("_BaseMap", new Vector2(0, leftOffset));
-            if (rightTrackMaterial != null)
-                rightTrackMaterial.SetTextureOffset("_BaseMap", new Vector2(0, rightOffset));
-            if (left2TrackMaterial != null)
-                left2TrackMaterial.SetTextureOffset("_BaseMap", new Vector2(0, -leftOffset));
-            if (right2TrackMaterial != null)
-                right2TrackMaterial.SetTextureOffset("_BaseMap", new Vector2(0, -rightOffset));
+            _leftOffset -= 0.5f * Time.deltaTime;
+            _rightOffset -= 0.5f * Time.deltaTime;
+            if (_leftTrackMaterial != null)
+                _leftTrackMaterial.SetTextureOffset("_BaseMap", new Vector2(0, _leftOffset));
+            if (_rightTrackMaterial != null)
+                _rightTrackMaterial.SetTextureOffset("_BaseMap", new Vector2(0, _rightOffset));
+            if (_left2TrackMaterial != null)
+                _left2TrackMaterial.SetTextureOffset("_BaseMap", new Vector2(0, -_leftOffset));
+            if (_right2TrackMaterial != null)
+                _right2TrackMaterial.SetTextureOffset("_BaseMap", new Vector2(0, -_rightOffset));
         }
 
-        if (hasSmoothStop && waitingForStop)
+        if (_hasSmoothStop && _waitingForStop)
         {
-            if (agent.velocity.magnitude > 0.01f)
+            if (_agent.velocity.magnitude > 0.01f)
             {
-                agent.velocity = Vector3.Lerp(agent.velocity, Vector3.zero, Time.deltaTime * decelerationRate);
+                _agent.velocity = Vector3.Lerp(_agent.velocity, Vector3.zero, Time.deltaTime * _decelerationRate);
             }
             else
             {
-                agent.ResetPath();
-                waitingForStop = false;
-                if (animatorBody != null)
-                    animatorBody.SetBool("IsMoving", false);
+                _agent.ResetPath();
+                _waitingForStop = false;
+                if (_animatorBody != null)
+                    _animatorBody.SetBool("IsMoving", false);
+            }
+        }
+        if (IsAttacking && _currentTarget != null)
+        {
+            if (!_currentTarget.gameObject.activeInHierarchy)
+            {
+                ClearTarget(_currentTarget);
+                return;
+            }
+            // check if enemy is still in atk range,otherwise move to it
+            float dist = Vector3.Distance(transform.position, _currentTarget.transform.position);
+            if (dist > _currentAtkRange)
+            {
+                if (_attack != null && _attack.IsContinuous)
+                    _attack.StopAutoFire();
+
+                _targetHasMovedAway = true;
+
+                if (_animatorWeap != null)
+                    foreach (Animator weap in _animatorWeap)
+                        if (weap != null)
+                            weap.SetBool("IsAttacking", false);
+
+                if (_unitType == UnitType.Aerial && _animatorBody != null)
+                    _animatorBody.SetBool("IsAttacking", false);
+
+                MoveTo(_currentTarget.transform.position);
+            }
+            else if (_targetHasMovedAway)
+            {
+                if (_requierFacingForAttack && !IsFacing(_currentTarget.transform))
+                {
+                    if (_alignRoutine != null)
+                        StopCoroutine(_alignRoutine);
+                    _alignRoutine = StartCoroutine(AlignAndEngage(_currentTarget));
+                }
+                else
+                {
+                    if (_attack != null && _attack.IsContinuous)
+                        _attack.StartAutoFire(_currentTarget);
+
+                    if (_animatorWeap != null)
+                        foreach (Animator weap in _animatorWeap)
+                            if (weap != null)
+                                weap.SetBool("IsAttacking", true);
+
+                    if (_unitType == UnitType.Aerial
+                    && _animatorBody != null
+                    && Vector3.Distance(transform.position, _currentTarget.transform.position) < 2)
+                    {
+                        Debug.Log("is aerial and attacking");
+                        _animatorBody.SetBool("IsAttacking", true);
+                    }
+                    _targetHasMovedAway = false;
+                }
             }
         }
     }
@@ -178,6 +270,7 @@ public abstract class Unit : MonoBehaviour
 
     void OnDisable()
     {
+        _hpDisplayCoroutine = null;
         if (!IsDead)
         {
             IsDead = true;
@@ -192,8 +285,10 @@ public abstract class Unit : MonoBehaviour
     /// <summary>Initializes the unit's stats based on base values.</summary>
     public virtual void Initialize()
     {
-        SetCurrentStats(baseHealth, baseAtk, baseMoveSpeed, baseAtkSpeed, baseRange);
-        agent.isStopped = false;
+        SetCurrentStats(_baseHealth, _baseAtk, _baseMoveSpeed, _baseAtkSpeed, _baseRange);
+        _hpBarCanvas.alpha = 0;
+        _agent.isStopped = false;
+        _attack?.Initialize(this);
     }
 
     /// <summary>Sets the team of the unit.</summary>
@@ -206,7 +301,7 @@ public abstract class Unit : MonoBehaviour
     /// <param name="newSquad"></param>
     public void SetSquad(Squad newSquad)
     {
-        squad = newSquad;
+        _squad = newSquad;
     }
 
     /// <summary>Sets the current stats of the unit.</summary>
@@ -217,18 +312,20 @@ public abstract class Unit : MonoBehaviour
     /// <param name="range"></param>
     public virtual void SetCurrentStats(int health, int atk, float moveSpeed, float atkSpeed, float range)
     {
-        currentHealth = health;
-        currentAtk = atk;
-        currentMoveSpeed = moveSpeed;
-        currentAtkSpeed = atkSpeed;
-        currentAtkRange = range;
-        agent.speed = currentMoveSpeed;
-        if (animatorBody != null)
-            animatorBody.SetFloat("MoveSpeed", currentMoveSpeed / 5f);
-        if (animatorWeap != null)
-            foreach (Animator weap in animatorWeap)
+        _currentHealth = health;
+        _currentAtk = atk;
+        _currentMoveSpeed = moveSpeed;
+        _currentAtkSpeed = atkSpeed;
+        _currentAtkRange = range;
+        _agent.speed = _currentMoveSpeed;
+        if (_animatorBody != null)
+            _animatorBody.SetFloat("MoveSpeed", _currentMoveSpeed / 5f);
+        if (_animatorWeap != null)
+            foreach (Animator weap in _animatorWeap)
                 if (weap != null)
-                    weap.SetFloat("AtkSpeed", currentAtkSpeed);
+                    weap.SetFloat("AtkSpeed", _currentAtkSpeed);
+        _hpBar.maxValue = _currentHealth;
+        _hpBar.value = _currentHealth;
     }
 
     //TODO 
@@ -246,13 +343,53 @@ public abstract class Unit : MonoBehaviour
     /// <summary>Resets the unit's stats to the boosted values and position .Call at game round end</summary>
     public virtual void ResetStats()
     {
-        SetCurrentStats(boostedHealth, boostedAtk, boostedMoveSpeed, boostedAtkSpeed, boostedRange);
-        transform.position = spawnPosition;
+        SetCurrentStats(_boostedHealth, _boostedAtk, _boostedMoveSpeed, _boostedAtkSpeed, _boostedRange);
+        transform.position = SpawnPosition;
         RoundStarted = false;
         IsAttacking = false;
-        currentTarget = null;
+        _currentTarget = null;
         IsMoving = false;
         IsDead = false;
+        _targetHasMovedAway = false;
+        _waitingForStop = false;
+    }
+
+    /// <summary>
+    /// Coroutine to display hp bar of unit
+    /// set slider to go down faster if more hp is missing
+    /// </summary>
+    /// <returns></returns>
+    IEnumerator DisplayHealth()
+    {
+        if (_hpBarCanvas.alpha < 1f)
+            yield return Fade(_hpBarCanvas, 1f, 0.2f);
+
+        while (true)
+        {
+            float dt = Time.unscaledDeltaTime;
+            float diff = Mathf.Abs(_hpBar.value - _barTargetHp);
+
+            if (diff > EPSILON)
+            {
+                // bigger gap ⇒ bigger step
+                float step = (_hpBarSpeed + 10f * diff) * dt;
+                _hpBar.value = Mathf.MoveTowards(_hpBar.value, _barTargetHp, step);
+            }
+            else
+            {
+                _hpBar.value = _barTargetHp;
+            }
+
+            diff = Mathf.Abs(_hpBar.value - _barTargetHp);
+            if (diff <= EPSILON && Time.unscaledTime >= _delayUntil)
+            {
+                yield return Fade(_hpBarCanvas, 0f, 0.15f);
+                _hpDisplayCoroutine = null;
+                yield break;
+            }
+
+            yield return null;
+        }
     }
     #endregion
 
@@ -262,32 +399,32 @@ public abstract class Unit : MonoBehaviour
     /// <param name="destination"></param>
     public void MoveTo(Vector3 destination)
     {
-        if (agent != null && agent.isActiveAndEnabled)
+        if (_agent != null && _agent.isActiveAndEnabled)
         {
-            agent.SetDestination(destination);
+            _agent.SetDestination(destination);
             IsMoving = true;
-            if (animatorBody != null)
-                animatorBody.SetBool("IsMoving", true);
-            agent.isStopped = false;
+            if (_animatorBody != null)
+                _animatorBody.SetBool("IsMoving", true);
+            _agent.isStopped = false;
         }
     }
 
     /// <summary>Stops the unit's movement, either instant or smoothed.</summary>
     public void StopMovement()
     {
-        if (agent != null && agent.isActiveAndEnabled && IsMoving)
+        if (_agent != null && _agent.isActiveAndEnabled && IsMoving)
         {
             IsMoving = false;
-            agent.isStopped = true;
-            if (!hasSmoothStop)
+            _agent.isStopped = true;
+            if (!_hasSmoothStop)
             {
-                agent.ResetPath();
-                agent.velocity = Vector3.zero;
-                if (animatorBody != null)
-                    animatorBody.SetBool("IsMoving", false);
+                _agent.ResetPath();
+                _agent.velocity = Vector3.zero;
+                if (_animatorBody != null)
+                    _animatorBody.SetBool("IsMoving", false);
             }
             else
-                waitingForStop = true;
+                _waitingForStop = true;
         }
     }
     #endregion
@@ -298,63 +435,93 @@ public abstract class Unit : MonoBehaviour
     public virtual void StartRound()
     {
         RoundStarted = true;
+        //UpdateBoostedStats()
+
     }
 
-    /// <summary>Applies damage to the unit and checks if it should be dead.</summary>
+    /// <summary>End the round, reset stats and position/// </summary>
+    public virtual void EndRound()
+    {
+        ResetStats();
+    }
+
+    /// <summary>Applies damage to the unit, call for hp bar update and checks if it should be dead.</summary>
     public virtual void TakeDamage(int damage)
     {
-        currentHealth -= damage;
-        if (currentHealth <= 0)
+        _currentHealth = Mathf.Max(0, _currentHealth - damage);
+
+        _barTargetHp = Mathf.Clamp(_currentHealth, _hpBar.minValue, _hpBar.maxValue);
+        _delayUntil = Time.unscaledTime + _delayBeforeFade;
+
+        if (_hpDisplayCoroutine == null)
+            _hpDisplayCoroutine = StartCoroutine(DisplayHealth());
+
+        if (_currentHealth <= 0)
         {
             IsDead = true;
             OnUnitDeath?.Invoke(this);
+            _hpBarCanvas.alpha = 0f;
             // Explosion animation
             this.gameObject.SetActive(false);
         }
     }
 
     /// <summary>
-    /// Detects units within range check with known friendlies and enemies.
+    /// Detects units within range check with known friendlies untargetable and enemies.
     /// if unknown, add them to the correct dictionnary.
     /// Check closest enemy, move to attack range and engage
     /// </summary>
     private void DetectEnemies()
     {
-        if (currentTarget != null && currentTarget.gameObject.activeInHierarchy)
+        if (_currentTarget != null && _currentTarget.gameObject.activeInHierarchy)
             return;
 
-        Collider[] hits = Physics.OverlapSphere(transform.position, detectionRadius/*, detectionMask*/);
+        int hitCount = Physics.OverlapSphereNonAlloc(transform.position, _detectionRadius, _hits/*, detectionMask*/);
 
         float closestDistanceSqr = float.MaxValue;
         Unit closestEnemy = null;
 
-        foreach (Collider hit in hits)
+        for (int i = 0; i < hitCount; i++)
         {
-            if (hit.gameObject == this.gameObject)
+            Collider hit = _hits[i];
+
+            if (!hit)
+                continue;
+
+            GameObject hitGo = hit.gameObject;
+
+            if (hitGo == this.gameObject)
                 continue;
 
             //skip if friendly and already known
-            if (knownFriendlies.TryGetValue(hit.gameObject, out Unit friendUnit))
+            if (_knownFriendlies.ContainsKey(hitGo) || _knownUntargetable.ContainsKey(hitGo))
                 continue;
-
-            Unit enemyUnit;
 
             //if not known enemy, check which team it is on
             // if it is an ally, add to known friendlies
             // if it is an enemy, add to known enemies
-            if (!knownEnemies.TryGetValue(hit.gameObject, out enemyUnit))
+            if (!_knownEnemies.TryGetValue(hitGo, out Unit enemyUnit))
             {
-                enemyUnit = hit.GetComponent<Unit>();
-
-                if (enemyUnit == null)
+                if (!hitGo.TryGetComponent(out enemyUnit))
                     continue;
 
                 if (enemyUnit.team == this.team)
                 {
-                    knownFriendlies.Add(hit.gameObject, enemyUnit);
+                    _knownFriendlies.TryAdd(hitGo, enemyUnit);
                     continue;
                 }
-                knownEnemies.Add(hit.gameObject, enemyUnit);
+                if (_aerialOnly && enemyUnit._unitType != UnitType.Aerial)
+                {
+                    _knownUntargetable.TryAdd(hitGo, enemyUnit);
+                    continue;
+                }
+                if (!_canTargetFlying && enemyUnit._unitType == UnitType.Aerial)
+                {
+                    _knownUntargetable.TryAdd(hitGo, enemyUnit);
+                    continue;
+                }
+
+                _knownEnemies.TryAdd(hitGo, enemyUnit);
             }
 
             float distSqr = (enemyUnit.transform.position - transform.position).sqrMagnitude;
@@ -365,14 +532,15 @@ public abstract class Unit : MonoBehaviour
             }
         }
 
+        float atkRangeSqr = _currentAtkRange * _currentAtkRange;
         if (closestEnemy != null)
         {
-            float distanceToEnemy = Vector3.Distance(transform.position, closestEnemy.transform.position);
-            if (turretAim != null)
-                foreach (TurretAim turret in turretAim)
+            if (_turretAim != null)
+                foreach (TurretAim turret in _turretAim)
                     if (turret != null)
                         turret.SetLookAtTarget(closestEnemy);
-            if (distanceToEnemy <= currentAtkRange)
+
+            if (closestDistanceSqr <= atkRangeSqr)
             {
                 StopMovement();
                 EngageTarget(closestEnemy);
@@ -387,43 +555,173 @@ public abstract class Unit : MonoBehaviour
     /// <summary>Engages the target unit in combat.</summary>
     public virtual void EngageTarget(Unit target)
     {
-        if (currentTarget == target)
+        if (_currentTarget == target)
             return;
-        IsAttacking = true;
-        currentTarget = target;
-        Debug.Log($"piou piou piou");
-        currentTarget.OnUnitDeath += ClearTarget;
-        /* TODO */
-        if (animatorWeap != null)
-            foreach (Animator weap in animatorWeap)
-                if (weap != null)
-                    weap.SetBool("IsAttacking", true);
-        if (unitType == UnitType.Aerial
-        && animatorBody != null
-        && Vector3.Distance(transform.position, target.transform.position) < 2)
+
+        _currentTarget = target;
+        IsAttacking = false;
+        _currentTarget.OnUnitDeath += ClearTarget;
+
+        if (_requierFacingForAttack && Vector3.Distance(transform.position, target.transform.position) <= _currentAtkRange && !IsFacing(target.transform))
         {
-            Debug.Log("is aerial and attacking");
-            animatorBody.SetBool("IsAttacking", true);
+            if (_alignRoutine != null)
+                StopCoroutine(_alignRoutine);
+            _alignRoutine = StartCoroutine(AlignAndEngage(target));
         }
-        // actual attack loop/ coroutine?
+        else
+            BeginFiring(target);
+    }
+
+    /// <summary>
+    /// Turn the unit toward the target and begin firing
+    /// </summary>
+    /// <param name="target"></param>
+    /// <returns></returns>
+    private IEnumerator AlignAndEngage(Unit target)
+    {
+        if (_agent == null || target == null) yield break;
+
+        bool prevUpdateRot = _agent.updateRotation;
+        _agent.updateRotation = false;
+        _agent.isStopped = true;
+
+        while (target != null && target.gameObject.activeInHierarchy)
+        {
+            float dist = Vector3.Distance(transform.position, target.transform.position);
+
+            if (dist > _currentAtkRange)
+            {
+                _agent.updateRotation = prevUpdateRot;
+                MoveTo(target.transform.position);
+                _alignRoutine = null;
+                yield break;
+            }
+
+            if (IsFacing(target.transform))
+                break;
+
+            Vector3 look = target.transform.position; look.y = transform.position.y;
+            Quaternion wanted = Quaternion.LookRotation((look - transform.position).normalized);
+            float step = Mathf.Max(1f, _agent.angularSpeed) * Time.deltaTime;
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, wanted, step);
+
+            if (Quaternion.Angle(transform.rotation, wanted) <= _facingEpsilonDeg)
+                break;
+
+            yield return null;
+        }
+
+        _agent.updateRotation = prevUpdateRot;
+        BeginFiring(target);
+        _alignRoutine = null;
+    }
+
+    /// <summary>
+    /// Start the shooting animation / damage dealing
+    /// </summary>
+    /// <param name="target"></param>
+    private void BeginFiring(Unit target)
+    {
+        IsAttacking = true;
+        if (_animatorWeap != null)
+            foreach (Animator weap in _animatorWeap)
+                if (weap) weap.SetBool("IsAttacking", true);
+
+        if (_unitType == UnitType.Aerial && _animatorBody != null &&
+            Vector3.Distance(transform.position, target.transform.position) < 2)
+            _animatorBody.SetBool("IsAttacking", true);
+
+        if (_attack != null && _attack.IsContinuous)
+            _attack.StartAutoFire(_currentTarget);
     }
 
     /// <summary>Clears the current target of the unit, stopping any ongoing attack.</summary>
     public virtual void ClearTarget(Unit unit)
     {
-        Debug.Log("Clearing target");
         if (unit != null)
             unit.OnUnitDeath -= ClearTarget;
 
-        IsAttacking = false;
-        if (animatorWeap != null)
-            foreach (Animator weap in animatorWeap)
+        if (_alignRoutine != null)
+        {
+            StopCoroutine(_alignRoutine);
+            _alignRoutine = null;
+        }
+
+        if (_agent != null)
+            _agent.updateRotation = true;
+
+        if (_attack != null && _attack.IsContinuous)
+            _attack.StopAutoFire();
+
+        if (_animatorWeap != null)
+            foreach (Animator weap in _animatorWeap)
                 if (weap != null)
                     weap.SetBool("IsAttacking", false);
-        if (unitType == UnitType.Aerial && animatorBody != null)
-            animatorBody.SetBool("IsAttacking", false);
-        currentTarget = null;
+
+        if (_unitType == UnitType.Aerial && _animatorBody != null)
+            _animatorBody.SetBool("IsAttacking", false);
+
+        _targetHasMovedAway = false;
+        IsAttacking = false;
+        _currentTarget = null;
     }
+
+    #endregion
+
+    #region Helpers
+    /// <summary>
+    /// Check if inside the cone in front of the unit
+    /// </summary>
+    /// <param name="t">target</param>
+    /// <returns></returns>
+    private bool IsFacing(Transform t)
+    {
+        Vector3 vectorToTarget = t.position - transform.position;
+        vectorToTarget.y = 0f;
+        /*is facing if on top of unit*/
+        if (vectorToTarget.sqrMagnitude < 0.0001f)
+            return true;
+        float dot = Vector3.Dot(transform.forward, vectorToTarget.normalized);
+        return dot >= _minFacingDot;
+    }
+
+    /// <summary>
+    /// turn degrees into a dot product, used fo check if facing
+    /// </summary>
+    /// <param name="degrees"></param>
+    /// <returns></returns>
+    private float DotFromDegrees(float degrees) => Mathf.Cos(degrees * Mathf.Deg2Rad);
+
+    /// <summary>
+    /// Fade in or out to target alpha
+    /// </summary>
+    /// <param name="targetAlpha">float alpha target</param>
+    /// <returns></returns>
+    private IEnumerator Fade(CanvasGroup targetGroup, float targetAlpha, float fadeDuration)
+    {
+        float start = targetGroup.alpha;
+        float time = 0f;
+        while (time < fadeDuration)
+        {
+            time += Time.unscaledDeltaTime;
+            targetGroup.alpha = Mathf.Lerp(start, targetAlpha, time / fadeDuration);
+            yield return null;
+        }
+        targetGroup.alpha = targetAlpha;
+    }
+
+    /// <summary>
+    /// Grant aerial targeting to unit
+    /// </summary>
+    public void GrantAntiAir()
+    {
+        if (!_canTargetFlying)
+        {
+            _canTargetFlying = true;
+            _knownUntargetable.Clear();
+        }
+    }
+
 
     #endregion
 
@@ -433,9 +731,9 @@ public abstract class Unit : MonoBehaviour
         if (!DebugMode)
             return;
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, baseRange);
+        Gizmos.DrawWireSphere(transform.position, _baseRange);
         Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, detectionRadius);
+        Gizmos.DrawWireSphere(transform.position, _detectionRadius);
     }
     #endregion
 

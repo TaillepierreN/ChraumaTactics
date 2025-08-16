@@ -11,6 +11,6 @@ public class Snipers : Unit
 	protected override void Start()
 	{
 		base.Start();
-		animatorBody.SetBool("IsSnipe", true);
+		_animatorBody.SetBool("IsSnipe", true);
 	}
 }
