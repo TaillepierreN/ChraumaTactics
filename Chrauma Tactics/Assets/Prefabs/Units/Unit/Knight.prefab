@@ -76,17 +76,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DebugMode: 1
   team: 0
-  _unitType: 0
+  _unitType: 5
   _unitType2: 0
   _unitDescription: 
-  _unitCost: 
+  _unitCost: 300
   _attack: {fileID: 908046554957684660}
   _ownHitbox: {fileID: 8795931856667047231}
-  _baseHealth: 1000
-  _baseAtk: 100
-  _baseMoveSpeed: 20
-  _baseAtkSpeed: 20
-  _baseRange: 20
+  _baseHealth: 3000
+  _baseAtk: 180
+  _baseMoveSpeed: 12
+  _baseAtkSpeed: 1.2
+  _baseRange: 9
   SpawnPosition: {x: 0, y: 0, z: 0}
   _hasSmoothStop: 0
   _decelerationRate: 2.5
@@ -99,13 +99,13 @@ MonoBehaviour:
   _left2TrackRenderer: {fileID: 0}
   _rightTrackRenderer: {fileID: 1056877004657295324}
   _right2TrackRenderer: {fileID: 0}
-  _detectionRadius: 100
+  _detectionRadius: 170
   _requierFacingForAttack: 0
   _canTargetFlying: 0
   _aerialOnly: 0
   _facingConeDegree: 32
   _facingEpsilonDeg: 1.5
-  RoundStarted: 0
+  RoundStarted: 1
   IsMoving: 0
   IsAttacking: 0
   IsDead: 0
@@ -255,7 +255,7 @@ MonoBehaviour:
   BarrelEnd:
   - {fileID: 5575949522142879123}
   _isAoe: 0
-  _aoeRadius: 3
+  _aoeRadius: 0
   _audioClip: {fileID: 8300000, guid: de48bd7a8f94aa44cbff92da5aff50bd, type: 3}
   _audioSource: {fileID: 1102974622541689685}
   _tickInterval: 0.2

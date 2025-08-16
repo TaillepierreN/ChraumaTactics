@@ -95,19 +95,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a33a89f9430d947799e007098205541a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DebugMode: 0
+  DebugMode: 1
   team: 0
   _unitType: 2
-  _unitType2: 0
+  _unitType2: 5
   _unitDescription: 
-  _unitCost: 
+  _unitCost: 200
   _attack: {fileID: 6493610921395602152}
   _ownHitbox: {fileID: 6463571122537059469}
-  _baseHealth: 1000
-  _baseAtk: 100
-  _baseMoveSpeed: 20
-  _baseAtkSpeed: 20
-  _baseRange: 20
+  _baseHealth: 75
+  _baseAtk: 30
+  _baseMoveSpeed: 11
+  _baseAtkSpeed: 1.5
+  _baseRange: 10
   SpawnPosition: {x: 0, y: 0, z: 0}
   _hasSmoothStop: 1
   _decelerationRate: 2.5
@@ -118,13 +118,13 @@ MonoBehaviour:
   _left2TrackRenderer: {fileID: 0}
   _rightTrackRenderer: {fileID: 0}
   _right2TrackRenderer: {fileID: 0}
-  _detectionRadius: 100
+  _detectionRadius: 170
   _requierFacingForAttack: 0
   _canTargetFlying: 1
-  _aerialOnly: 1
+  _aerialOnly: 0
   _facingConeDegree: 32
   _facingEpsilonDeg: 1.5
-  RoundStarted: 0
+  RoundStarted: 1
   IsMoving: 0
   IsAttacking: 0
   IsDead: 0
@@ -253,7 +253,7 @@ MonoBehaviour:
   BarrelEnd:
   - {fileID: 925274537532112808}
   _isAoe: 0
-  _aoeRadius: 3
+  _aoeRadius: 0
   _audioClip: {fileID: 8300000, guid: de48bd7a8f94aa44cbff92da5aff50bd, type: 3}
   _audioSource: {fileID: 3920531310147560548}
   _tickInterval: 0.2
