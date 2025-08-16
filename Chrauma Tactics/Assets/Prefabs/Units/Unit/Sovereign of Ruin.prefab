@@ -65,7 +65,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 119.28424, y: 0, z: 0}
-  m_LocalScale: {x: 1.48, y: 1.48, z: 1.48}
+  m_LocalScale: {x: 1.69, y: 1.6900002, z: 1.6900002}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 1793462991524820108}
@@ -107,18 +107,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 82887be813f254299ad055987575e471, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DebugMode: 0
+  DebugMode: 1
   team: 0
-  _unitType: 0
-  _unitType2: 0
+  _unitType: 3
+  _unitType2: 1
   _unitDescription: 
-  _unitCost: 
+  _unitCost: 700
   _attack: {fileID: 3955929253313295273}
   _ownHitbox: {fileID: 1897067783907294776}
-  _baseHealth: 1000
-  _baseAtk: 100
-  _baseMoveSpeed: 20
-  _baseAtkSpeed: 20
+  _baseHealth: 6200
+  _baseAtk: 120
+  _baseMoveSpeed: 6
+  _baseAtkSpeed: 1.1
   _baseRange: 20
   SpawnPosition: {x: 0, y: 0, z: 0}
   _hasSmoothStop: 0
@@ -136,7 +136,7 @@ MonoBehaviour:
   _left2TrackRenderer: {fileID: 0}
   _rightTrackRenderer: {fileID: 0}
   _right2TrackRenderer: {fileID: 0}
-  _detectionRadius: 100
+  _detectionRadius: 170
   _requierFacingForAttack: 0
   _canTargetFlying: 0
   _aerialOnly: 0
@@ -292,13 +292,14 @@ MonoBehaviour:
   BarrelEnd:
   - {fileID: 4184418217265503929}
   - {fileID: 3162855477493581756}
-  _isAoe: 0
-  _aoeRadius: 3
+  _isAoe: 1
+  _aoeRadius: 10
   _audioClip: {fileID: 8300000, guid: 0d763e4d2c65c574fa67111609aef024, type: 3}
   _audioSource: {fileID: 8237813325125759632}
   _projectilePrefab: {fileID: 4471817912746270888, guid: d4ea6534b3c429d4bbdc6d6ab2a90b62, type: 3}
   _impactVFXPrefab:
   - {fileID: 7484493792602375096, guid: d54af38ad9f3b3e43a8123927165f838, type: 3}
+  - {fileID: 7484493792602375096, guid: 2f498e5fec50e7541859d82ff73ef0ef, type: 3}
   _projectileSpeed: 30
   _impactLifeTime: 0.5
   _nbrOfPooledProjectile: 5
