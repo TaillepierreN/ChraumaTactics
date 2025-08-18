@@ -11,8 +11,7 @@ public class RoundManager : MonoBehaviour
     [SerializeField] private Rd_Gameplay _radioGameplay;
 
     private GameManager _gameManager;
-    private Player _p1;
-    private Player _p2;
+
 
     [Header("Round Timers (seconds)")]
     [Min(1f)] public float prepTime = 15f;
@@ -44,9 +43,6 @@ public class RoundManager : MonoBehaviour
     {
         _gameManager = _radioGameplay.GameManager;
 
-        _p1 = _gameManager.player1;
-        _p2 = _gameManager.player2;
-
         _gameManager.InitStartingCredits(creditsPerRound.Length > 0 ? creditsPerRound[0] : 0);
     }
 
@@ -69,8 +65,8 @@ public class RoundManager : MonoBehaviour
 
     public void StartGame()
     {
+        _radioGameplay.RoundUIManager.ShowRoundUI();
         BeginPreparationPhase();
-
     }
 
     public void ForceEndPreparation()

@@ -11,6 +11,8 @@ public class RoundUIManager : MonoBehaviour
 
 
     [Header("Panels and buttons")]
+    [SerializeField] private GameObject _roundUI;
+
     public GameObject prepUI;
     public GameObject battleUI;
     public GameObject endRoundButton;
@@ -50,7 +52,10 @@ public class RoundUIManager : MonoBehaviour
         _roundManager.OnTimerTick -= HandleTimerTick;
     }
 
-
+    public void ShowRoundUI()
+    {
+        _roundUI.SetActive(true);
+    }
     public void OnEndRoundButton()
     {
         _roundManager.ForceEndPreparation();
