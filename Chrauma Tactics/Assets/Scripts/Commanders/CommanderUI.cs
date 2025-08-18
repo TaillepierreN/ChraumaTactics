@@ -29,9 +29,12 @@ public class CommanderUI : MonoBehaviour
         portraitImage.sprite = commander.portrait;
     }
 
+    /// <summary>
+    /// Onclick to select commander
+    /// </summary>
     public void SelectCommander()
     {
-        //_radioGameplay.GameManager.setChosenCommander(commanderData);
+        _radioGameplay.GameManager.SetChosenCommander(commanderData);
         _radioGameplay.RoundManager.StartGame();
         CommanderChosen?.Invoke();
     }

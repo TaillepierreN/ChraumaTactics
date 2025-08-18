@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace CT.Gameplay
@@ -8,6 +9,7 @@ namespace CT.Gameplay
         public Team Team;
         public int Credits;
         public int HP;
+        public List<Squad> Army;
     }
 
 }

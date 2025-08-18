@@ -1,5 +1,5 @@
-using TMPro;
 using UnityEngine;
+using CT.Gameplay;
 
 [CreateAssetMenu(fileName = "Gameplay", menuName = "Radio/Gameplay")]
 public class Rd_Gameplay : ScriptableObject
