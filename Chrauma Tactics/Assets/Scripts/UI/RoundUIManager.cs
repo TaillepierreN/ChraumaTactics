@@ -4,110 +4,90 @@ using UnityEngine.UI;
 
 public class RoundUIManager : MonoBehaviour
 {
+    [Header("Texts")]
     public TextMeshProUGUI roundText;
-
-    public float prepTime = 15f;
-    public float battleTime = 10f;
-    private float currentTime;
-
     public TextMeshProUGUI prepTimerText;
     public TextMeshProUGUI battleTimerText;
 
-    public GameObject endRoundButton;
+
+    [Header("Panels and buttons")]
     public GameObject prepUI;
     public GameObject battleUI;
+    public GameObject endRoundButton;
 
-    private enum Phase { Preparation, Combat }
-    private Phase currentPhase;
+    [Header("Refs")]
+    [SerializeField] private Rd_Gameplay _radioGameplay;
+    [SerializeField] private TMP_Text creditsText;
 
-    private int currentRound = 1;
-    private bool isFirstPrep = true;
+    private RoundManager _roundManager;
 
-    [SerializeField] private RoundManager roundManager; //ref
+    void Awake()
+    {
+        _radioGameplay.SetRoundUIManager(this);
+        _radioGameplay.SetCreditsText(creditsText);
+    }
 
     void Start()
     {
-        StartPreparation();
+        _roundManager = _radioGameplay.RoundManager;
+
+        _roundManager.OnPhaseChanged += HandlePhaseChanged;
+        _roundManager.OnRoundChanged += HandleRoundChanged;
+        _roundManager.OnTimerTick += HandleTimerTick;
+
+        HandleRoundChanged(_roundManager.CurrentRound, _roundManager.CurrentPhase);
+        HandlePhaseChanged(_roundManager.CurrentPhase);
+        HandleTimerTick(_roundManager.TimeRemaining);
+
     }
 
-    void Update()
+    void OnDestroy()
     {
-        currentTime -= Time.deltaTime;
-
-        switch (currentPhase)
-        {
-            case Phase.Preparation:
-                UpdatePrepTimerUI();
-                if (currentTime <= 0f)
-                    StartCombat();
-                break;
-
-            case Phase.Combat:
-                UpdateBattleTimerUI();
-                if (currentTime <= 0f)
-                    StartPreparation();
-                break;
-        }
+        if (_roundManager == null)
+            return;
+        _roundManager.OnPhaseChanged -= HandlePhaseChanged;
+        _roundManager.OnRoundChanged -= HandleRoundChanged;
+        _roundManager.OnTimerTick -= HandleTimerTick;
     }
 
-    void UpdatePrepTimerUI()
-    {
-        prepTimerText.text = Mathf.CeilToInt(currentTime).ToString();
-    }
-
-    void UpdateBattleTimerUI()
-    {
-        battleTimerText.text = Mathf.CeilToInt(currentTime).ToString();
-    }
 
     public void OnEndRoundButton()
     {
-        StartCombat();
+        _roundManager.ForceEndPreparation();
     }
 
-    void StartPreparation()
+    private void HandlePhaseChanged(RoundPhase phase)
     {
-        currentPhase = Phase.Preparation;
-        currentTime = prepTime;
+        bool isPrep = phase == RoundPhase.Preparation;
 
-        if (!isFirstPrep)
+        if (prepUI)
+            prepUI.SetActive(isPrep);
+        if (battleUI)
+            battleUI.SetActive(!isPrep);
+
+        if (endRoundButton)
+            endRoundButton.SetActive(isPrep);
+    }
+
+    private void HandleRoundChanged(int round, RoundPhase phase)
+    {
+        if (roundText != null)
+            roundText.text = $"Round {round} - {phase}";
+    }
+
+    private void HandleTimerTick(float TimeRemaining)
+    {
+        int seconds = Mathf.CeilToInt(TimeRemaining);
+
+        if (_roundManager.CurrentPhase == RoundPhase.Preparation)
         {
-            currentRound++;
-
-            // Add creds for new round
-            if (roundManager != null)
-                roundManager.AddRoundCredits(currentRound);
+            if (prepTimerText)
+                prepTimerText.text = seconds.ToString();
         }
         else
         {
-            isFirstPrep = false;
+            if (battleTimerText)
+                battleTimerText.text = seconds.ToString();
         }
-
-        UpdateRoundText();
-
-        prepUI.SetActive(true);
-        battleUI.SetActive(false);
-        endRoundButton.SetActive(true);
-
-        Debug.Log($"Preparation Started! Round {currentRound}");
-    }
-
-    void StartCombat()
-    {
-        currentPhase = Phase.Combat;
-        currentTime = battleTime;
-
-        UpdateRoundText();
-
-        prepUI.SetActive(false);
-        battleUI.SetActive(true);
-        endRoundButton.SetActive(false);
-
-        Debug.Log($"Combat Started! Round {currentRound}");
-    }
-
-    private void UpdateRoundText()
-    {
-        roundText.text = $"Round {currentRound} - {currentPhase}";
     }
 }
