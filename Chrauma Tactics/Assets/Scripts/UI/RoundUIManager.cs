@@ -26,7 +26,6 @@ public class RoundUIManager : MonoBehaviour
     void Awake()
     {
         _radioGameplay.SetRoundUIManager(this);
-        _radioGameplay.SetCreditsText(creditsText);
     }
 
     void Start()
@@ -94,5 +93,11 @@ public class RoundUIManager : MonoBehaviour
             if (battleTimerText)
                 battleTimerText.text = seconds.ToString();
         }
+    }
+
+    public void UpdateCreditsUI(int playerCred)
+    {
+        if (creditsText != null)
+            creditsText.text = playerCred.ToString();
     }
 }

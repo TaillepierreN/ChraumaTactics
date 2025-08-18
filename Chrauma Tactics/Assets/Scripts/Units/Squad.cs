@@ -9,6 +9,9 @@ public class Squad : MonoBehaviour
     /// <summary>If true, the squad will spawn units when space bar is pressed.(need debugmode)</summary>
     public bool startSpawnDebug = false;
 
+    [Header("Refs")]
+    [SerializeField] private Rd_Gameplay _radioGameplay;
+
 
     [Header("Squad Settings")]
     public Team team;
@@ -30,6 +33,17 @@ public class Squad : MonoBehaviour
     /// <summary>The list of units in the squad.</summary>
     private List<Unit> units = new List<Unit>();
 
+
+    void Start()
+    {
+        _radioGameplay.GameManager.IsInBattlePhase += SetUnitAction;
+    }
+
+    void OnDisable()
+    {
+        _radioGameplay.GameManager.IsInBattlePhase -= SetUnitAction;
+
+    }
 
     #region Squad creation
     /// <summary>Spawns the units in the squad at their designated spawn positions.</summary>
@@ -108,11 +122,18 @@ public class Squad : MonoBehaviour
     #region Gameplay Methods
 
     /// <summary>Starts the round for all units in the squad, allowing them to perform their actions.</summary>
-    public void StartRound()
+    public void SetUnitAction(bool isInCombatPhase)
     {
         foreach (Unit unit in units)
         {
-            unit.StartRound();
+            if (isInCombatPhase)
+                unit.StartRound();
+            else
+            {
+                if (!unit.gameObject.activeSelf)
+                    unit.gameObject.SetActive(true);
+                unit.EndRound();
+            }
         }
     }
 

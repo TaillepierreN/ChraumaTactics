@@ -134,6 +134,12 @@ namespace CT.Units.Attacks
             _onDone?.Invoke();
         }
 
+        public void Abort()
+        {
+            _isActive = false;
+            _onDone = null;
+        }
+
         #endregion
 
         #region Debug

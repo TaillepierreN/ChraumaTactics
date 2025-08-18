@@ -1,12 +1,12 @@
 using CT.Gameplay;
 using UnityEngine;
 using TMPro;
+using System;
 
 public class GameManager : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private Rd_Gameplay _radioGameplay;
-    private TMP_Text _creditsText;
     private RoundManager _roundManager;
 
 
@@ -14,6 +14,7 @@ public class GameManager : MonoBehaviour
     public Player player1;
     public Player player2;
 
+    public Action<bool> IsInBattlePhase;
 
     void Awake()
     {
@@ -23,7 +24,12 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         _roundManager = _radioGameplay.RoundManager;
-        _creditsText = _radioGameplay.CreditsText;
+        _roundManager.OnPhaseChanged += HandlePhaseChange;
+    }
+
+    void OnDisable()
+    {
+        _roundManager.OnPhaseChanged -= HandlePhaseChange;
     }
 
     public void InitStartingCredits(int startingCredits)
@@ -66,9 +72,14 @@ public class GameManager : MonoBehaviour
         return false;
     }
 
+    private void HandlePhaseChange(RoundPhase roundPhase)
+    {
+        IsInBattlePhase?.Invoke(roundPhase == RoundPhase.Combat);
+    }
+
     public void UpdateCreditsUI()
     {
-        if (_creditsText != null)
-            _creditsText.text = player1.Credits.ToString();
+        _radioGameplay.RoundUIManager.UpdateCreditsUI(player1.Credits);
     }
+
 }

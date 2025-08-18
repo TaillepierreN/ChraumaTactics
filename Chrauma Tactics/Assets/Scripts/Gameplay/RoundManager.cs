@@ -29,6 +29,7 @@ public class RoundManager : MonoBehaviour
     public float TimeRemaining { get; private set; }
 
     private bool _isFirstPrep = true;
+    private bool _gameStarted = false;
 
     public event Action<RoundPhase> OnPhaseChanged;
     public event Action<int, RoundPhase> OnRoundChanged;
@@ -48,6 +49,8 @@ public class RoundManager : MonoBehaviour
 
     void Update()
     {
+        if (!_gameStarted)
+            return;
         TimeRemaining -= Time.deltaTime;
         if (TimeRemaining < 0f)
             TimeRemaining = 0f;
@@ -67,6 +70,7 @@ public class RoundManager : MonoBehaviour
     {
         _radioGameplay.RoundUIManager.ShowRoundUI();
         BeginPreparationPhase();
+        _gameStarted = true;
     }
 
     public void ForceEndPreparation()
