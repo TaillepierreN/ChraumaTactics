@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System;
 
 public class CommanderUI : MonoBehaviour
 {
@@ -10,9 +11,11 @@ public class CommanderUI : MonoBehaviour
     public TMP_Text unit1NameText;
     public TMP_Text unit2NameText;
     public TMP_Text HPText;
-
-
+    [SerializeField] private Rd_Gameplay _radioGameplay;
     private Commander commanderData;
+
+    public Action CommanderChosen;
+
 
     public void SetCommander(Commander commander)
     {
@@ -21,8 +24,18 @@ public class CommanderUI : MonoBehaviour
         descriptionText.text = commander.description;
         unit1NameText.text = commander.unitName1;
         unit2NameText.text = commander.unitName2;
-        
+
         commanderNameText.text = commander.commanderName;
         portraitImage.sprite = commander.portrait;
+    }
+
+    /// <summary>
+    /// Onclick to select commander
+    /// </summary>
+    public void SelectCommander()
+    {
+        _radioGameplay.GameManager.SetChosenCommander(commanderData);
+        _radioGameplay.RoundManager.StartGame();
+        CommanderChosen?.Invoke();
     }
 }

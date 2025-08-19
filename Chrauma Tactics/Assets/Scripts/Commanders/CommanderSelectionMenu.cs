@@ -1,7 +1,5 @@
-using UnityEngine;
 using System.Collections.Generic;
-using TMPro;
-using UnityEngine.UI;
+using UnityEngine;
 
 public class CommanderSelectionMenu : MonoBehaviour
 {
@@ -9,6 +7,8 @@ public class CommanderSelectionMenu : MonoBehaviour
     public Commander[] commanders;
     public GameObject commanderUIPrefab;
     public Transform container;
+    private List<CommanderUI> _listOfComUI = new();
+    [SerializeField] private GameObject _commanderSelectPanel;
 
     void Start()
     {
@@ -18,7 +18,10 @@ public class CommanderSelectionMenu : MonoBehaviour
         for (int i = 0; i < count; i++)
         {
             GameObject ui = Instantiate(commanderUIPrefab, container);
-            ui.GetComponent<CommanderUI>().SetCommander(commanders[i]);
+            CommanderUI comUI = ui.GetComponent<CommanderUI>();
+            comUI.SetCommander(commanders[i]);
+            _listOfComUI.Add(comUI);
+            comUI.CommanderChosen += GameStart;
         }
     }
 
@@ -30,6 +33,23 @@ public class CommanderSelectionMenu : MonoBehaviour
             Commander temp = array[rnd];
             array[rnd] = array[i];
             array[i] = temp;
+        }
+    }
+
+    private void GameStart()
+    {
+        _commanderSelectPanel.SetActive(false);
+    }
+
+    void OnDisable()
+    {
+        if (_listOfComUI.Count != 0)
+        {
+            foreach (CommanderUI comUI in _listOfComUI)
+            {
+                if (comUI != null)
+                    comUI.CommanderChosen -= GameStart;
+            }
         }
     }
 }

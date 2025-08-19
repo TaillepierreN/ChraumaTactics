@@ -99,6 +99,7 @@ MonoBehaviour:
   unit1NameText: {fileID: 3725705437846453888}
   unit2NameText: {fileID: 3761266756069047854}
   HPText: {fileID: 2862287913910700768}
+  _radioGameplay: {fileID: 11400000, guid: 1a380cd7d54b23342a8b318ae7e67f93, type: 2}
 --- !u!1 &223073816046053057
 GameObject:
   m_ObjectHideFlags: 0
@@ -509,7 +510,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 7276160694845237326}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 694411438580669303}
+        m_TargetAssemblyTypeName: CommanderUI, Assembly-CSharp
+        m_MethodName: SelectCommander
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &4223487186562248437
 GameObject:
   m_ObjectHideFlags: 0

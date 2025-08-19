@@ -343,15 +343,11 @@ public abstract class Unit : MonoBehaviour
     /// <summary>Resets the unit's stats to the boosted values and position .Call at game round end</summary>
     public virtual void ResetStats()
     {
-        SetCurrentStats(_boostedHealth, _boostedAtk, _boostedMoveSpeed, _boostedAtkSpeed, _boostedRange);
-        transform.position = SpawnPosition;
-        RoundStarted = false;
-        IsAttacking = false;
-        _currentTarget = null;
-        IsMoving = false;
-        IsDead = false;
-        _targetHasMovedAway = false;
-        _waitingForStop = false;
+        SetCurrentStats(_baseHealth, _baseAtk, _baseMoveSpeed, _baseAtkSpeed, _baseRange);
+        if (_agent && _agent.isActiveAndEnabled)
+            _agent.Warp(SpawnPosition);
+        else
+            transform.position = SpawnPosition;
     }
 
     /// <summary>
@@ -442,6 +438,17 @@ public abstract class Unit : MonoBehaviour
     /// <summary>End the round, reset stats and position/// </summary>
     public virtual void EndRound()
     {
+        RoundStarted = false;
+
+        StopMovement();
+        if (CurrentTarget != null)
+            ClearTarget(CurrentTarget);
+
+        (_attack as Ballistic)?.ClearProjectiles();
+
+        if (IsDead)
+            IsDead = false;
+        _waitingForStop = false;
         ResetStats();
     }
 
