@@ -6,6 +6,9 @@ using UnityEngine;
 namespace CT.Gameplay
 {
     [CreateAssetMenu(fileName = "EnemyAIPlan", menuName = "Enemy/Plans", order = 0)]
+    /// <summary> 
+    /// Represents a plan for the AI enemy, containing multiple rounds of planing
+    /// </summary>
     public class EnemyAIPlan : ScriptableObject
     {
 
@@ -31,12 +34,14 @@ namespace CT.Gameplay
     }
 
     [Serializable]
+    /// <summary> Represent a single round </summary>
     public class RoundPlanning
     {
         public List<SquadOrder> Spawns = new();
     }
 
     [Serializable]
+    /// <summary> Represent a squad order to be delivered</summary>
     public class SquadOrder
     {
         [Header("Squad Settings")]
