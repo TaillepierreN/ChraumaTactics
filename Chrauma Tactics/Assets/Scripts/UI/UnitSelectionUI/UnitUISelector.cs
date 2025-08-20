@@ -11,6 +11,7 @@ namespace CT.UI.UnitSelectionUI
         [SerializeField] private TMP_Text unitCost;
         [SerializeField] private int unitNum;
         [SerializeField] private Rd_Gameplay _radioGameplay;
+        public Team team;
         private GameManager _gameManager;
 
 
@@ -30,7 +31,7 @@ namespace CT.UI.UnitSelectionUI
 
         public void OnButtonClicked()
         {
-            if (_gameManager.SpendCredits(unitPrefab.GetComponent<Unit>().UnitCost))
+            if (_gameManager.SpendCredits(unitPrefab.GetComponent<Unit>().UnitCost, team))
             {
                 Debug.Log($"Placing unit: {unitPrefab.name}");
                 UnitPlacer.Instance.StartPlacingUnit(unitPrefab, unitNum);

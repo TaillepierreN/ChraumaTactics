@@ -1,12 +1,14 @@
 using UnityEngine;
 using System;
 
-public enum RoundPhase { Preparation, Combat, PostCombat }
+public enum RoundPhase { Preparation, PostPreparation, Combat, PostCombat }
 
 namespace CT.Gameplay
 {
     public class RoundManager : MonoBehaviour
     {
+
+        public bool DebugMode = false;
 
         [Header("References")]
         [SerializeField] private Rd_Gameplay _radioGameplay;
@@ -16,6 +18,7 @@ namespace CT.Gameplay
 
         [Header("Round Timers (seconds)")]
         [Min(1f)] public float prepTime = 15f;
+        [Min(1f)] public float postPrepTime = 5f;
         [Min(1f)] public float battleTime = 10f;
         [Min(1f)] public float postBattleTime = 5f;
 
@@ -65,6 +68,10 @@ namespace CT.Gameplay
                 switch (CurrentPhase)
                 {
                     case RoundPhase.Preparation:
+                        BeginPostPreparationPhase();
+                        break;
+
+                    case RoundPhase.PostPreparation:
                         BeginCombatPhase();
                         break;
 
@@ -105,7 +112,7 @@ namespace CT.Gameplay
         {
             if (CurrentPhase != RoundPhase.Preparation)
                 return;
-            BeginCombatPhase();
+            BeginPostPreparationPhase();
         }
 
         /// <summary>
@@ -127,7 +134,22 @@ namespace CT.Gameplay
 
             TriggerEvents();
 
-            Debug.Log($"Preparation Started! Round {CurrentRound}");
+            if (DebugMode)
+                Debug.Log($"Preparation Started! Round {CurrentRound}");
+        }
+
+        /// <summary>
+        /// Start the post preparation phase
+        /// </summary>
+        private void BeginPostPreparationPhase()
+        {
+            CurrentPhase = RoundPhase.PostPreparation;
+            TimeRemaining = postPrepTime;
+
+            TriggerEvents();
+
+            if (DebugMode)
+                Debug.Log($"PostPreparation Started! Round {CurrentRound}");
         }
 
         /// <summary>
@@ -140,7 +162,8 @@ namespace CT.Gameplay
 
             TriggerEvents();
 
-            Debug.Log($"Combat Started! Round {CurrentRound}");
+            if (DebugMode)
+                Debug.Log($"Combat Started! Round {CurrentRound}");
         }
 
         /// <summary>
@@ -153,7 +176,8 @@ namespace CT.Gameplay
 
             TriggerEvents();
 
-            Debug.Log($"Post Combat Started! Round {CurrentRound}");
+            if (DebugMode)
+                Debug.Log($"Post Combat Started! Round {CurrentRound}");
         }
         #endregion
 
