@@ -33,6 +33,9 @@ public class BoostManager : MonoBehaviour
     private readonly Dictionary<Team, List<Augment>> _augmentChosenByTeam
             = new Dictionary<Team, List<Augment>>();
 
+    private readonly Dictionary<Team, StatBoost> _globalBoosts
+            = new Dictionary<Team, StatBoost>();
+
     void Awake()
     {
         _RdGameplay.SetBoostManager(this);
@@ -42,11 +45,16 @@ public class BoostManager : MonoBehaviour
         {
             _boosts[team] = new Dictionary<UnitType, StatBoost>();
             _augmentChosenByTeam[team] = new List<Augment>();
+            _globalBoosts[team] = default;
         }
     }
 
     public void RegisterAugmentToTeam(Team team, Augment augment)
     {
+
+        if (!_RdGameplay.GameManager.SpendCredits(AugmentCosts.GetCost(augment.rarity), team))
+            Debug.LogWarning($"BoostManager: not enough credits to pay {augment.augmentName} {augment.rarity} for team {team}");
+
         _augmentChosenByTeam[team].Add(augment);
 
         StatBoost newBoost = new StatBoost();
@@ -69,19 +77,23 @@ public class BoostManager : MonoBehaviour
                 newBoost.RangePercent = augment.bonusValue;
                 break;
         }
+
+        if (augment.targetScope == AugmentTargetScope.AllUnits)
+        {
+            _globalBoosts[team] += newBoost;
+            return;
+        }
+
         if (_boosts[team].TryGetValue(augment.targetType, out StatBoost prevBoost))
             _boosts[team][augment.targetType] = prevBoost + newBoost;
         else
             _boosts[team][augment.targetType] = newBoost;
 
-        if (!_RdGameplay.GameManager.SpendCredits(AugmentCosts.GetCost(augment.rarity), team))
-            Debug.LogWarning($"BoostManager: not enough credits to pay {augment.augmentName} {augment.rarity} for team {team}");
-
     }
 
     public StatBoost GetBoostForUnit(Unit unit)
     {
-        StatBoost total = default;
+        StatBoost total = _globalBoosts[unit.team];
         total += GetBoostsForType(unit.team, unit.UnitType);
         total += GetBoostsForType(unit.team, unit.UnitType2);
         return total;

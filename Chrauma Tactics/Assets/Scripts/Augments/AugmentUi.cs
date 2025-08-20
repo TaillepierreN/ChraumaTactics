@@ -22,7 +22,11 @@ public class AugmentUI : MonoBehaviour
 
         statTypeText.text = augment.statType.ToString();
         augmentNameText.text = augment.augmentName;
-        unitTypeText.text = augment.targetType.ToString();
+
+        unitTypeText.text = augment.targetScope == AugmentTargetScope.AllUnits
+        ? "All Units"
+        : augment.targetType.ToString();
+
         iconImage.sprite = augment.icon;
         rarityText.text = augment.rarity.ToString();
         bonusText.text = augment.bonusValue.ToString("F0") + "%";
