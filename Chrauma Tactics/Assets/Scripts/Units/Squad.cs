@@ -9,6 +9,9 @@ public class Squad : MonoBehaviour
     /// <summary>If true, the squad will spawn units when space bar is pressed.(need debugmode)</summary>
     public bool startSpawnDebug = false;
 
+    [Header("Refs")]
+    [SerializeField] private Rd_Gameplay _radioGameplay;
+
 
     [Header("Squad Settings")]
     public Team team;
@@ -29,7 +32,19 @@ public class Squad : MonoBehaviour
     [Header("Squad Properties")]
     /// <summary>The list of units in the squad.</summary>
     private List<Unit> units = new List<Unit>();
+    public int nbrOfDeadUnit = 0;
 
+
+    void Start()
+    {
+        _radioGameplay.GameManager.SetSquadPhase += SetUnitAction;
+    }
+
+    void OnDisable()
+    {
+        _radioGameplay.GameManager.SetSquadPhase -= SetUnitAction;
+
+    }
 
     #region Squad creation
     /// <summary>Spawns the units in the squad at their designated spawn positions.</summary>
@@ -81,12 +96,13 @@ public class Squad : MonoBehaviour
             if (unit != null)
             {
                 unit.SetTeam(team);
-                unit.spawnPosition = newUnitObj.transform.position;
+                unit.SpawnPosition = newUnitObj.transform.position;
                 unit.Initialize();
                 unit.SetSquad(this);
                 units.Add(unit);
             }
         }
+        _radioGameplay.GameManager.AddToArmy(team, this);
     }
 
     #endregion
@@ -108,11 +124,30 @@ public class Squad : MonoBehaviour
     #region Gameplay Methods
 
     /// <summary>Starts the round for all units in the squad, allowing them to perform their actions.</summary>
-    public void StartRound()
+    public void SetUnitAction(RoundPhase phase)
     {
-        foreach (Unit unit in units)
+        switch (phase)
         {
-            unit.StartRound();
+            case RoundPhase.Combat:
+                foreach (Unit unit in units)
+                    unit.StartRound();
+                nbrOfDeadUnit = 0;
+                break;
+
+            case RoundPhase.PostCombat:
+                foreach (Unit unit in units)
+                {
+                    if (!unit.gameObject.activeSelf)
+                    {
+                        nbrOfDeadUnit++;
+                        unit.gameObject.SetActive(true);
+                    }
+                    unit.EndRound();
+                }
+                break;
+
+            default:
+                break;
         }
     }
 
@@ -158,7 +193,6 @@ public class Squad : MonoBehaviour
         {
             Debug.Log("Debug Spawn Units");
             Debug.Log($"Team: {team}, Number of Units: {nbrOfUnits}");
-            Debug.Log($"Spawn Positions Count: {SpawnPositions.Count}");
             SpawnUnit();
         }
     }
