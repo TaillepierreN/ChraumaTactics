@@ -22,10 +22,10 @@ public class DebugArmy : MonoBehaviour
         StartWar -= StartTheWar;
     }
 
-	void Start()
-	{
+    void Start()
+    {
         BuildArmy();
-	}
+    }
 
     /// <summary>
     /// populate the array with children to make an army
@@ -61,5 +61,10 @@ public class DebugArmy : MonoBehaviour
             soldier.StartRound();
         }
         Debug.Log($"Team {team} is engaging");
+    }
+
+    public void EventStartWar()
+    {
+        StartWar?.Invoke();
     }
 }
