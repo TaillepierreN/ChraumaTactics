@@ -7,13 +7,11 @@ public class Rd_Gameplay : ScriptableObject
     private GameManager _gameManager;
     private RoundManager _roundManager;
     private RoundUIManager _roundUIManager;
-    private BoostManager _boostManager;
 
 
     public GameManager GameManager => _gameManager;
     public RoundManager RoundManager => _roundManager;
     public RoundUIManager RoundUIManager => _roundUIManager;
-    public BoostManager BoostManager => _boostManager;
 
     public void SetGameManager(GameManager gm)
     {
@@ -28,11 +26,6 @@ public class Rd_Gameplay : ScriptableObject
     public void SetRoundUIManager(RoundUIManager ruim)
     {
         _roundUIManager = ruim;
-    }
-
-    public void SetBoostManager(BoostManager bm)
-    {
-        _boostManager = bm;
     }
 
 }

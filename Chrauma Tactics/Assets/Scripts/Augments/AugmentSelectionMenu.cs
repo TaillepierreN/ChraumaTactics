@@ -7,29 +7,8 @@ public class AugmentSelectionMenu : MonoBehaviour
     public Augment[] allAugments;
     public GameObject augmentUIPrefab;
     public Transform container;
-    private List<GameObject> _selectedAugments = new List<GameObject>();
-    private bool _isInitialized = false;
 
-    void OnEnable()
-    {
-        if (!_isInitialized && _selectedAugments.Count == 0)
-        {
-            DisplayAugment();
-            _isInitialized = true;
-        }
-    }
-
-    void OnDisable()
-    {
-        foreach (GameObject augmentUI in _selectedAugments)
-        {
-            Destroy(augmentUI);
-        }
-        _selectedAugments.Clear();
-        _isInitialized = false;
-    }
-
-    private void DisplayAugment()
+    void Start()
     {
         AugmentRarity chosenRarity = GetRandomRarity();
 
@@ -47,7 +26,6 @@ public class AugmentSelectionMenu : MonoBehaviour
         {
             GameObject ui = Instantiate(augmentUIPrefab, container);
             ui.GetComponent<AugmentUI>().SetAugment(augmentsOfRarity[i]);
-            _selectedAugments.Add(ui);
         }
     }
 
@@ -57,9 +35,9 @@ public class AugmentSelectionMenu : MonoBehaviour
         if (roll < 40f)
             return AugmentRarity.Silver;
         else if (roll < 75f)
-            return AugmentRarity.Gold;
+            return AugmentRarity.Gold; 
         else
-            return AugmentRarity.Quantum;
+            return AugmentRarity.Quantum; 
     }
 
     private void Shuffle<T>(List<T> list)

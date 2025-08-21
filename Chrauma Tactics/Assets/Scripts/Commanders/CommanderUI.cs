@@ -12,7 +12,6 @@ public class CommanderUI : MonoBehaviour
     public TMP_Text unit2NameText;
     public TMP_Text HPText;
     [SerializeField] private Rd_Gameplay _radioGameplay;
-    [SerializeField] private Team team;
     private Commander commanderData;
 
     public Action CommanderChosen;
@@ -36,14 +35,6 @@ public class CommanderUI : MonoBehaviour
     public void SelectCommander()
     {
         _radioGameplay.GameManager.SetChosenCommander(commanderData);
-        if (commanderData.StartingAugment != null && commanderData.StartingAugment.Length > 0)
-        {
-            foreach (Augment augment in commanderData.StartingAugment)
-            {
-                if (augment == null) continue;
-                _radioGameplay.BoostManager.RegisterAugmentToTeam(team, augment);
-            }
-        }
         _radioGameplay.RoundManager.StartGame();
         CommanderChosen?.Invoke();
     }

@@ -6,7 +6,6 @@ namespace CT.Gameplay
 
     public class GameManager : MonoBehaviour
     {
-        public bool DebugMode = false;
         [Header("References")]
         [SerializeField] private Rd_Gameplay _radioGameplay;
         private RoundManager _roundManager;
@@ -15,7 +14,6 @@ namespace CT.Gameplay
         [Header("Player stats")]
         public Player player1;
         public Player player2;
-        [Min(1)] public int playerDamage = 500;
 
         [Header("Events")]
         public Action<RoundPhase> SetSquadPhase;
@@ -99,45 +97,24 @@ namespace CT.Gameplay
         /// </summary>
         /// <param name="amount"></param>
         /// <returns></returns>
-        public bool SpendCredits(int amount, Team team)
+        public bool SpendCredits(int amount)
         {
-            if (team == Team.Player1)
+            if (player1.Credits >= amount)
             {
-                if (player1.Credits >= amount)
-                {
-                    player1.Credits -= amount;
-                    UpdateCreditsUI();
-                    return true;
-                }
-            }
-            else
-            {
-                if (player2.Credits >= amount)
-                {
-                    player2.Credits -= amount;
-                    UpdateCreditsUI();
-                    return true;
-                }
+                player1.Credits -= amount;
+                UpdateCreditsUI();
+                return true;
             }
             return false;
         }
 
         /// <summary>
-        /// tell all squad when phase change 
-        /// in post preparation apply boosts
-        /// in post combat, check who won
+        /// tell all squad when phase change and in post combat, check who won
         /// </summary>
         /// <param name="roundPhase"></param>
         private void HandlePhaseChange(RoundPhase roundPhase)
         {
             SetSquadPhase?.Invoke(roundPhase);
-
-            if (roundPhase == RoundPhase.PostPreparation)
-            {
-                _radioGameplay.BoostManager.ApplyBoostsToArmy(player1.Army);
-                _radioGameplay.BoostManager.ApplyBoostsToArmy(player2.Army);
-            }
-
             if (roundPhase == RoundPhase.PostCombat)
                 CheckWinRound();
         }
@@ -154,29 +131,24 @@ namespace CT.Gameplay
                 player1Survivors += squad.nbrOfUnits - squad.nbrOfDeadUnit;
             foreach (Squad squad in player2.Army)
                 player2Survivors += squad.nbrOfUnits - squad.nbrOfDeadUnit;
-            if (DebugMode)
-            {
-                Debug.Log($"Player 1 has {player1Survivors} surviving units");
-                Debug.Log($"Player 2 has {player2Survivors} surviving units");
-            }
+
+            Debug.Log($"Player 1 has {player1Survivors} surviving units");
+            Debug.Log($"Player 2 has {player2Survivors} surviving units");
             if (player1Survivors > player2Survivors)
             {
-                if (DebugMode)
-                    Debug.Log("Player 1 win this round");
+                Debug.Log("Player 1 win this round");
                 _radioGameplay.RoundUIManager.RoundResult(1);
                 DamagePlayer(2/*, player2Survivors*/);
             }
             else if (player1Survivors < player2Survivors)
             {
-                if (DebugMode)
-                    Debug.Log("Player 2 win this round");
+                Debug.Log("Player 2 win this round");
                 _radioGameplay.RoundUIManager.RoundResult(2);
                 DamagePlayer(1/*, player1Survivors*/);
             }
             else
             {
-                if (DebugMode)
-                    Debug.Log("Draw");
+                Debug.Log("Draw");
                 _radioGameplay.RoundUIManager.RoundResult(3);
                 DamagePlayer(1/*, player2Survivors*/);
                 DamagePlayer(2/*, player1Survivors*/);
@@ -191,14 +163,14 @@ namespace CT.Gameplay
         {
             if (player == 1)
             {
-                player1.HP -= playerDamage/* * numberofUnitAlive*/;
+                player1.HP -= 500/* * numberofUnitAlive*/;
                 if (player1.HP < 0)
                     Debug.Log($"Player 2 won the game");
                 _radioGameplay.RoundUIManager.UpdatePlayerHp(1, player1.HP);
             }
             else
             {
-                player2.HP -= playerDamage/* * numberofUnitAlive*/;
+                player2.HP -= 500/* * numberofUnitAlive*/;
                 if (player2.HP < 0)
                     Debug.Log($"Player 1 won the game");
                 _radioGameplay.RoundUIManager.UpdatePlayerHp(2, player2.HP);
