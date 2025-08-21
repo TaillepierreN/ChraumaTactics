@@ -25,6 +25,9 @@ public abstract class Commander : ScriptableObject
     [Header("Commander Stats")]
     [SerializeField] public int playerHealth;
 
+    [Header("Augment")]
+    public Augment[] StartingAugment;
+
     /// <summary>
     /// Called when the commander is selected.
     /// This is where you can spawn units, set stats, etc.

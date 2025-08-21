@@ -17,6 +17,7 @@ public class RoundUIManager : MonoBehaviour
     [SerializeField] private GameObject _roundUI;
 
     public GameObject prepUI;
+    public GameObject augmentSelectionUI;
     public GameObject battleUI;
     public GameObject postBattleUI;
     public CanvasGroup resultGroup;
@@ -37,6 +38,7 @@ public class RoundUIManager : MonoBehaviour
     [SerializeField] private TMP_Text creditsText;
 
     private RoundManager _roundManager;
+    private int _currentRound = 1;
 
     void Awake()
     {
@@ -75,6 +77,11 @@ public class RoundUIManager : MonoBehaviour
         _roundManager.ForceEndPreparation();
     }
 
+    public void OnSkipAugmentSelection()
+    {
+        augmentSelectionUI.SetActive(false);
+    }
+
     /// <summary>
     /// Check the phase to display the right UI
     /// </summary>
@@ -85,15 +92,20 @@ public class RoundUIManager : MonoBehaviour
         {
             case RoundPhase.Preparation:
                 prepUI.SetActive(true);
+                if (_currentRound % 2 == 0)
+                    augmentSelectionUI.SetActive(true);
                 postBattleUI.SetActive(false);
                 endRoundButton.SetActive(true);
                 resultGroup.alpha = 0;
                 break;
 
-            case RoundPhase.Combat:
+            case RoundPhase.PostPreparation:
                 prepUI.SetActive(false);
-                battleUI.SetActive(true);
                 endRoundButton.SetActive(false);
+                break;
+
+            case RoundPhase.Combat:
+                battleUI.SetActive(true);
                 break;
 
             case RoundPhase.PostCombat:
@@ -111,6 +123,7 @@ public class RoundUIManager : MonoBehaviour
     {
         if (roundText != null)
             roundText.text = $"Round {round} - {phase}";
+        _currentRound = round;
     }
 
     /// <summary>
