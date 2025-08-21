@@ -31,9 +31,8 @@ public class Squad : MonoBehaviour
     public List<Transform> SpawnPositions = new List<Transform>();
     [Header("Squad Properties")]
     /// <summary>The list of units in the squad.</summary>
-    private List<Unit> _units = new List<Unit>();
+    private List<Unit> units = new List<Unit>();
     public int nbrOfDeadUnit = 0;
-    public IReadOnlyList<Unit> Units => _units;
 
 
     void Start()
@@ -100,7 +99,7 @@ public class Squad : MonoBehaviour
                 unit.SpawnPosition = newUnitObj.transform.position;
                 unit.Initialize();
                 unit.SetSquad(this);
-                _units.Add(unit);
+                units.Add(unit);
             }
         }
         _radioGameplay.GameManager.AddToArmy(team, this);
@@ -114,7 +113,7 @@ public class Squad : MonoBehaviour
     /// <param name="destination"></param>
     public void MoveTo(Vector3 destination)
     {
-        foreach (Unit unit in _units)
+        foreach (Unit unit in units)
         {
             unit.MoveTo(destination);
         }
@@ -130,13 +129,13 @@ public class Squad : MonoBehaviour
         switch (phase)
         {
             case RoundPhase.Combat:
-                foreach (Unit unit in _units)
+                foreach (Unit unit in units)
                     unit.StartRound();
                 nbrOfDeadUnit = 0;
                 break;
 
             case RoundPhase.PostCombat:
-                foreach (Unit unit in _units)
+                foreach (Unit unit in units)
                 {
                     if (!unit.gameObject.activeSelf)
                     {
