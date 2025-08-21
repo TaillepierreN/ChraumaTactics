@@ -10,12 +10,15 @@ namespace CT.UI.UnitSelectionUI
         [SerializeField] private GameObject unitPrefab;
         [SerializeField] private TMP_Text unitCost;
         [SerializeField] private int unitNum;
-        [SerializeField] private RoundManager roundManager;
+        [SerializeField] private Rd_Gameplay _radioGameplay;
+        public Team team;
+        private GameManager _gameManager;
 
 
 
         void Start()
         {
+            _gameManager = _radioGameplay.GameManager;
             if (unitPrefab != null)
             {
                 Unit unit = unitPrefab.GetComponent<Unit>();
@@ -28,7 +31,7 @@ namespace CT.UI.UnitSelectionUI
 
         public void OnButtonClicked()
         {
-            if (roundManager.SpendCredits(unitPrefab.GetComponent<Unit>().UnitCost))
+            if (_gameManager.SpendCredits(unitPrefab.GetComponent<Unit>().UnitCost, team))
             {
                 Debug.Log($"Placing unit: {unitPrefab.name}");
                 UnitPlacer.Instance.StartPlacingUnit(unitPrefab, unitNum);

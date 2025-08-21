@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Pool;
 
@@ -201,6 +202,7 @@ namespace CT.Units.Attacks
             if (_audioSource && _audioClip)
                 _audioSource.PlayOneShot(_audioClip);
 
+            _projectileShot.Add(projectile);
             proj.Launch(
                 new Projectile.PayLoad
                 {
@@ -218,7 +220,7 @@ namespace CT.Units.Attacks
                 {
                     GameObject impactVFX = _impactPool.Get();
                     impactVFX.transform.SetPositionAndRotation(pos, Quaternion.LookRotation(normal));
-                    StartCoroutine(ReturnAfter(impactVFX, _impactPool, _impactLifeTime));
+                    impactVFX.GetComponent<AutoRelease>().Arm(_impactPool, _impactLifeTime);
                 },
                 impactVFXAoE: (pos, normal) =>
                 {
@@ -229,18 +231,22 @@ namespace CT.Units.Attacks
                         {
                             GameObject impactVFX = _impactPool.Get();
                             impactVFX.transform.SetPositionAndRotation(p, Quaternion.LookRotation(normal));
-                            StartCoroutine(ReturnAfter(impactVFX, _impactPool, _impactLifeTime));
+                            impactVFX.GetComponent<AutoRelease>().Arm(_impactPool, _impactLifeTime);
                         }
                         else
                         {
                             GameObject impactVFXAoE = _impactAoEPool.Get();
                             impactVFXAoE.transform.SetPositionAndRotation(p, Quaternion.LookRotation(normal));
-                            StartCoroutine(ReturnAfter(impactVFXAoE, _impactAoEPool, _impactLifeTime));
+                            impactVFXAoE.GetComponent<AutoRelease>().Arm(_impactAoEPool, _impactLifeTime);
                         }
                         count++;
                     }
                 },
-                onDone: () => _projectilePool.Release(projectile)
+                onDone: () =>
+                {
+                    _projectilePool.Release(projectile);
+                    _projectileShot.Remove(projectile);
+                }
             );
             return;
         }
@@ -248,20 +254,6 @@ namespace CT.Units.Attacks
         #endregion
 
         #region Helpers
-
-        /// <summary>
-        /// Return the impact to the pool
-        /// </summary>
-        /// <param name="go">impact to return</param>
-        /// <param name="pool">pool to return the object too</param>
-        /// <param name="t">how long before returning</param>
-        /// <returns></returns>
-        private IEnumerator ReturnAfter(GameObject go, ObjectPool<GameObject> pool, float t)
-        {
-            yield return new WaitForSeconds(t);
-            if (go != null)
-                pool.Release(go);
-        }
 
         /// <summary>
         /// check if owner is set and barrel end exist
@@ -284,6 +276,22 @@ namespace CT.Units.Attacks
             projectile = _projectilePool.Get();
             projectile.transform.SetPositionAndRotation(BarrelEnd[index].position, BarrelEnd[index].rotation);
             proj = projectile.GetComponent<Projectile>();
+        }
+
+        public override void ClearProjectiles()
+        {
+            if (_projectileShot == null) return;
+
+            for (int i = _projectileShot.Count - 1; i >= 0; i--)
+            {
+                var go = _projectileShot[i];
+                if (!go) { _projectileShot.RemoveAt(i); continue; }
+
+                var proj = go.GetComponent<Projectile>();
+                proj?.Abort();
+                _projectilePool.Release(go);
+                _projectileShot.RemoveAt(i);
+            }
         }
 
         #endregion

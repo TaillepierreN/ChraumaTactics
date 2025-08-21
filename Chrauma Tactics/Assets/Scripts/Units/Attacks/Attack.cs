@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace CT.Units.Attacks
@@ -14,6 +15,8 @@ namespace CT.Units.Attacks
         [SerializeField] protected private float _aoeRadius = 3f;
         [SerializeField] protected private AudioClip _audioClip;
         [SerializeField] protected private AudioSource _audioSource;
+        protected private List<GameObject> _projectileShot = new();
+
 
         /// <summary>
         /// Toggle to set if attack is continuous(and not ballistic)
@@ -79,6 +82,11 @@ namespace CT.Units.Attacks
         /// </summary>
         /// <param name="target"></param>
         public virtual void StopAutoFire() { }
+
+        /// <summary>
+        /// Clear balistic project when round end
+        /// </summary>
+        public virtual void ClearProjectiles() { }
 
         #endregion
     }
