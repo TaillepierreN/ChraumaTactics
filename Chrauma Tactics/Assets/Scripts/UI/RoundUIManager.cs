@@ -12,7 +12,6 @@ public class RoundUIManager : MonoBehaviour
     public TextMeshProUGUI battleTimerText;
     public TMP_Text postBattleText;
 
-
     [Header("Panels and buttons")]
     [SerializeField] private GameObject _roundUI;
 
@@ -22,6 +21,7 @@ public class RoundUIManager : MonoBehaviour
     public GameObject postBattleUI;
     public CanvasGroup resultGroup;
     public GameObject endRoundButton;
+    public GameObject betweenRoundsPanel;
 
     [Header("Player Stats")]
     [SerializeField] Slider HPSliderP1;
@@ -31,14 +31,13 @@ public class RoundUIManager : MonoBehaviour
     private int P1maxHP;
     private int P2maxHP;
 
-
-
     [Header("Refs")]
     [SerializeField] private Rd_Gameplay _radioGameplay;
     [SerializeField] private TMP_Text creditsText;
 
     private RoundManager _roundManager;
     private int _currentRound = 1;
+    private Coroutine betweenRoundsRoutine;
 
     void Awake()
     {
@@ -56,7 +55,6 @@ public class RoundUIManager : MonoBehaviour
         HandleRoundChanged(_roundManager.CurrentRound, _roundManager.CurrentPhase);
         HandlePhaseChanged(_roundManager.CurrentPhase);
         HandleTimerTick(_roundManager.TimeRemaining);
-
     }
 
     void OnDestroy()
@@ -72,6 +70,7 @@ public class RoundUIManager : MonoBehaviour
     {
         _roundUI.SetActive(true);
     }
+
     public void OnEndRoundButton()
     {
         _roundManager.ForceEndPreparation();
@@ -82,10 +81,6 @@ public class RoundUIManager : MonoBehaviour
         augmentSelectionUI.SetActive(false);
     }
 
-    /// <summary>
-    /// Check the phase to display the right UI
-    /// </summary>
-    /// <param name="phase"></param>
     private void HandlePhaseChanged(RoundPhase phase)
     {
         switch (phase)
@@ -113,10 +108,7 @@ public class RoundUIManager : MonoBehaviour
                 postBattleUI.SetActive(true);
                 StartCoroutine(ShowResult());
                 break;
-            default:
-                break;
         }
-
     }
 
     private void HandleRoundChanged(int round, RoundPhase phase)
@@ -126,36 +118,61 @@ public class RoundUIManager : MonoBehaviour
         _currentRound = round;
     }
 
-    /// <summary>
-    /// handle the timer display
-    /// </summary>
-    /// <param name="TimeRemaining"></param>
     private void HandleTimerTick(float TimeRemaining)
     {
         int seconds = Mathf.CeilToInt(TimeRemaining);
 
-        if (_roundManager.CurrentPhase == RoundPhase.Preparation)
+        switch (_roundManager.CurrentPhase)
         {
-            if (prepTimerText)
-                prepTimerText.text = seconds.ToString();
-        }
-        else
-        {
-            if (battleTimerText)
-                battleTimerText.text = seconds.ToString();
+            case RoundPhase.Preparation:
+                if (prepTimerText)
+                {
+                    prepTimerText.gameObject.SetActive(true);
+                    prepTimerText.text = seconds.ToString();
+                }
+                if (battleTimerText) battleTimerText.gameObject.SetActive(false);
+                break;
+
+            case RoundPhase.Combat:
+                if (battleTimerText)
+                {
+                    battleTimerText.gameObject.SetActive(true);
+                    battleTimerText.text = seconds.ToString();
+                }
+                if (prepTimerText) prepTimerText.gameObject.SetActive(false);
+                break;
+
+            case RoundPhase.PostPreparation:
+            case RoundPhase.PostCombat:
+                if (betweenRoundsRoutine != null)
+                    StopCoroutine(betweenRoundsRoutine);
+
+                betweenRoundsRoutine = StartCoroutine(ShowBetweenRoundsPanel(1f));
+
+                if (battleTimerText)
+                {
+                    battleTimerText.gameObject.SetActive(true);
+                    battleTimerText.text = seconds.ToString();
+                }
+                if (prepTimerText) prepTimerText.gameObject.SetActive(false);
+                break;
         }
     }
 
-    /// <summary>
-    /// set the player HP based on commander choice
-    /// TEMP: both player use the same commander
-    /// </summary>
-    /// <param name="playerHp"></param>
+    private IEnumerator ShowBetweenRoundsPanel(float duration)
+    {
+        if (betweenRoundsPanel)
+        {
+            betweenRoundsPanel.SetActive(true);
+            yield return new WaitForSeconds(duration);
+            betweenRoundsPanel.SetActive(false);
+        }
+    }
+
     public void SetPlayerHp(int playerHp)
     {
         HPSliderP1.maxValue = playerHp;
         HPSliderP1.value = playerHp;
-        //for now p2 has same hp as p1
         HPSliderP2.maxValue = playerHp;
         HPSliderP2.value = playerHp;
         HPTextP1.text = $"{playerHp}/{playerHp}";
@@ -163,11 +180,6 @@ public class RoundUIManager : MonoBehaviour
         P1maxHP = P2maxHP = playerHp;
     }
 
-    /// <summary>
-    /// Update the hp slider of players
-    /// </summary>
-    /// <param name="player"></param>
-    /// <param name="playerHp"></param>
     public void UpdatePlayerHp(int player, int playerHp)
     {
         if (player == 1)
@@ -182,20 +194,12 @@ public class RoundUIManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Update the credits of player(one for now)
-    /// </summary>
-    /// <param name="playerCred"></param>
     public void UpdateCreditsUI(int playerCred)
     {
         if (creditsText != null)
             creditsText.text = playerCred.ToString();
     }
 
-    /// <summary>
-    /// set text of round winner
-    /// </summary>
-    /// <param name="winningPlayer"></param>
     public void RoundResult(int winningPlayer)
     {
         if (winningPlayer == 1)
@@ -206,10 +210,6 @@ public class RoundUIManager : MonoBehaviour
             postBattleText.text = "Draw";
     }
 
-    /// <summary>
-    /// fade in the result panel
-    /// </summary>
-    /// <returns></returns>
     private IEnumerator ShowResult()
     {
         float start = resultGroup.alpha;
