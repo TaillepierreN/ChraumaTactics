@@ -121,6 +121,7 @@ public abstract class Unit : MonoBehaviour
     private Coroutine _hpDisplayCoroutine;
     private float _barTargetHp;
     private float _delayUntil = -1f;
+    /// <summary>tolerance threshold (really close to 0)</summary>
     const float EPSILON = 0.001f;
 
     #endregion
@@ -135,6 +136,8 @@ public abstract class Unit : MonoBehaviour
     #region Unit Getters
     /// <summary>
     /// Gets the current health of the unit.
+    public UnitType UnitType => _unitType;
+    public UnitType UnitType2 => _unitType2;
     public int CurrentHealth => _currentHealth;
     public int CurrentAtk => _currentAtk;
     public Unit CurrentTarget => _currentTarget;
@@ -312,6 +315,15 @@ public abstract class Unit : MonoBehaviour
     /// <param name="range"></param>
     public virtual void SetCurrentStats(int health, int atk, float moveSpeed, float atkSpeed, float range)
     {
+        if (team == Team.Player1 && DebugMode)
+        {
+            Debug.Log($"Setting stat for {gameObject.name}");
+            Debug.Log($"Health: {_baseHealth} -> {health}");
+            Debug.Log($"Atk: {_baseAtk} -> {atk}");
+            Debug.Log($"MoveSpeed: {_baseMoveSpeed} -> {moveSpeed}");
+            Debug.Log($"AtkSpeed: {_baseAtkSpeed} -> {atkSpeed}");
+            Debug.Log($"Range: {_baseRange} -> {range}");
+        }
         _currentHealth = health;
         _currentAtk = atk;
         _currentMoveSpeed = moveSpeed;
@@ -328,17 +340,26 @@ public abstract class Unit : MonoBehaviour
         _hpBar.value = _currentHealth;
     }
 
-    //TODO 
-    // Example of boost to stats at start of rounds?
-    /*public virtual void UpdateBoostedStats(BonusManager manager)
+    /// <summary>
+    /// Updates the unit's stats based on the given stat boosts
+    /// </summary>
+    /// <param name="boosts"></param>
+    public virtual void UpdateBoostedStats(StatBoost boosts)
     {
-        boostedHealth = baseHealth + manager.GetHealthBonus();
-        boostedAtk = baseAtk + manager.GetAttackBonus();
-        boostedMoveSpeed = baseMoveSpeed + manager.GetMoveSpeedBonus();
-        boostedAtkSpeed = baseAtkSpeed + manager.GetAttackSpeedBonus();
-        boostedRange = baseRange + manager.GetRangeBonus();
-        SetCurrentStats(boostedHealth, boostedAtk, boostedMoveSpeed, boostedAtkSpeed, boostedRange);
-    }*/
+        float hpMultiplicator = 1f + boosts.HpPercent * 0.01f;
+        float atkMultiplicator = 1f + boosts.AtkPercent * 0.01f;
+        float aspdMultiplicator = 1f + boosts.AtkSpeedPercent * 0.01f;
+        float mspMultiplicator = 1f + boosts.MoveSpeedPercent * 0.01f;
+        float rngMultiplicator = 1f + boosts.RangePercent * 0.01f;
+
+        _boostedHealth = Mathf.RoundToInt(_baseHealth * hpMultiplicator);
+        _boostedAtk = Mathf.RoundToInt(_baseAtk * atkMultiplicator);
+        _boostedAtkSpeed = _baseAtkSpeed * aspdMultiplicator;
+        _boostedMoveSpeed = _baseMoveSpeed * mspMultiplicator;
+        _boostedRange = _baseRange * rngMultiplicator;
+
+        SetCurrentStats(_boostedHealth, _boostedAtk, _boostedMoveSpeed, _boostedAtkSpeed, _boostedRange);
+    }
 
     /// <summary>Resets the unit's stats to the boosted values and position .Call at game round end</summary>
     public virtual void ResetStats()
