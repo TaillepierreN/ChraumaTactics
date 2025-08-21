@@ -39,6 +39,7 @@ namespace CT.UI.UnitSelectionUI
             else
             {
                 return;
+
             }
         }
     }
