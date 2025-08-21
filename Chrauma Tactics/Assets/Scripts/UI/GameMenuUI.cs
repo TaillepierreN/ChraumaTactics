@@ -10,8 +10,6 @@ public class GameMenuUI : MonoBehaviour
     public GameObject rankingPanel;
 
 
-
-
     public void OnPlay()
     {
         SceneLoader.Load("LobbyPreGame");
@@ -114,5 +112,5 @@ public class GameMenuUI : MonoBehaviour
             Debug.Log("Quit confirmation popup closed");
         }
     }
-    
+
 }
