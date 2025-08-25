@@ -14,6 +14,9 @@ namespace CT.Gameplay
         [SerializeField] private Rd_Gameplay _radioGameplay;
         private GameObject unitPrefab;
         private int numberOfUnits = 1;
+        private Team placingTeam;
+        private bool usingVoucher = false;
+        private GameObject voucherUnitPrefab = null;
 
 
         private GameObject ghostUnit;
@@ -68,7 +71,23 @@ namespace CT.Gameplay
             }
         }
 
-        public void StartPlacingUnit(GameObject unitToPlace, int nbrOfUnits = 1)
+        public void StartPlacingUnit(GameObject unitToPlace, int nbrOfUnits = 1, Team team = Team.Player1)
+        {
+            placingTeam = team;
+            usingVoucher = false;
+            voucherUnitPrefab = null;
+            BeginPlacing(unitToPlace, nbrOfUnits);
+        }
+
+        public void StartPlacingFreeUnit(GameObject unitToPlace, int nbrOfUnits = 1, Team team = Team.Player1)
+        {
+            placingTeam = team;
+            usingVoucher = true;
+            voucherUnitPrefab = unitToPlace;
+            BeginPlacing(unitToPlace, nbrOfUnits);
+        }
+
+        private void BeginPlacing(GameObject unitToPlace, int nbrOfUnits)
         {
             unitPrefab = unitToPlace;
             numberOfUnits = nbrOfUnits;
@@ -96,6 +115,7 @@ namespace CT.Gameplay
             }
 
             isPlacing = true;
+            return;
         }
 
         private void PlaceUnit(GridPosition pos)
@@ -106,11 +126,27 @@ namespace CT.Gameplay
             GameObject SquadObject = Instantiate(squadPrefab, LevelGrid.Instance.GetWorldPosition(pos), Quaternion.identity);
             Squad squad = SquadObject.GetComponent<Squad>();
 
+            squad.team = placingTeam;
             squad.nbrOfUnits = numberOfUnits;
             squad.unitPrefab = unitPrefab;
             squad.SpawnUnit();
 
             LevelGrid.Instance.AddSquadAtGridPosition(pos, squad);
+
+            if (usingVoucher && voucherUnitPrefab != null)
+            {
+                Player player = _radioGameplay.GameManager.GetPlayerByTeam(placingTeam);
+                if (player != null)
+                    player.ConsumeFreeSquadVoucher(voucherUnitPrefab);
+            }
+            usingVoucher = false;
+            voucherUnitPrefab = null;
+
+            if (placingTeam == Team.Player1)
+                _radioGameplay.GameManager.P1CreditsChanged?.Invoke(_radioGameplay.GameManager.player1.Credits);
+            else
+                _radioGameplay.GameManager.P2CreditsChanged?.Invoke(_radioGameplay.GameManager.player2.Credits);
+
 
             ClearGhostUnit();
         }

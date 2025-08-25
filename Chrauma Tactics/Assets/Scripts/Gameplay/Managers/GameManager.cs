@@ -254,6 +254,12 @@ namespace CT.Gameplay
         {
             _radioGameplay.RoundUIManager.UpdateCreditsUI(player1.Credits);
         }
+
+        public Player GetPlayerByTeam(Team team)
+        {
+            return team == Team.Player1 ? player1 : player2;
+        }
+        
         #endregion
     }
 }

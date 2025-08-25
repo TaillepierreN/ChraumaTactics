@@ -16,8 +16,9 @@ namespace CT.UI.UnitSelectionUI
         [SerializeField] private Button _button;
         private Coroutine _listenCo;
         private bool _isSubscribed = false;
-        public Team Team;
         private GameManager _gameManager;
+        private int _cost;
+        public Team Team;
 
         #region Unity Methods
         private void Awake()
@@ -33,6 +34,7 @@ namespace CT.UI.UnitSelectionUI
                 if (unit != null)
                 {
                     unitCost.text = unit.UnitCost.ToString();
+                    _cost = unit.UnitCost;
                 }
             }
         }
@@ -109,17 +111,41 @@ namespace CT.UI.UnitSelectionUI
 
         private void CheckIfCanAfford()
         {
-            if (_gameManager.CanAfford(unitPrefab.GetComponent<Unit>().UnitCost, Team))
-                _button.interactable = true;
+            Player player = _gameManager.GetPlayerByTeam(Team);
+            bool hasVoucher = player != null && player.FreeSquadVouchers.Contains(unitPrefab);
+
+            if (hasVoucher)
+            {
+                unitCost.text = "Free";
+            }
             else
-                _button.interactable = false;
+            {
+                unitCost.text = _cost.ToString();
+            }
+
+            int cost = 0;
+            Unit unit = unitPrefab.GetComponent<Unit>();
+            if (unit != null)
+                cost = unit.UnitCost;
+
+            bool canAfford = _gameManager.CanAfford(cost, Team);
+            _button.interactable = hasVoucher || canAfford;
         }
+
         public void OnButtonClicked()
         {
-            if (_gameManager.SpendCredits(unitPrefab.GetComponent<Unit>().UnitCost, Team))
+            Player player = _gameManager.GetPlayerByTeam(Team);
+            if (player == null) return;
+            if (player.FreeSquadVouchers.Contains(unitPrefab))
+            {
+                UnitPlacer.Instance.StartPlacingFreeUnit(unitPrefab, unitNum, Team);
+                CheckIfCanAfford();
+                return;
+            }
+            else if (_gameManager.SpendCredits(unitPrefab.GetComponent<Unit>().UnitCost, Team))
             {
                 //Debug.Log($"Placing unit: {unitPrefab.name}");
-                UnitPlacer.Instance.StartPlacingUnit(unitPrefab, unitNum);
+                UnitPlacer.Instance.StartPlacingUnit(unitPrefab, unitNum, Team);
             }
             else
             {
