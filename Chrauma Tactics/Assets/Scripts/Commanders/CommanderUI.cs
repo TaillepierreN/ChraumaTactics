@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System;
+using CT.Gameplay;
 
 public class CommanderUI : MonoBehaviour
 {
@@ -30,7 +31,7 @@ public class CommanderUI : MonoBehaviour
         UnitIcon2.sprite = commander.unitIcon2;
         BoostIcon1.sprite = commander.boostIcon1;
         BoostIcon2.sprite = commander.boostIcon2;
-        
+
         HPText.text = commander.playerHealth.ToString();
         descriptionText.text = commander.description;
         unit1NameText.text = commander.unitName1;
@@ -54,7 +55,19 @@ public class CommanderUI : MonoBehaviour
                 _radioGameplay.BoostManager.RegisterAugmentToTeam(team, augment);
             }
         }
+        if (commanderData.unitPrefab1 != null)
+            GiveFreeSquadToPlayer(team, commanderData.unitPrefab1);
+        if (commanderData.unitPrefab2 != null)
+            GiveFreeSquadToPlayer(team, commanderData.unitPrefab2);
         _radioGameplay.RoundManager.StartGame();
         CommanderChosen?.Invoke();
+    }
+
+    private void GiveFreeSquadToPlayer(Team team, GameObject unitPrefab)
+    {
+        if (unitPrefab == null) return;
+        Player player = _radioGameplay.GameManager.GetPlayerByTeam(team);
+        if (player == null) return;
+        player.GiveFreeSquadVoucher(unitPrefab);
     }
 }
