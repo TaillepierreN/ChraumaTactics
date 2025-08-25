@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using CT.Units.Animations;
 using CT.Units.Attacks;
+using NaughtyAttributes;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
@@ -12,6 +13,9 @@ public abstract class Unit : MonoBehaviour
 {
     #region Unit Properties
     public bool DebugMode = false;
+    [ShowIf("DebugMode")]
+    public bool DebugStats = false;
+
     public Team team;
     protected Squad _squad;
     [SerializeField] protected UnitType _unitType;
@@ -19,7 +23,6 @@ public abstract class Unit : MonoBehaviour
     [SerializeField] protected string _unitDescription;
     [SerializeField] protected int _unitCost;
     [SerializeField] protected Attack _attack;
-    public int UnitCost => _unitCost;
     /// <summary>
     /// Where the enemy should aim
     /// </summary>
@@ -58,6 +61,7 @@ public abstract class Unit : MonoBehaviour
     [Header("Unit NavMesh Agent")]
     protected NavMeshAgent _agent;
     [SerializeField] protected bool _hasSmoothStop = false;
+    [ShowIf("_hasSmoothStop")]
     [SerializeField] protected float _decelerationRate = 2.5f;
     private bool _waitingForStop = false;
 
@@ -76,6 +80,10 @@ public abstract class Unit : MonoBehaviour
     private Material _right2TrackMaterial;
     private float _leftOffset = 0f;
     private float _rightOffset = 0f;
+
+    [Header("Unit Audio")]
+    [SerializeField] protected AudioSource _audioSource;
+    [SerializeField] protected AudioClip _moveClip;
 
 
     [Header("Unit Detection settings")]
@@ -98,7 +106,9 @@ public abstract class Unit : MonoBehaviour
     [SerializeField] private bool _canTargetFlying;
     [SerializeField] private bool _aerialOnly = false;
 
+    [ShowIf("_requierFacingForAttack")]
     [SerializeField, Range(0f, 90f)] private float _facingConeDegree = 32f;
+    [ShowIf("_requierFacingForAttack")]
     [SerializeField] private float _facingEpsilonDeg = 1.5f;
     private float _minFacingDot = 0.85f;
     private Coroutine _alignRoutine;
@@ -142,6 +152,8 @@ public abstract class Unit : MonoBehaviour
     public int CurrentAtk => _currentAtk;
     public Unit CurrentTarget => _currentTarget;
     public Transform Hitbox => _ownHitbox;
+    public int UnitCost => _unitCost;
+
 
     #endregion
 
@@ -149,6 +161,8 @@ public abstract class Unit : MonoBehaviour
     protected virtual void Awake()
     {
         _agent = GetComponent<NavMeshAgent>();
+        if (_audioSource == null)
+            _audioSource = GetComponent<AudioSource>();
         if (_leftTrackRenderer != null)
             _leftTrackMaterial = _leftTrackRenderer.material;
         if (_rightTrackRenderer != null)
@@ -205,6 +219,7 @@ public abstract class Unit : MonoBehaviour
             {
                 _agent.ResetPath();
                 _waitingForStop = false;
+                PlayMoveSound(false);
                 if (_animatorBody != null)
                     _animatorBody.SetBool("IsMoving", false);
             }
@@ -315,7 +330,7 @@ public abstract class Unit : MonoBehaviour
     /// <param name="range"></param>
     public virtual void SetCurrentStats(int health, int atk, float moveSpeed, float atkSpeed, float range)
     {
-        if (team == Team.Player1 && DebugMode)
+        if (team == Team.Player1 && DebugMode && DebugStats)
         {
             Debug.Log($"Setting stat for {gameObject.name}");
             Debug.Log($"Health: {_baseHealth} -> {health}");
@@ -420,10 +435,29 @@ public abstract class Unit : MonoBehaviour
         {
             _agent.SetDestination(destination);
             IsMoving = true;
+            PlayMoveSound();
             if (_animatorBody != null)
                 _animatorBody.SetBool("IsMoving", true);
             _agent.isStopped = false;
         }
+    }
+
+    private void PlayMoveSound(bool shouldPlay = true)
+    {
+        if (_audioSource != null && _moveClip != null)
+            if (shouldPlay && !_audioSource.isPlaying)
+            {
+                _audioSource.clip = _moveClip;
+                _audioSource.time = UnityEngine.Random.Range(0f, _moveClip.length - 0.1f);
+                _audioSource.loop = true;
+                _audioSource.Play();
+            }
+            else if (!shouldPlay && _audioSource.isPlaying)
+            {
+                _audioSource.loop = false;
+                _audioSource.Stop();
+            }
+
     }
 
     /// <summary>Stops the unit's movement, either instant or smoothed.</summary>
@@ -436,6 +470,7 @@ public abstract class Unit : MonoBehaviour
             if (!_hasSmoothStop)
             {
                 _agent.ResetPath();
+                PlayMoveSound(false);
                 _agent.velocity = Vector3.zero;
                 if (_animatorBody != null)
                     _animatorBody.SetBool("IsMoving", false);
@@ -462,6 +497,7 @@ public abstract class Unit : MonoBehaviour
         RoundStarted = false;
 
         StopMovement();
+        PlayMoveSound(false);
         if (CurrentTarget != null)
             ClearTarget(CurrentTarget);
 

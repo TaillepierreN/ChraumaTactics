@@ -6,7 +6,8 @@ namespace CT.Grid
 {
     public class LevelGrid : MonoBehaviour
     {
-        public static LevelGrid Instance { get; private set;}
+        public bool DebugMode = false;
+        public static LevelGrid Instance { get; private set; }
 
         public int gridX = 10;
         public int gridZ = 10;
@@ -24,7 +25,8 @@ namespace CT.Grid
             Instance = this;
 
             _gridSystem = new GridSystem(gridX, gridZ, 10f);
-            _gridSystem.CreateDebugObjects(_gridDebugObjectPrefab, this.gameObject);
+            if (DebugMode)
+                _gridSystem.CreateDebugObjects(_gridDebugObjectPrefab, this.gameObject);
         }
 
         public void AddSquadAtGridPosition(GridPosition gridPosition, Squad squad)

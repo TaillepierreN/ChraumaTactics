@@ -75,6 +75,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   DebugMode: 1
+  DebugStats: 0
   team: 0
   _unitType: 1
   _unitType2: 2
@@ -97,6 +98,8 @@ MonoBehaviour:
   _left2TrackRenderer: {fileID: 0}
   _rightTrackRenderer: {fileID: 0}
   _right2TrackRenderer: {fileID: 0}
+  _audioSource: {fileID: 1912957263709174951}
+  _moveClip: {fileID: 8300000, guid: 35a9ffbeb490b72409c425a80535c6ff, type: 3}
   _detectionRadius: 170
   _requierFacingForAttack: 0
   _canTargetFlying: 1
@@ -152,7 +155,7 @@ AudioSource:
   Spatialize: 0
   SpatializePostEffects: 0
   Priority: 128
-  DopplerLevel: 1
+  DopplerLevel: 0
   MinDistance: 1
   MaxDistance: 80
   Pan2D: 0
@@ -213,7 +216,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0
+      value: 0.11111111
       inSlope: 0
       outSlope: 0
       tangentMode: 0
