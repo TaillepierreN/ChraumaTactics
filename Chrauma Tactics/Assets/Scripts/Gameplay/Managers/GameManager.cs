@@ -19,6 +19,8 @@ namespace CT.Gameplay
 
         [Header("Events")]
         public Action<RoundPhase> SetSquadPhase;
+        public Action<int> P1CreditsChanged;
+        public Action<int> P2CreditsChanged;
 
         #region  Unity callbacks
         void Awake()
@@ -84,14 +86,21 @@ namespace CT.Gameplay
             {
                 player1.Credits += _roundManager.creditsPerRound[roundNumber - 1];
                 player2.Credits += _roundManager.creditsPerRound[roundNumber - 1];
+                CreditsChanged();
             }
             else
             {
                 player1.Credits += _roundManager.creditsPerRound[_roundManager.creditsPerRound.Length - 1];
                 player2.Credits += _roundManager.creditsPerRound[_roundManager.creditsPerRound.Length - 1];
-
+                CreditsChanged();
             }
             UpdateCreditsUI();
+        }
+
+        private void CreditsChanged()
+        {
+            P1CreditsChanged?.Invoke(player1.Credits);
+            P2CreditsChanged?.Invoke(player2.Credits);
         }
 
         /// <summary>
@@ -107,6 +116,7 @@ namespace CT.Gameplay
                 {
                     player1.Credits -= amount;
                     UpdateCreditsUI();
+                    P1CreditsChanged?.Invoke(player1.Credits);
                     return true;
                 }
             }
@@ -116,10 +126,29 @@ namespace CT.Gameplay
                 {
                     player2.Credits -= amount;
                     UpdateCreditsUI();
+                    P2CreditsChanged?.Invoke(player2.Credits);
                     return true;
                 }
             }
             return false;
+        }
+
+        /// <summary>
+        /// Check if player can afford a purchase
+        /// </summary>
+        /// <param name="amount"></param>
+        /// <param name="team"></param>
+        /// <returns></returns>
+        public bool CanAfford(int amount, Team team)
+        {
+            if (team == Team.Player1)
+            {
+                return player1.Credits >= amount;
+            }
+            else
+            {
+                return player2.Credits >= amount;
+            }
         }
 
         /// <summary>
