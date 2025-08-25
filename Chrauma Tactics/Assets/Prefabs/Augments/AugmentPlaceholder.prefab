@@ -332,7 +332,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 4831780281912330553}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 4135020195415333817}
+        m_TargetAssemblyTypeName: AugmentUI, Assembly-CSharp
+        m_MethodName: SelectAugment
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &4831780283281075906
 GameObject:
   m_ObjectHideFlags: 0
@@ -504,6 +516,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 625317f0d90d74de39273957f7dc2aea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _radioGameplay: {fileID: 11400000, guid: 1a380cd7d54b23342a8b318ae7e67f93, type: 2}
+  team: 0
   iconImage: {fileID: 6176139488170996378}
   augmentNameText: {fileID: 8723642741315878057}
   unitTypeText: {fileID: 1043107719479627767}

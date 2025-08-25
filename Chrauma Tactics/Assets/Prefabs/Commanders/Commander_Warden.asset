@@ -13,10 +13,17 @@ MonoBehaviour:
   m_Name: Commander_Warden
   m_EditorClassIdentifier: 
   commanderName: Warden
-  portrait: {fileID: 21300000, guid: 2f29486dcf90a1e48a054800ede68ee2, type: 3}
+  portrait: {fileID: 21300000, guid: 780aab8831b3a4f7d93e5ae9c6e02998, type: 3}
   description: "piti\xE9"
   unitPrefab1: {fileID: 0}
   unitName1: Hammer
   unitPrefab2: {fileID: 0}
   unitName2: Arclight
+  unitIcon1: {fileID: 21300000, guid: d2da53fcae2e84305b3d0950b3944bf7, type: 3}
+  unitIcon2: {fileID: 21300000, guid: 92e9f6ab2e02d4ad7a549cf142b56639, type: 3}
+  boostIcon1: {fileID: 21300000, guid: 11e40dd8122b5a14282c0f6900aef54c, type: 3}
+  boostIcon2: {fileID: 21300000, guid: c2591cd5c61f4164cbbdb34b8a1ca082, type: 3}
   playerHealth: 4500
+  StartingAugment:
+  - {fileID: 11400000, guid: e654751d089bb4bd2b2386a05f9b4d28, type: 2}
+  - {fileID: 11400000, guid: 08061014424e545159d128289d7f5934, type: 2}

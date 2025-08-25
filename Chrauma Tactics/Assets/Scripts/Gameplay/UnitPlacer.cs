@@ -11,7 +11,8 @@ namespace CT.Gameplay
 
         [SerializeField] private GameObject squadPrefab;
         [SerializeField] private GameObject ghostSquadPrefab;
-        [SerializeField] private GameObject unitPrefab;
+        [SerializeField] private Rd_Gameplay _radioGameplay;
+        private GameObject unitPrefab;
         private int numberOfUnits = 1;
 
 
@@ -27,6 +28,22 @@ namespace CT.Gameplay
                 return;
             }
             Instance = this;
+        }
+
+        private void Start()
+        {
+            _radioGameplay.RoundManager.OnPhaseChanged += HandleChangePhase;
+        }
+
+        private void OnDestroy()
+        {
+            _radioGameplay.RoundManager.OnPhaseChanged -= HandleChangePhase;
+        }
+
+        private void HandleChangePhase(RoundPhase phase)
+        {
+            if (phase == RoundPhase.PostPreparation)
+                ClearGhostUnit();
         }
 
         private void Update()
@@ -50,6 +67,7 @@ namespace CT.Gameplay
                     PlaceUnit(gridPos);
             }
         }
+
         public void StartPlacingUnit(GameObject unitToPlace, int nbrOfUnits = 1)
         {
             unitPrefab = unitToPlace;
@@ -94,6 +112,12 @@ namespace CT.Gameplay
 
             LevelGrid.Instance.AddSquadAtGridPosition(pos, squad);
 
+            ClearGhostUnit();
+        }
+
+        private void ClearGhostUnit()
+        {
+            isPlacing = false;
             GridSystemVisual.Instance.HideAllOverlays();
             Destroy(ghostUnit);
             ghostUnit = null;

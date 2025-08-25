@@ -17,6 +17,12 @@ public abstract class Commander : ScriptableObject
     [SerializeField] public string unitName1;
     [SerializeField] public GameObject unitPrefab2;
     [SerializeField] public string unitName2;
+    [SerializeField] public Sprite unitIcon1;
+    [SerializeField] public Sprite unitIcon2;
+    [SerializeField] public Sprite boostIcon1;
+    [SerializeField] public Sprite boostIcon2;
+
+
 
     // [Header("Bonuses")]
     // public CommanderBonus bonus1;
@@ -24,6 +30,9 @@ public abstract class Commander : ScriptableObject
 
     [Header("Commander Stats")]
     [SerializeField] public int playerHealth;
+
+    [Header("Augment")]
+    public Augment[] StartingAugment;
 
     /// <summary>
     /// Called when the commander is selected.

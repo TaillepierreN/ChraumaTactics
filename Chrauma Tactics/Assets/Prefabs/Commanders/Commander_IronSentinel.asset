@@ -13,10 +13,17 @@ MonoBehaviour:
   m_Name: Commander_IronSentinel
   m_EditorClassIdentifier: 
   commanderName: Iron Sentinel
-  portrait: {fileID: 21300000, guid: fd128e31b324f614e8f9fbc6a1d518f5, type: 3}
+  portrait: {fileID: 21300000, guid: 2f0efc227ab2f42f18ce59d4d63f3321, type: 3}
   description: Bonus pizza aqui
   unitPrefab1: {fileID: 0}
   unitName1: Strikers
   unitPrefab2: {fileID: 0}
   unitName2: Hammer
+  unitIcon1: {fileID: 21300000, guid: 4db36883ffb674102b8648dc7a85317d, type: 3}
+  unitIcon2: {fileID: 21300000, guid: d2da53fcae2e84305b3d0950b3944bf7, type: 3}
+  boostIcon1: {fileID: 21300000, guid: c2591cd5c61f4164cbbdb34b8a1ca082, type: 3}
+  boostIcon2: {fileID: 21300000, guid: db7e2dc1a8334d94482fe0e0a13d9287, type: 3}
   playerHealth: 5000
+  StartingAugment:
+  - {fileID: 11400000, guid: 6ae7075ca141d43018e71ce0a0010d75, type: 2}
+  - {fileID: 11400000, guid: f631ea197564344ddaa1f0d5c7164ac7, type: 2}

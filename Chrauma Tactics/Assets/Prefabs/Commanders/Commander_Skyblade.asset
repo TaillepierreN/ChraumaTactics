@@ -13,10 +13,17 @@ MonoBehaviour:
   m_Name: Commander_Skyblade
   m_EditorClassIdentifier: 
   commanderName: Skyblade
-  portrait: {fileID: 21300000, guid: 5152209d48898094bb37a08ac50d61a5, type: 3}
+  portrait: {fileID: 21300000, guid: c7b4058d2a25e46b7b69303f719c4aff, type: 3}
   description: BOBO et NUNUS
   unitPrefab1: {fileID: 0}
   unitName1: Arclight
   unitPrefab2: {fileID: 0}
   unitName2: Snipers
+  unitIcon1: {fileID: 21300000, guid: 92e9f6ab2e02d4ad7a549cf142b56639, type: 3}
+  unitIcon2: {fileID: 21300000, guid: 4a087075aeb844882851f8e92362a400, type: 3}
+  boostIcon1: {fileID: 21300000, guid: c2591cd5c61f4164cbbdb34b8a1ca082, type: 3}
+  boostIcon2: {fileID: 21300000, guid: 9e406253d198e3144bfc5127c13048a1, type: 3}
   playerHealth: 4100
+  StartingAugment:
+  - {fileID: 11400000, guid: 9955ebc9d717d4d23ae213e2c66b8a6b, type: 2}
+  - {fileID: 11400000, guid: 0aa72b5cc625045ef9ba6d02f053799c, type: 2}

@@ -13,10 +13,17 @@ MonoBehaviour:
   m_Name: Commander_Solaris
   m_EditorClassIdentifier: 
   commanderName: Solaris
-  portrait: {fileID: 21300000, guid: 944a3fea93fb18045b9842fa130e76c0, type: 3}
+  portrait: {fileID: 21300000, guid: c2aaa109d921e4c1cb6340de1ef38e5d, type: 3}
   description: Beau Nusse
   unitPrefab1: {fileID: 0}
   unitName1: Strikers
   unitPrefab2: {fileID: 0}
   unitName2: Swarmers
+  unitIcon1: {fileID: 21300000, guid: 4db36883ffb674102b8648dc7a85317d, type: 3}
+  unitIcon2: {fileID: 21300000, guid: a7d9260efceea4d7e87924e21bb177fe, type: 3}
+  boostIcon1: {fileID: 21300000, guid: db7e2dc1a8334d94482fe0e0a13d9287, type: 3}
+  boostIcon2: {fileID: 21300000, guid: 11e40dd8122b5a14282c0f6900aef54c, type: 3}
   playerHealth: 3800
+  StartingAugment:
+  - {fileID: 11400000, guid: d312e197bedae4c29a0b07603bdccf01, type: 2}
+  - {fileID: 11400000, guid: 41fc5af6e856e4c4fb0a05263bfdc04b, type: 2}

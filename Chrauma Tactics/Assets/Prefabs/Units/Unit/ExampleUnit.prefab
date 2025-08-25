@@ -115,32 +115,33 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   DebugMode: 0
+  DebugStats: 0
   team: 1
-  unitType: 1
-  unitType2: 0
-  unitDescription: 
-  unitCost: 
-  attack: {fileID: 6949082303041918633}
-  ownHitbox: {fileID: 3419336797323587729}
-  baseHealth: 500
-  baseAtk: 25
-  baseMoveSpeed: 20
-  baseAtkSpeed: 4
-  baseRange: 20
-  spawnPosition: {x: 0, y: 0, z: 0}
-  hasSmoothStop: 1
-  decelerationRate: 4
-  animatorBody: {fileID: 3419336797316063059}
-  animatorWeap:
-  - {fileID: 7175038933347460022}
-  turretAim:
-  - {fileID: 1958134385177635530}
-  leftTrackRenderer: {fileID: 3419336797321294431}
-  left2TrackRenderer: {fileID: 3419336797321294423}
-  rightTrackRenderer: {fileID: 3419336797321294427}
-  right2TrackRenderer: {fileID: 3419336797321294419}
+  _unitType: 0
+  _unitType2: 0
+  _unitDescription: 
+  _unitCost: 0
+  _attack: {fileID: 0}
+  _ownHitbox: {fileID: 0}
+  _baseHealth: 1000
+  _baseAtk: 100
+  _baseMoveSpeed: 20
+  _baseAtkSpeed: 20
+  _baseRange: 20
+  SpawnPosition: {x: 0, y: 0, z: 0}
+  _hasSmoothStop: 0
+  _decelerationRate: 2.5
+  _animatorBody: {fileID: 0}
+  _animatorWeap: []
+  _turretAim: []
+  _leftTrackRenderer: {fileID: 0}
+  _left2TrackRenderer: {fileID: 0}
+  _rightTrackRenderer: {fileID: 0}
+  _right2TrackRenderer: {fileID: 0}
   _detectionRadius: 100
-  requierFacingForAttack: 0
+  _requierFacingForAttack: 0
+  _canTargetFlying: 0
+  _aerialOnly: 0
   _facingConeDegree: 32
   _facingEpsilonDeg: 1.5
   RoundStarted: 0
@@ -150,7 +151,7 @@ MonoBehaviour:
   _hpBarCanvas: {fileID: 5923906130482824537}
   _hpBar: {fileID: 239403093807088784}
   _hpBarSpeed: 100
-  delayBeforeFade: 5
+  _delayBeforeFade: 5
 --- !u!195 &3097943012908374767
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -232,16 +233,16 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
   m_PlayOnAwake: 0
-  m_Volume: 0.5
+  m_Volume: 0.2
   m_Pitch: 1
   Loop: 0
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
   Priority: 128
-  DopplerLevel: 1
+  DopplerLevel: 0
   MinDistance: 1
-  MaxDistance: 500
+  MaxDistance: 80
   Pan2D: 0
   rolloffMode: 0
   BypassEffects: 0
@@ -260,14 +261,23 @@ AudioSource:
       inWeight: 0.33333334
       outWeight: 0.33333334
     - serializedVersion: 3
-      time: 1
-      value: 0
-      inSlope: 0
-      outSlope: 0
+      time: 0.14929968
+      value: 0.11335218
+      inSlope: -0.7735135
+      outSlope: -0.7735135
       tangentMode: 0
       weightedMode: 0
       inWeight: 0.33333334
-      outWeight: 0.33333334
+      outWeight: 0.46272996
+    - serializedVersion: 3
+      time: 0.52199244
+      value: 0
+      inSlope: -0.7014918
+      outSlope: -0.7014918
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33033925
+      outWeight: 0.27359372
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
@@ -276,7 +286,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0
+      value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -291,7 +301,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0
+      value: 0.11111111
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -465,31 +475,6 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 1958134385177635530}
   m_SourcePrefab: {fileID: 100100000, guid: 7ab26f4bfe958f24b8bf4e84ef85d2d6, type: 3}
---- !u!95 &3419336797316063059 stripped
-Animator:
-  m_CorrespondingSourceObject: {fileID: 9500000, guid: 7ab26f4bfe958f24b8bf4e84ef85d2d6, type: 3}
-  m_PrefabInstance: {fileID: 3419336797323455027}
-  m_PrefabAsset: {fileID: 0}
---- !u!23 &3419336797321294419 stripped
-MeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 2300000, guid: 7ab26f4bfe958f24b8bf4e84ef85d2d6, type: 3}
-  m_PrefabInstance: {fileID: 3419336797323455027}
-  m_PrefabAsset: {fileID: 0}
---- !u!23 &3419336797321294423 stripped
-MeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 2300004, guid: 7ab26f4bfe958f24b8bf4e84ef85d2d6, type: 3}
-  m_PrefabInstance: {fileID: 3419336797323455027}
-  m_PrefabAsset: {fileID: 0}
---- !u!23 &3419336797321294427 stripped
-MeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 2300008, guid: 7ab26f4bfe958f24b8bf4e84ef85d2d6, type: 3}
-  m_PrefabInstance: {fileID: 3419336797323455027}
-  m_PrefabAsset: {fileID: 0}
---- !u!23 &3419336797321294431 stripped
-MeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 2300012, guid: 7ab26f4bfe958f24b8bf4e84ef85d2d6, type: 3}
-  m_PrefabInstance: {fileID: 3419336797323455027}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &3419336797323488499 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 100032, guid: 7ab26f4bfe958f24b8bf4e84ef85d2d6, type: 3}
@@ -509,11 +494,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rotationSpeed: 5
   baseTransform: {fileID: 3419336797323587737}
---- !u!4 &3419336797323587729 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 400034, guid: 7ab26f4bfe958f24b8bf4e84ef85d2d6, type: 3}
-  m_PrefabInstance: {fileID: 3419336797323455027}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &3419336797323587737 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400042, guid: 7ab26f4bfe958f24b8bf4e84ef85d2d6, type: 3}
@@ -817,10 +797,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 317feaeea96deba4982391aaeec1941d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attack: {fileID: 6949082303041918633}
-  ownerUnit: {fileID: 7052226453586481135}
---- !u!95 &7175038933347460022 stripped
-Animator:
-  m_CorrespondingSourceObject: {fileID: 9500000, guid: 8a019139a647e3a409c2591013013522, type: 3}
-  m_PrefabInstance: {fileID: 7175038933340067542}
-  m_PrefabAsset: {fileID: 0}
+  Attack: {fileID: 0}
+  OwnerUnit: {fileID: 0}
