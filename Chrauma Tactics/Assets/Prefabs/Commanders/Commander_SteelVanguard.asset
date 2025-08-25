@@ -13,10 +13,17 @@ MonoBehaviour:
   m_Name: Commander_SteelVanguard
   m_EditorClassIdentifier: 
   commanderName: Steel Vanguard
-  portrait: {fileID: 0}
+  portrait: {fileID: 21300000, guid: d22d43171e0da4007b00553086530bd4, type: 3}
   description: "J'ai plus d'id\xE9e"
   unitPrefab1: {fileID: 0}
   unitName1: Hammer
   unitPrefab2: {fileID: 0}
   unitName2: Strikers
+  unitIcon1: {fileID: 21300000, guid: d2da53fcae2e84305b3d0950b3944bf7, type: 3}
+  unitIcon2: {fileID: 21300000, guid: 4db36883ffb674102b8648dc7a85317d, type: 3}
+  boostIcon1: {fileID: 21300000, guid: db7e2dc1a8334d94482fe0e0a13d9287, type: 3}
+  boostIcon2: {fileID: 21300000, guid: c2591cd5c61f4164cbbdb34b8a1ca082, type: 3}
   playerHealth: 4600
+  StartingAugment:
+  - {fileID: 11400000, guid: 0af70021aa3a44f39933f25fe53a857a, type: 2}
+  - {fileID: 11400000, guid: 1d90d1e9b92664085abcd356085e7eed, type: 2}

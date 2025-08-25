@@ -13,10 +13,17 @@ MonoBehaviour:
   m_Name: Commander_StormHawk
   m_EditorClassIdentifier: 
   commanderName: Storm Hawk
-  portrait: {fileID: 21300000, guid: b7a716d20b5b6854fa0e175430873515, type: 3}
+  portrait: {fileID: 21300000, guid: 1ba9a12a07875480bb90fddd2e384952, type: 3}
   description: Piou piou boum
   unitPrefab1: {fileID: 0}
   unitName1: Swarmers
   unitPrefab2: {fileID: 0}
   unitName2: Snipers
+  unitIcon1: {fileID: 21300000, guid: a7d9260efceea4d7e87924e21bb177fe, type: 3}
+  unitIcon2: {fileID: 21300000, guid: 4a087075aeb844882851f8e92362a400, type: 3}
+  boostIcon1: {fileID: 21300000, guid: 9e406253d198e3144bfc5127c13048a1, type: 3}
+  boostIcon2: {fileID: 21300000, guid: db7e2dc1a8334d94482fe0e0a13d9287, type: 3}
   playerHealth: 4200
+  StartingAugment:
+  - {fileID: 11400000, guid: e77f99fbe26ff4a9597b9507074c48f8, type: 2}
+  - {fileID: 11400000, guid: 805a0fa5d5fb143ff8b5bd42a64096bd, type: 2}

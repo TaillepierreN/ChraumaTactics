@@ -13,10 +13,17 @@ MonoBehaviour:
   m_Name: Commander_Bulwark
   m_EditorClassIdentifier: 
   commanderName: Bulwark
-  portrait: {fileID: 21300000, guid: fd128e31b324f614e8f9fbc6a1d518f5, type: 3}
+  portrait: {fileID: 21300000, guid: ffed79147dc2c47278a177cc9d9e7f46, type: 3}
   description: Bonus will go there
   unitPrefab1: {fileID: 0}
   unitName1: Arclight
   unitPrefab2: {fileID: 0}
   unitName2: Spider X
+  unitIcon1: {fileID: 21300000, guid: 92e9f6ab2e02d4ad7a549cf142b56639, type: 3}
+  unitIcon2: {fileID: 21300000, guid: 63daec434abf940de85c09fd9606e151, type: 3}
+  boostIcon1: {fileID: 21300000, guid: 1a063d0265c299448bde5fd3e0d01f0b, type: 3}
+  boostIcon2: {fileID: 21300000, guid: c2591cd5c61f4164cbbdb34b8a1ca082, type: 3}
   playerHealth: 4800
+  StartingAugment:
+  - {fileID: 11400000, guid: bbf56c33be55649b4a434c91aad347ff, type: 2}
+  - {fileID: 11400000, guid: 797d5f982128242e0b813852a485360c, type: 2}
