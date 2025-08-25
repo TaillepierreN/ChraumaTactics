@@ -62,7 +62,7 @@ namespace CT.UI.UnitSelectionUI
             if (_isSubscribed) return;
 
             _radioGameplay.RoundManager.OnRoundChanged += HandleRoundChanged;
-            Debug.Log("subbed");
+
             if (Team == Team.Player1)
                 _radioGameplay.GameManager.P1CreditsChanged += CreditsChanged;
             else if (Team == Team.Player2)
@@ -118,7 +118,7 @@ namespace CT.UI.UnitSelectionUI
         {
             if (_gameManager.SpendCredits(unitPrefab.GetComponent<Unit>().UnitCost, Team))
             {
-                Debug.Log($"Placing unit: {unitPrefab.name}");
+                //Debug.Log($"Placing unit: {unitPrefab.name}");
                 UnitPlacer.Instance.StartPlacingUnit(unitPrefab, unitNum);
             }
             else
