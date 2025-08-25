@@ -13,10 +13,17 @@ MonoBehaviour:
   m_Name: Commander_Shadowfang
   m_EditorClassIdentifier: 
   commanderName: Shadowfang
-  portrait: {fileID: 21300000, guid: ca08acf24e3375842b15762e883aaced, type: 3}
+  portrait: {fileID: 21300000, guid: bd8303f23b0344752877d5f156f762b1, type: 3}
   description: bonus et bonus
   unitPrefab1: {fileID: 0}
   unitName1: Spider X
   unitPrefab2: {fileID: 0}
   unitName2: Swarmers
+  unitIcon1: {fileID: 21300000, guid: 63daec434abf940de85c09fd9606e151, type: 3}
+  unitIcon2: {fileID: 21300000, guid: a7d9260efceea4d7e87924e21bb177fe, type: 3}
+  boostIcon1: {fileID: 21300000, guid: c2591cd5c61f4164cbbdb34b8a1ca082, type: 3}
+  boostIcon2: {fileID: 21300000, guid: 1a063d0265c299448bde5fd3e0d01f0b, type: 3}
   playerHealth: 3900
+  StartingAugment:
+  - {fileID: 11400000, guid: 0cd68b9fefcd246e2b81ca91b5caca59, type: 2}
+  - {fileID: 11400000, guid: 2f2f5ffbe1b174939966550fad3de303, type: 2}

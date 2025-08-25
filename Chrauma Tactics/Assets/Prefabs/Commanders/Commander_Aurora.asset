@@ -13,10 +13,17 @@ MonoBehaviour:
   m_Name: Commander_Aurora
   m_EditorClassIdentifier: 
   commanderName: Aurora
-  portrait: {fileID: 21300000, guid: 772a3f02e15b95343a8890817bebdb65, type: 3}
-  description: Les bonus iront la
+  portrait: {fileID: 21300000, guid: 1914a1e9a957c4a2ba42d8c6d9264a35, type: 3}
+  description: Ranged Units +10% Range / All Units +4% Attack
   unitPrefab1: {fileID: 0}
   unitName1: Snipers
   unitPrefab2: {fileID: 0}
   unitName2: Swarmers
+  unitIcon1: {fileID: 21300000, guid: 4a087075aeb844882851f8e92362a400, type: 3}
+  unitIcon2: {fileID: 21300000, guid: a7d9260efceea4d7e87924e21bb177fe, type: 3}
+  boostIcon1: {fileID: 21300000, guid: 9e406253d198e3144bfc5127c13048a1, type: 3}
+  boostIcon2: {fileID: 21300000, guid: 11e40dd8122b5a14282c0f6900aef54c, type: 3}
   playerHealth: 4000
+  StartingAugment:
+  - {fileID: 11400000, guid: 3fc38fb6e599147ad996c40f7d4132c1, type: 2}
+  - {fileID: 11400000, guid: 13bc85987ba204aeabb896de5f05f532, type: 2}
