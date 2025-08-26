@@ -30,7 +30,10 @@ namespace CT.Grid
         }
         void Start()
         {
-            rd_Gameplay.RoundManager.OnPhaseChanged += UpdateGridVisual;
+            RoundManager rm = rd_Gameplay ? rd_Gameplay.RoundManager : null;
+            if (rm != null)
+                rm.OnPhaseChanged += UpdateGridVisual;
+
             _gridSystemVisualSingleArray = new GridSystemVisualSingle[LevelGrid.Instance.GetWidth(), LevelGrid.Instance.GetHeight()];
             for (int x = 0; x < LevelGrid.Instance.GetWidth(); x++)
             {
@@ -47,7 +50,9 @@ namespace CT.Grid
 
         void OnDisable()
         {
-            rd_Gameplay.RoundManager.OnPhaseChanged -= UpdateGridVisual;
+            RoundManager rm = rd_Gameplay ? rd_Gameplay.RoundManager : null;
+            if (rm != null)
+                rm.OnPhaseChanged -= UpdateGridVisual;
         }
         public void HideAllGridPosition()
         {

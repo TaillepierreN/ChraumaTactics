@@ -52,7 +52,7 @@ public class MainMenuUI : MonoBehaviour
 
     public void OnPlay()
     {
-        SceneLoader.Load("GameMenu");
+        SceneLoader.LoadOffline("GameMenu");
     }
 
     public void OnSettings()

@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using Unity.Netcode;
+using CT.Tools;
 
 public class Squad : MonoBehaviour
 {
@@ -68,6 +70,10 @@ public class Squad : MonoBehaviour
 
     public void SpawnUnit()
     {
+        var nm = NetworkManager.Singleton;
+        bool netActive = nm && nm.IsListening;
+        bool server = netActive && nm.IsServer;
+
         List<Vector3> formation = SquadFormationPresets.GetFormation(nbrOfUnits);
 
         if (formation == null || formation.Count < nbrOfUnits)
@@ -83,6 +89,9 @@ public class Squad : MonoBehaviour
             TrySnapToNavMesh(desiredWorldPos, out Vector3 spawnPos);
 
             GameObject newUnitObj = Instantiate(unitPrefab, spawnPos, transform.rotation, transform);
+
+            NetworkObject networkObject = newUnitObj.GetComponent<NetworkObject>();
+            networkObject.TrySpawn(true);
 
             NavMeshAgent agent = newUnitObj.GetComponent<NavMeshAgent>();
             if (agent != null)

@@ -7,9 +7,12 @@ using NaughtyAttributes;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
+using Unity.Netcode;
+using Unity.Netcode.Components;
+using CT.Tools;
 
 
-public abstract class Unit : MonoBehaviour
+public abstract class Unit : NetworkBehaviour
 {
     #region Unit Properties
     public bool DebugMode = false;
@@ -68,6 +71,7 @@ public abstract class Unit : MonoBehaviour
 
     [Header("Unit Animation")]
     [SerializeField] protected Animator _animatorBody;
+    [SerializeField] protected NetworkAnimator _netAnimatorBody;
     [SerializeField] protected Animator[] _animatorWeap;
     [SerializeField] protected TurretAim[] _turretAim;
     [SerializeField] private Renderer _leftTrackRenderer;
@@ -80,6 +84,10 @@ public abstract class Unit : MonoBehaviour
     private Material _right2TrackMaterial;
     private float _leftOffset = 0f;
     private float _rightOffset = 0f;
+    static readonly int HASH_IsMoving = Animator.StringToHash("IsMoving");
+    static readonly int HASH_IsAttacking = Animator.StringToHash("IsAttacking");
+    static readonly int HASH_MoveSpeed = Animator.StringToHash("MoveSpeed");
+    static readonly int HASH_AtkSpeed = Animator.StringToHash("AtkSpeed");
 
     [Header("Unit Audio")]
     [SerializeField] protected AudioSource _audioSource;
@@ -221,7 +229,7 @@ public abstract class Unit : MonoBehaviour
                 _waitingForStop = false;
                 PlayMoveSound(false);
                 if (_animatorBody != null)
-                    _animatorBody.SetBool("IsMoving", false);
+                    _animatorBody.SetBool(HASH_IsMoving, false);
             }
         }
         if (IsAttacking && _currentTarget != null)
@@ -243,10 +251,10 @@ public abstract class Unit : MonoBehaviour
                 if (_animatorWeap != null)
                     foreach (Animator weap in _animatorWeap)
                         if (weap != null)
-                            weap.SetBool("IsAttacking", false);
+                            weap.SetBool(HASH_IsAttacking, false);
 
                 if (_unitType == UnitType.Aerial && _animatorBody != null)
-                    _animatorBody.SetBool("IsAttacking", false);
+                    _animatorBody.SetBool(HASH_IsAttacking, false);
 
                 MoveTo(_currentTarget.transform.position);
             }
@@ -266,14 +274,14 @@ public abstract class Unit : MonoBehaviour
                     if (_animatorWeap != null)
                         foreach (Animator weap in _animatorWeap)
                             if (weap != null)
-                                weap.SetBool("IsAttacking", true);
+                                weap.SetBool(HASH_IsAttacking, true);
 
                     if (_unitType == UnitType.Aerial
                     && _animatorBody != null
                     && Vector3.Distance(transform.position, _currentTarget.transform.position) < 2)
                     {
                         Debug.Log("is aerial and attacking");
-                        _animatorBody.SetBool("IsAttacking", true);
+                        _animatorBody.SetBool(HASH_IsAttacking, true);
                     }
                     _targetHasMovedAway = false;
                 }
@@ -346,11 +354,11 @@ public abstract class Unit : MonoBehaviour
         _currentAtkRange = range;
         _agent.speed = _currentMoveSpeed;
         if (_animatorBody != null)
-            _animatorBody.SetFloat("MoveSpeed", _currentMoveSpeed / 5f);
+            _animatorBody.SetFloat(HASH_MoveSpeed, _currentMoveSpeed / 5f);
         if (_animatorWeap != null)
             foreach (Animator weap in _animatorWeap)
                 if (weap != null)
-                    weap.SetFloat("AtkSpeed", _currentAtkSpeed);
+                    weap.SetFloat(HASH_AtkSpeed, _currentAtkSpeed);
         _hpBar.maxValue = _currentHealth;
         _hpBar.value = _currentHealth;
     }
@@ -437,7 +445,7 @@ public abstract class Unit : MonoBehaviour
             IsMoving = true;
             PlayMoveSound();
             if (_animatorBody != null)
-                _animatorBody.SetBool("IsMoving", true);
+                _animatorBody.SetBool(HASH_IsMoving, true);
             _agent.isStopped = false;
         }
     }
@@ -473,7 +481,7 @@ public abstract class Unit : MonoBehaviour
                 PlayMoveSound(false);
                 _agent.velocity = Vector3.zero;
                 if (_animatorBody != null)
-                    _animatorBody.SetBool("IsMoving", false);
+                    _animatorBody.SetBool(HASH_IsMoving, false);
             }
             else
                 _waitingForStop = true;
@@ -523,6 +531,7 @@ public abstract class Unit : MonoBehaviour
         if (_currentHealth <= 0)
         {
             IsDead = true;
+            _netAnimatorBody.SetTrigger(Animator.StringToHash("IsDead"));
             OnUnitDeath?.Invoke(this);
             _hpBarCanvas.alpha = 0f;
             // Explosion animation
@@ -689,11 +698,11 @@ public abstract class Unit : MonoBehaviour
         IsAttacking = true;
         if (_animatorWeap != null)
             foreach (Animator weap in _animatorWeap)
-                if (weap) weap.SetBool("IsAttacking", true);
+                if (weap) weap.SetBool(HASH_IsAttacking, true);
 
         if (_unitType == UnitType.Aerial && _animatorBody != null &&
             Vector3.Distance(transform.position, target.transform.position) < 2)
-            _animatorBody.SetBool("IsAttacking", true);
+            _animatorBody.SetBool(HASH_IsAttacking, true);
 
         if (_attack != null && _attack.IsContinuous)
             _attack.StartAutoFire(_currentTarget);
@@ -720,10 +729,10 @@ public abstract class Unit : MonoBehaviour
         if (_animatorWeap != null)
             foreach (Animator weap in _animatorWeap)
                 if (weap != null)
-                    weap.SetBool("IsAttacking", false);
+                    weap.SetBool(HASH_IsAttacking, false);
 
         if (_unitType == UnitType.Aerial && _animatorBody != null)
-            _animatorBody.SetBool("IsAttacking", false);
+            _animatorBody.SetBool(HASH_IsAttacking, false);
 
         _targetHasMovedAway = false;
         IsAttacking = false;

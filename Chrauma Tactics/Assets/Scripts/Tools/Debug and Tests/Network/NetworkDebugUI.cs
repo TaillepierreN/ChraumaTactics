@@ -3,7 +3,7 @@ using Unity.Netcode;
 
 public class NetworkDebugUI : MonoBehaviour
 {
-	    public void StartHost()
+    public void StartHost()
     {
         bool ok = NetworkManager.Singleton.StartHost();
         Debug.LogWarning($"[NET] StartHost() => {ok} | IsServer={NetworkManager.Singleton.IsServer} IsClient={NetworkManager.Singleton.IsClient}");

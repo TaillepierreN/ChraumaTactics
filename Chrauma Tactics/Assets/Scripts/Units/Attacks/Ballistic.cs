@@ -2,6 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Pool;
+using Unity.Netcode;
+using CT.Tools;
+using Unity.VisualScripting;
+using Unity.Netcode.Components;
 
 namespace CT.Units.Attacks
 {
@@ -29,6 +33,7 @@ namespace CT.Units.Attacks
         private ObjectPool<GameObject> _projectilePool;
         private ObjectPool<GameObject> _impactPool;
         private ObjectPool<GameObject> _impactAoEPool;
+        private INetworkPrefabInstanceHandler _projHandler;
 
         #region Unity Callbacks
 
@@ -52,7 +57,7 @@ namespace CT.Units.Attacks
                     defaultCapacity: 32, maxSize: 256
                 );
             }
-            if (_impactVFXPrefab != null)
+            if (_impactVFXPrefab != null && _impactVFXPrefab.Length >= 1)
             {
                 _impactPool = new ObjectPool<GameObject>(
                     createFunc: () =>
@@ -92,6 +97,17 @@ namespace CT.Units.Attacks
                     _impactAoEPool.Release(_impactAoEPool.Get());
 
             }
+
+            NetworkManager nm = NetworkManager.Singleton;
+            if (_projectilePrefab != null
+            && _projectilePrefab.GetComponent<NetworkObject>() != null
+            && nm != null
+            && nm.PrefabHandler != null)
+            {
+                _projHandler = new PooledProjectileHandler(_projectilePrefab, _projectilePool);
+                NetworkManager.Singleton.PrefabHandler.RemoveHandler(_projectilePrefab);
+                NetworkManager.Singleton.PrefabHandler.AddHandler(_projectilePrefab, _projHandler);
+            }
         }
 
         void OnDestroy()
@@ -99,6 +115,16 @@ namespace CT.Units.Attacks
             _projectilePool?.Clear();
             _impactPool?.Clear();
             _impactAoEPool?.Clear();
+
+            NetworkManager nm = NetworkManager.Singleton;
+            if (_projHandler != null && nm != null && nm.PrefabHandler != null)
+            {
+                if (NetPrefabHandlerRegistry.TryRelease(_projectilePrefab, out var handler, out bool lastRelease) && lastRelease)
+                {
+                    nm.PrefabHandler.RemoveHandler(_projectilePrefab);
+                }
+                _projHandler = null;
+            }
         }
 
         /// <summary>
@@ -244,8 +270,17 @@ namespace CT.Units.Attacks
                 },
                 onDone: () =>
                 {
-                    _projectilePool.Release(projectile);
                     _projectileShot.Remove(projectile);
+                    NetworkObject no = projectile.GetComponent<NetworkObject>();
+                    if (no && no.IsSpawned)
+                    {
+                        no.Despawn(true);
+                        Destroy(projectile);
+                    }
+                    else
+                    {
+                        _projectilePool?.Release(projectile);
+                    }
                 }
             );
             return;
@@ -273,6 +308,25 @@ namespace CT.Units.Attacks
         /// <param name="proj"></param>
         private void GetAndSetProjectile(int index, out GameObject projectile, out Projectile proj)
         {
+            /*Online*/
+            if (NetX.IsServer)
+            {
+                projectile = Instantiate(_projectilePrefab, BarrelEnd[index].position, BarrelEnd[index].rotation);
+
+                if (!projectile.activeSelf) projectile.SetActive(true);
+
+                NetworkTransform nt = projectile.GetComponent<NetworkTransform>();
+                if (nt && !nt.enabled)
+                    nt.enabled = true;
+
+                NetworkObject no = projectile.GetComponent<NetworkObject>();
+                if (no && !no.IsSpawned)
+                    no.Spawn(true);
+
+                proj = projectile.GetComponent<Projectile>();
+                return;
+            }
+            /*offline*/
             projectile = _projectilePool.Get();
             projectile.transform.SetPositionAndRotation(BarrelEnd[index].position, BarrelEnd[index].rotation);
             proj = projectile.GetComponent<Projectile>();
@@ -284,12 +338,26 @@ namespace CT.Units.Attacks
 
             for (int i = _projectileShot.Count - 1; i >= 0; i--)
             {
-                var go = _projectileShot[i];
-                if (!go) { _projectileShot.RemoveAt(i); continue; }
+                GameObject go = _projectileShot[i];
+                if (!go)
+                {
+                    _projectileShot.RemoveAt(i);
+                    continue;
+                }
 
-                var proj = go.GetComponent<Projectile>();
+                Projectile proj = go.GetComponent<Projectile>();
                 proj?.Abort();
-                _projectilePool.Release(go);
+
+                NetworkObject no = go.GetComponent<NetworkObject>();
+                if (no && no.IsSpawned)
+                {
+                    no.Despawn(true);
+                    Destroy(go);
+                }
+                else
+                {
+                    _projectilePool?.Release(go);
+                }
                 _projectileShot.RemoveAt(i);
             }
         }

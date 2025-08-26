@@ -10,11 +10,13 @@ GameObject:
   m_Component:
   - component: {fileID: 3005384268175812808}
   - component: {fileID: 7863634189960830644}
+  - component: {fileID: -3553213043801160288}
   - component: {fileID: 7720598506486536747}
   - component: {fileID: 5486077790063058784}
   - component: {fileID: 15440284082077293}
   - component: {fileID: 1248385897925284610}
   - component: {fileID: -228744923853373879}
+  - component: {fileID: -6280072068451275521}
   m_Layer: 0
   m_Name: Fusilliers
   m_TagString: Untagged
@@ -62,6 +64,31 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &-3553213043801160288
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1048969119062683968}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 1890014394
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
 --- !u!114 &7720598506486536747
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -74,6 +101,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29fda86e6f8fc4a91b33578c32966574, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   DebugMode: 1
   DebugStats: 0
   team: 0
@@ -92,6 +120,7 @@ MonoBehaviour:
   _hasSmoothStop: 0
   _decelerationRate: 2.5
   _animatorBody: {fileID: 7101653757217017792}
+  _netAnimatorBody: {fileID: 2176159511200126357}
   _animatorWeap:
   - {fileID: 1308143226299446122}
   _turretAim: []
@@ -287,6 +316,52 @@ NavMeshObstacle:
   m_CarveOnlyStationary: 1
   m_Center: {x: 0, y: 0.32, z: 0.84}
   m_TimeToStationary: 0.25
+--- !u!114 &-6280072068451275521
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1048969119062683968}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e96cb6065543e43c4a752faaa1468eb1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
+  NetworkTransformExpanded: 0
+  AutoOwnerAuthorityTickOffset: 1
+  PositionInterpolationType: 0
+  RotationInterpolationType: 0
+  ScaleInterpolationType: 0
+  PositionLerpSmoothing: 1
+  PositionMaxInterpolationTime: 0.1
+  RotationLerpSmoothing: 1
+  RotationMaxInterpolationTime: 0.1
+  ScaleLerpSmoothing: 1
+  ScaleMaxInterpolationTime: 0.1
+  AuthorityMode: 0
+  TickSyncChildren: 0
+  UseUnreliableDeltas: 0
+  SyncPositionX: 1
+  SyncPositionY: 1
+  SyncPositionZ: 1
+  SyncRotAngleX: 1
+  SyncRotAngleY: 1
+  SyncRotAngleZ: 1
+  SyncScaleX: 1
+  SyncScaleY: 1
+  SyncScaleZ: 1
+  PositionThreshold: 0.001
+  RotAngleThreshold: 0.01
+  ScaleThreshold: 0.01
+  UseQuaternionSynchronization: 0
+  UseQuaternionCompression: 0
+  UseHalfFloatPrecision: 0
+  InLocalSpace: 0
+  SwitchTransformSpaceWhenParented: 0
+  Interpolate: 1
+  SlerpPosition: 0
 --- !u!1 &1877422930439643760
 GameObject:
   m_ObjectHideFlags: 0
@@ -381,13 +456,36 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4830194865085820196, guid: 87b6d661a41c8c949a8dd3ca8d4f8ee4, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2176159511200126357}
   m_SourcePrefab: {fileID: 100100000, guid: 87b6d661a41c8c949a8dd3ca8d4f8ee4, type: 3}
 --- !u!4 &7101653757207502882 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4830194865085919492, guid: 87b6d661a41c8c949a8dd3ca8d4f8ee4, type: 3}
   m_PrefabInstance: {fileID: 2415733510501781798}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &7101653757207542786 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4830194865085820196, guid: 87b6d661a41c8c949a8dd3ca8d4f8ee4, type: 3}
+  m_PrefabInstance: {fileID: 2415733510501781798}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2176159511200126357
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7101653757207542786}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8d0727d5ae3244e3b569694d3912374, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
+  TransitionStateInfoList: []
+  m_Animator: {fileID: 7101653757217017792}
 --- !u!95 &7101653757217017792 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 4830194865093107430, guid: 87b6d661a41c8c949a8dd3ca8d4f8ee4, type: 3}
@@ -478,6 +576,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1244826968577739478, guid: aebc28a524ea04557afb54708517e3d4, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6275077935752988041}
+    - targetCorrespondingSourceObject: {fileID: 1244826968577739478, guid: aebc28a524ea04557afb54708517e3d4, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2686165305333459473}
     - targetCorrespondingSourceObject: {fileID: 7944156050055472195, guid: aebc28a524ea04557afb54708517e3d4, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1249781183493047467}
@@ -612,6 +713,21 @@ MonoBehaviour:
   - {fileID: 359531686014878543}
   - {fileID: 6785752755961579589}
   - {fileID: 4213436256382507186}
+--- !u!114 &2686165305333459473
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6796178367824265558}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8d0727d5ae3244e3b569694d3912374, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
+  TransitionStateInfoList: []
+  m_Animator: {fileID: 1308143226299446122}
 --- !u!4 &8442957064620868813 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4196522557339406157, guid: aebc28a524ea04557afb54708517e3d4, type: 3}

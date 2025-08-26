@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5253091017926116840}
   - component: {fileID: 6239214172547770577}
+  - component: {fileID: 1421256958908064054}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -44,12 +45,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28368428a24397b4db1d5a3a09b4605c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  DebugMode: 0
   _radioGameplay: {fileID: 11400000, guid: 1a380cd7d54b23342a8b318ae7e67f93, type: 2}
   player1:
     Team: 0
     Credits: 0
     HP: 0
+    Army: []
+    FreeSquadVouchers: []
   player2:
     Team: 1
     Credits: 0
     HP: 0
+    Army: []
+    FreeSquadVouchers: []
+  playerDamage: 500
+--- !u!114 &1421256958908064054
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7944919072423648246}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf3df9e14c618ae4592d43b796e70eb8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _netServicesPrefab: {fileID: 818900892994350429, guid: 544c8fca3f652814d9e740937cde18e9, type: 3}

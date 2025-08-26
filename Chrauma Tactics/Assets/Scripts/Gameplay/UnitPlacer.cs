@@ -2,6 +2,8 @@ using UnityEngine;
 using CT.Grid;
 using System.Linq;
 using System.Collections.Generic;
+using Unity.Netcode;
+using CT.Tools;
 
 namespace CT.Gameplay
 {
@@ -27,7 +29,7 @@ namespace CT.Gameplay
         {
             if (Instance != null && Instance != this)
             {
-                Destroy(Instance);
+                Destroy(gameObject);
                 return;
             }
             Instance = this;
@@ -35,12 +37,15 @@ namespace CT.Gameplay
 
         private void Start()
         {
-            _radioGameplay.RoundManager.OnPhaseChanged += HandleChangePhase;
+            var rm = _radioGameplay.RoundManager;
+            if (rm != null)
+                rm.OnPhaseChanged += HandleChangePhase;
         }
 
         private void OnDestroy()
         {
-            _radioGameplay.RoundManager.OnPhaseChanged -= HandleChangePhase;
+            var rm = _radioGameplay.RoundManager;
+            if (rm != null) rm.OnPhaseChanged -= HandleChangePhase;
         }
 
         private void HandleChangePhase(RoundPhase phase)
@@ -123,16 +128,43 @@ namespace CT.Gameplay
             if (!isPlacing)
                 return;
             isPlacing = false;
-            GameObject SquadObject = Instantiate(squadPrefab, LevelGrid.Instance.GetWorldPosition(pos), Quaternion.identity);
-            Squad squad = SquadObject.GetComponent<Squad>();
 
-            squad.team = placingTeam;
-            squad.nbrOfUnits = numberOfUnits;
-            squad.unitPrefab = unitPrefab;
-            squad.SpawnUnit();
+            Vector3 worldPos = LevelGrid.Instance.GetWorldPosition(pos);
 
-            LevelGrid.Instance.AddSquadAtGridPosition(pos, squad);
+            bool online = NetX.InSession;
 
+            if (!online)
+            {
+                GameObject SquadObject = Instantiate(squadPrefab, LevelGrid.Instance.GetWorldPosition(pos), Quaternion.identity);
+                Squad squad = SquadObject.GetComponent<Squad>();
+
+                squad.team = placingTeam;
+                squad.nbrOfUnits = numberOfUnits;
+                squad.unitPrefab = unitPrefab;
+                squad.SpawnUnit();
+
+                LevelGrid.Instance.AddSquadAtGridPosition(pos, squad);
+            }
+            else
+            {
+                if (PlacementNetwork.Instance == null)
+                {
+                    Debug.LogError("UnitPlacer: No PlacementNetwork instance found in the scene.");
+                    ClearGhostUnit();
+                    return;
+                }
+
+                int unitIndex = PlacementNetwork.Instance.IndexOfUnit(unitPrefab);
+                if (unitIndex < 0)
+                {
+                    Debug.LogError("Unit prefab not whitelisted in PlacementNetwork");
+                    ClearGhostUnit();
+                    return;
+                }
+
+                PlacementNetwork.Instance.PlaceSquadServerRpc(worldPos, numberOfUnits, unitIndex);
+
+            }
             if (usingVoucher && voucherUnitPrefab != null)
             {
                 Player player = _radioGameplay.GameManager.GetPlayerByTeam(placingTeam);

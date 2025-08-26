@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using CT.Tools;
 using UnityEngine;
 
 namespace CT.Units.Attacks
@@ -45,14 +46,17 @@ namespace CT.Units.Attacks
         /// </summary>
         void Update()
         {
+            if (NetX.NM && NetX.IsListening && !NetX.IsServer)
+                return;
+
             if (!_isActive) return;
 
             if (_payload.Target == null || !_payload.Target.gameObject.activeInHierarchy)
-            {
-                _isActive = false;
-                _onDone?.Invoke();
-                return;
-            }
+                {
+                    _isActive = false;
+                    _onDone?.Invoke();
+                    return;
+                }
 
             /*movement toward the target*/
             Vector3 targetPos = _payload.Target.Hitbox.position;

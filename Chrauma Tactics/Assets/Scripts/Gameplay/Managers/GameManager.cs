@@ -30,13 +30,24 @@ namespace CT.Gameplay
 
         void Start()
         {
+            var nm = Unity.Netcode.NetworkManager.Singleton;
+            bool netActive = nm && nm.IsListening;
+            bool authoritative = !netActive || nm.IsServer;
+
+            if (!authoritative)
+            {
+                enabled = false;
+                return;
+            }
             _roundManager = _radioGameplay.RoundManager;
-            _roundManager.OnPhaseChanged += HandlePhaseChange;
+            if (_roundManager != null)
+                _roundManager.OnPhaseChanged += HandlePhaseChange;
         }
 
         void OnDisable()
         {
-            _roundManager.OnPhaseChanged -= HandlePhaseChange;
+            if (_roundManager != null)
+                _roundManager.OnPhaseChanged -= HandlePhaseChange;
         }
 
         #endregion
@@ -259,7 +270,7 @@ namespace CT.Gameplay
         {
             return team == Team.Player1 ? player1 : player2;
         }
-        
+
         #endregion
     }
 }

@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using TMPro;
 using System;
 using CT.Gameplay;
+using Unity.Netcode;
 
 public class CommanderUI : MonoBehaviour
 {
@@ -46,6 +47,9 @@ public class CommanderUI : MonoBehaviour
     /// </summary>
     public void SelectCommander()
     {
+        var nm = NetworkManager.Singleton;
+        bool netActive = nm && nm.IsListening;
+
         _radioGameplay.GameManager.SetChosenCommander(commanderData);
         if (commanderData.StartingAugment != null && commanderData.StartingAugment.Length > 0)
         {
@@ -59,7 +63,16 @@ public class CommanderUI : MonoBehaviour
             GiveFreeSquadToPlayer(team, commanderData.unitPrefab1);
         if (commanderData.unitPrefab2 != null)
             GiveFreeSquadToPlayer(team, commanderData.unitPrefab2);
-        _radioGameplay.RoundManager.StartGame();
+
+        if (netActive)
+        {
+            if (GameFlowNetwork.Instance != null)
+                GameFlowNetwork.Instance.StartGameServerRpc();
+        }
+        else
+        {
+            _radioGameplay.RoundManager.StartGame();
+        }
         CommanderChosen?.Invoke();
     }
 

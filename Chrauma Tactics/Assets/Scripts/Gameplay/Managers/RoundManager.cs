@@ -1,11 +1,13 @@
 using UnityEngine;
 using System;
+using Unity.Netcode;
+using CT.Tools;
 
 public enum RoundPhase { Preparation, PostPreparation, Combat, PostCombat }
 
 namespace CT.Gameplay
 {
-    public class RoundManager : MonoBehaviour
+    public class RoundManager : NetworkBehaviour
     {
 
         public bool DebugMode = false;
@@ -43,11 +45,19 @@ namespace CT.Gameplay
         #region Unity Callbacks
         void Awake()
         {
-            _radioGameplay.SetRoundManager(this);
+
+            if (NetX.IsAuthoritative)
+                _radioGameplay.SetRoundManager(this);
         }
 
         void Start()
         {
+
+            if (!NetX.IsAuthoritative)
+            {
+                enabled = false;
+                return;
+            }
             _gameManager = _radioGameplay.GameManager;
 
             _gameManager.InitStartingCredits(creditsPerRound.Length > 0 ? creditsPerRound[0] : 0);
@@ -97,7 +107,12 @@ namespace CT.Gameplay
         /// </summary>
         public void StartGame()
         {
-            _radioGameplay.RoundUIManager.ShowRoundUI();
+            var nm = NetworkManager.Singleton;
+            bool netActive = nm && nm.IsListening;
+            bool authoritative = !netActive || nm.IsServer;
+
+            if (!authoritative || _gameStarted) return;
+            _radioGameplay?.RoundUIManager?.ShowRoundUI();
             BeginPreparationPhase();
             _gameStarted = true;
         }

@@ -48,6 +48,12 @@ public class RoundUIManager : MonoBehaviour
     {
         _roundManager = _radioGameplay.RoundManager;
 
+        if (_roundManager == null)
+        {
+            // Is client so no need to sub
+            return;
+        }
+
         _roundManager.OnPhaseChanged += HandlePhaseChanged;
         _roundManager.OnRoundChanged += HandleRoundChanged;
         _roundManager.OnTimerTick += HandleTimerTick;
