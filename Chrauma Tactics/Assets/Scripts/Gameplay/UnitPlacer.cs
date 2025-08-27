@@ -131,9 +131,7 @@ namespace CT.Gameplay
 
             Vector3 worldPos = LevelGrid.Instance.GetWorldPosition(pos);
 
-            bool online = NetX.InSession;
-
-            if (!online)
+            if (!NetX.IsListening)
             {
                 GameObject SquadObject = Instantiate(squadPrefab, LevelGrid.Instance.GetWorldPosition(pos), Quaternion.identity);
                 Squad squad = SquadObject.GetComponent<Squad>();
@@ -162,10 +160,21 @@ namespace CT.Gameplay
                     return;
                 }
 
-                PlacementNetwork.Instance.PlaceSquadServerRpc(worldPos, numberOfUnits, unitIndex);
+                bool useVoucher = usingVoucher && voucherUnitPrefab == unitPrefab;
+                PlacementNetwork.Instance.PlaceSquadServerRpc(worldPos, numberOfUnits, unitIndex, useVoucher);
+                if (useVoucher && voucherUnitPrefab != null)
+                {
+                    GameManager gm = _radioGameplay.GameManager;
+                    Player player = gm.GetPlayerByTeam(placingTeam);
+                    if (player != null && player.FreeSquadVouchers.Contains(voucherUnitPrefab))
+                    {
+                        player.ConsumeFreeSquadVoucher(voucherUnitPrefab);
+                        gm.NotifyVoucherChanged();
+                    }
+                }
 
             }
-            if (usingVoucher && voucherUnitPrefab != null)
+            if (!NetX.IsListening && usingVoucher && voucherUnitPrefab != null)
             {
                 Player player = _radioGameplay.GameManager.GetPlayerByTeam(placingTeam);
                 if (player != null)
@@ -174,10 +183,13 @@ namespace CT.Gameplay
             usingVoucher = false;
             voucherUnitPrefab = null;
 
-            if (placingTeam == Team.Player1)
-                _radioGameplay.GameManager.P1CreditsChanged?.Invoke(_radioGameplay.GameManager.player1.Credits);
-            else
-                _radioGameplay.GameManager.P2CreditsChanged?.Invoke(_radioGameplay.GameManager.player2.Credits);
+            if (!NetX.IsListening)
+            {
+                if (placingTeam == Team.Player1)
+                    _radioGameplay.GameManager.P1CreditsChanged?.Invoke(_radioGameplay.GameManager.player1.Credits, 1);
+                else
+                    _radioGameplay.GameManager.P2CreditsChanged?.Invoke(_radioGameplay.GameManager.player2.Credits, 2);
+            }
 
 
             ClearGhostUnit();

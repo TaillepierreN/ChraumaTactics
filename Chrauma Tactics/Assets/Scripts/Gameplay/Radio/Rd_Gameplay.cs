@@ -8,12 +8,14 @@ public class Rd_Gameplay : ScriptableObject
     private RoundManager _roundManager;
     private RoundUIManager _roundUIManager;
     private BoostManager _boostManager;
+    private GameStateNetwork _gameStateNetwork;
 
 
     public GameManager GameManager => _gameManager;
     public RoundManager RoundManager => _roundManager;
     public RoundUIManager RoundUIManager => _roundUIManager;
     public BoostManager BoostManager => _boostManager;
+    public GameStateNetwork GameStateNetwork => _gameStateNetwork;
 
     public void SetGameManager(GameManager gm)
     {
@@ -33,6 +35,11 @@ public class Rd_Gameplay : ScriptableObject
     public void SetBoostManager(BoostManager bm)
     {
         _boostManager = bm;
+    }
+
+    public void SetGameStateNetwork(GameStateNetwork gsn)
+    {
+        _gameStateNetwork = gsn;
     }
 
 }

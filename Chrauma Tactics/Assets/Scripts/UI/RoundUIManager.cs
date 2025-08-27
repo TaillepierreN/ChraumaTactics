@@ -3,6 +3,7 @@ using TMPro;
 using UnityEngine.UI;
 using System.Collections;
 using CT.Gameplay;
+using CT.Tools;
 
 public class RoundUIManager : MonoBehaviour
 {
@@ -30,12 +31,18 @@ public class RoundUIManager : MonoBehaviour
     [SerializeField] Text HPTextP2;
     private int P1maxHP;
     private int P2maxHP;
+    [Header("UI Options")]
+    [SerializeField] private Team creditsForTeam = Team.Player1;
 
     [Header("Refs")]
     [SerializeField] private Rd_Gameplay _radioGameplay;
     [SerializeField] private TMP_Text creditsText;
 
     private RoundManager _roundManager;
+    private GameManager _gameManager;
+    private GameStateNetwork _stateNet;
+    private bool _boundToState;
+    private bool _offlineBOund;
     private int _currentRound = 1;
     private Coroutine betweenRoundsRoutine;
 
@@ -47,6 +54,13 @@ public class RoundUIManager : MonoBehaviour
     void Start()
     {
         _roundManager = _radioGameplay.RoundManager;
+        _stateNet = _radioGameplay.GameStateNetwork;
+        _gameManager = _radioGameplay.GameManager;
+        StartCoroutine(BindStateWhenReady());
+        TryBindOfflineIfNeeded();
+
+        if (NetX.IsListening && NetX.NM && !NetX.IsServer)
+            creditsForTeam = Team.Player2;
 
         if (_roundManager != null)
         {
@@ -62,11 +76,24 @@ public class RoundUIManager : MonoBehaviour
 
     void OnDestroy()
     {
-        if (_roundManager == null)
-            return;
-        _roundManager.OnPhaseChanged -= HandlePhaseChanged;
-        _roundManager.OnRoundChanged -= HandleRoundChanged;
-        _roundManager.OnTimerTick -= HandleTimerTick;
+        if (_roundManager != null)
+        {
+            _roundManager.OnPhaseChanged -= HandlePhaseChanged;
+            _roundManager.OnRoundChanged -= HandleRoundChanged;
+            _roundManager.OnTimerTick -= HandleTimerTick;
+        }
+        if (_stateNet != null && _boundToState)
+        {
+            _stateNet.P1Credits.OnValueChanged -= OnP1CreditsChanged;
+            _stateNet.P2Credits.OnValueChanged -= OnP2CreditsChanged;
+            _stateNet.P1HP.OnValueChanged -= OnP1HpChanged;
+            _stateNet.P2HP.OnValueChanged -= OnP2HpChanged;
+        }
+        if (_gameManager != null && _offlineBOund)
+        {
+            _gameManager.P1CreditsChanged -= UpdateCreditsUI;
+            _gameManager.P2CreditsChanged -= UpdateCreditsUI;
+        }
     }
 
     public void ShowRoundUI()
@@ -88,6 +115,56 @@ public class RoundUIManager : MonoBehaviour
     {
         augmentSelectionUI.SetActive(false);
     }
+
+    private IEnumerator BindStateWhenReady()
+    {
+        /* wait for networked state; if it never comes, we stay offline-bound*/
+        while (_stateNet == null || !_stateNet.IsSpawned)
+        {
+            _stateNet = _radioGameplay.GameStateNetwork;
+            yield return null;
+        }
+
+        if (_boundToState) yield break;
+        _boundToState = true;
+
+        if (NetX.IsListening && !(NetX.NM && NetX.IsServer))
+            _stateNet.RequestFullStateSyncServerRpc();
+
+        _stateNet.P1Credits.OnValueChanged += OnP1CreditsChanged;
+        _stateNet.P2Credits.OnValueChanged += OnP2CreditsChanged;
+        _stateNet.P1HP.OnValueChanged += OnP1HpChanged;
+        _stateNet.P2HP.OnValueChanged += OnP2HpChanged;
+
+        UpdateCreditsUI(_stateNet.P1Credits.Value, 1);
+        UpdateCreditsUI(_stateNet.P2Credits.Value, 2);
+        UpdatePlayerHp(1, _stateNet.P1HP.Value);
+        UpdatePlayerHp(2, _stateNet.P2HP.Value);
+    }
+
+    private void TryBindOfflineIfNeeded()
+    {
+
+        if (NetX.IsListening) return;
+        if (_offlineBOund) return;
+        if (_gameManager == null) return;
+
+        _offlineBOund = true;
+
+        _gameManager.P1CreditsChanged += UpdateCreditsUI;
+        // (If you show P2 credits somewhere later, add another subscription for P2)
+        // _gm.P2CreditsChanged += v => ...;
+
+        UpdateCreditsUI(_gameManager.player1.Credits, 1);
+        UpdateCreditsUI(_gameManager.player2.Credits, 2);
+        UpdatePlayerHp(1, _gameManager.player1.HP);
+        UpdatePlayerHp(2, _gameManager.player2.HP);
+    }
+
+    private void OnP1CreditsChanged(int oldV, int newV) => UpdateCreditsUI(newV, 1);
+    private void OnP2CreditsChanged(int oldV, int newV) => UpdateCreditsUI(newV, 2);
+    private void OnP1HpChanged(int oldV, int newV) => UpdatePlayerHp(1, newV);
+    private void OnP2HpChanged(int oldV, int newV) => UpdatePlayerHp(2, newV);
 
     private void HandlePhaseChanged(RoundPhase phase)
     {
@@ -202,10 +279,16 @@ public class RoundUIManager : MonoBehaviour
         }
     }
 
-    public void UpdateCreditsUI(int playerCred)
+    public void UpdateCreditsUI(int playerCred, int player)
     {
-        if (creditsText != null)
+        if (creditsText == null)
+            return;
+        int myIndex = (creditsForTeam == Team.Player1) ? 1 : 2;
+        if (player == myIndex)
+        {
+            Debug.Log($"[UI] Credits updated for me (P{myIndex}): {playerCred}");
             creditsText.text = playerCred.ToString();
+        }
     }
 
     public void RoundResult(int winningPlayer)

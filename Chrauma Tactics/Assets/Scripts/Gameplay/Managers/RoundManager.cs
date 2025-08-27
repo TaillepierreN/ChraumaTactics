@@ -271,11 +271,7 @@ namespace CT.Gameplay
         {
             _radioGameplay?.RoundUIManager?.ShowRoundUI();
         }
-        [ClientRpc]
-        public void CreditsChangedClientRpc(int p1, int p2)
-        {
-            _radioGameplay.RoundUIManager.UpdateCreditsUI(p1);
-        }
+
         #endregion
     }
 }

@@ -6,12 +6,14 @@ using Unity.Netcode;
 namespace CT.Gameplay
 {
 
-    public class GameManager : MonoBehaviour
+    public class GameManager : NetworkBehaviour
     {
         public bool DebugMode = false;
         [Header("References")]
         [SerializeField] private Rd_Gameplay _radioGameplay;
         private RoundManager _roundManager;
+        private GameStateNetwork _stateNet;
+
 
 
         [Header("Player stats")]
@@ -21,8 +23,10 @@ namespace CT.Gameplay
 
         [Header("Events")]
         public Action<RoundPhase> SetSquadPhase;
-        public Action<int> P1CreditsChanged;
-        public Action<int> P2CreditsChanged;
+        public Action<int, int> P1CreditsChanged;
+        public Action<int, int> P2CreditsChanged;
+        public Action VoucherChanged;
+        public void NotifyVoucherChanged() => VoucherChanged?.Invoke();
 
         #region  Unity callbacks
         void Awake()
@@ -33,6 +37,8 @@ namespace CT.Gameplay
         void Start()
         {
             _roundManager = _radioGameplay.RoundManager;
+            _stateNet = _radioGameplay.GameStateNetwork;
+
             if (_roundManager != null)
                 _roundManager.OnPhaseChanged += HandlePhaseChange;
         }
@@ -54,7 +60,14 @@ namespace CT.Gameplay
         {
             player1.Credits = startingCredits;
             player2.Credits = startingCredits;
-            UpdateCreditsUI();
+            if (NetX.IsListening && IsServer && _stateNet != null && _stateNet.IsSpawned)
+            {
+                _stateNet.P1Credits.Value = player1.Credits;
+                _stateNet.P2Credits.Value = player2.Credits;
+                _stateNet.P1HP.Value = player1.HP;
+                _stateNet.P2HP.Value = player2.HP;
+            }
+            CreditsChanged();
         }
 
         /// <summary>
@@ -68,6 +81,11 @@ namespace CT.Gameplay
             //temporary//
             player2.HP = cmd.playerHealth;
             _radioGameplay.RoundUIManager.SetPlayerHp(cmd.playerHealth);
+            if (NetX.IsListening && IsServer && _stateNet != null && _stateNet.IsSpawned)
+            {
+                _stateNet.P1HP.Value = player1.HP;
+                _stateNet.P2HP.Value = player2.HP;
+            }
         }
 
         #endregion
@@ -98,16 +116,17 @@ namespace CT.Gameplay
                 player2.Credits += _roundManager.creditsPerRound[_roundManager.creditsPerRound.Length - 1];
                 CreditsChanged();
             }
-            UpdateCreditsUI();
-            RoundManager rm = _radioGameplay.RoundManager;
-            if (NetX.NM && NetX.IsServer && rm != null)
-                rm.CreditsChangedClientRpc(player1.Credits, player2.Credits);
+            if (NetX.IsListening && IsServer && _stateNet != null && _stateNet.IsSpawned)
+            {
+                _stateNet.P1Credits.Value = player1.Credits;
+                _stateNet.P2Credits.Value = player2.Credits;
+            }
         }
 
         private void CreditsChanged()
         {
-            P1CreditsChanged?.Invoke(player1.Credits);
-            P2CreditsChanged?.Invoke(player2.Credits);
+            P1CreditsChanged?.Invoke(player1.Credits, 1);
+            P2CreditsChanged?.Invoke(player2.Credits, 2);
         }
 
         /// <summary>
@@ -122,8 +141,9 @@ namespace CT.Gameplay
                 if (player1.Credits >= amount)
                 {
                     player1.Credits -= amount;
-                    UpdateCreditsUI();
-                    P1CreditsChanged?.Invoke(player1.Credits);
+                    P1CreditsChanged?.Invoke(player1.Credits, 1);
+                    if (NetX.IsListening && IsServer && _stateNet != null && _stateNet.IsSpawned)
+                        _stateNet.P1Credits.Value = player1.Credits;
                     return true;
                 }
             }
@@ -132,8 +152,9 @@ namespace CT.Gameplay
                 if (player2.Credits >= amount)
                 {
                     player2.Credits -= amount;
-                    UpdateCreditsUI();
-                    P2CreditsChanged?.Invoke(player2.Credits);
+                    P2CreditsChanged?.Invoke(player2.Credits, 2);
+                    if (NetX.IsListening && IsServer && _stateNet != null && _stateNet.IsSpawned)
+                        _stateNet.P2Credits.Value = player2.Credits;
                     return true;
                 }
             }
@@ -232,14 +253,20 @@ namespace CT.Gameplay
                 player1.HP -= playerDamage/* * numberofUnitAlive*/;
                 if (player1.HP < 0)
                     Debug.Log($"Player 2 won the game");
-                _radioGameplay.RoundUIManager.UpdatePlayerHp(1, player1.HP);
+                if (NetX.IsListening && IsServer && _stateNet != null && _stateNet.IsSpawned)
+                    _stateNet.P1HP.Value = player1.HP;
+                else
+                    _radioGameplay.RoundUIManager.UpdatePlayerHp(1, player1.HP);
             }
             else
             {
                 player2.HP -= playerDamage/* * numberofUnitAlive*/;
                 if (player2.HP < 0)
                     Debug.Log($"Player 1 won the game");
-                _radioGameplay.RoundUIManager.UpdatePlayerHp(2, player2.HP);
+                if (NetX.IsListening && IsServer && _stateNet != null && _stateNet.IsSpawned)
+                    _stateNet.P2HP.Value = player2.HP;
+                else
+                    _radioGameplay.RoundUIManager.UpdatePlayerHp(2, player2.HP);
             }
         }
         #endregion
@@ -261,7 +288,8 @@ namespace CT.Gameplay
 
         public void UpdateCreditsUI()
         {
-            _radioGameplay.RoundUIManager.UpdateCreditsUI(player1.Credits);
+            _radioGameplay.RoundUIManager.UpdateCreditsUI(player1.Credits, 1);
+            _radioGameplay.RoundUIManager.UpdateCreditsUI(player2.Credits, 2);
         }
 
         public Player GetPlayerByTeam(Team team)
