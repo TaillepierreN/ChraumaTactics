@@ -48,19 +48,16 @@ public class RoundUIManager : MonoBehaviour
     {
         _roundManager = _radioGameplay.RoundManager;
 
-        if (_roundManager == null)
+        if (_roundManager != null)
         {
-            // Is client so no need to sub
-            return;
+            _roundManager.OnPhaseChanged += HandlePhaseChanged;
+            _roundManager.OnRoundChanged += HandleRoundChanged;
+            _roundManager.OnTimerTick += HandleTimerTick;
+
+            HandleRoundChanged(_roundManager.CurrentRound, _roundManager.CurrentPhase);
+            HandlePhaseChanged(_roundManager.CurrentPhase);
+            HandleTimerTick(_roundManager.TimeRemaining);
         }
-
-        _roundManager.OnPhaseChanged += HandlePhaseChanged;
-        _roundManager.OnRoundChanged += HandleRoundChanged;
-        _roundManager.OnTimerTick += HandleTimerTick;
-
-        HandleRoundChanged(_roundManager.CurrentRound, _roundManager.CurrentPhase);
-        HandlePhaseChanged(_roundManager.CurrentPhase);
-        HandleTimerTick(_roundManager.TimeRemaining);
     }
 
     void OnDestroy()
@@ -79,7 +76,12 @@ public class RoundUIManager : MonoBehaviour
 
     public void OnEndRoundButton()
     {
-        _roundManager.ForceEndPreparation();
+        if (_roundManager == null) return;
+
+        if (Unity.Netcode.NetworkManager.Singleton && Unity.Netcode.NetworkManager.Singleton.IsServer)
+            _roundManager.ForceEndPreparation();
+        else
+            _roundManager.ForceEndPreparationServerRpc();
     }
 
     public void OnSkipAugmentSelection()

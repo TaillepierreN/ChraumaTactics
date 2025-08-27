@@ -1,10 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Pool;
 using Unity.Netcode;
 using CT.Tools;
-using Unity.VisualScripting;
 using Unity.Netcode.Components;
 
 namespace CT.Units.Attacks
@@ -33,7 +30,8 @@ namespace CT.Units.Attacks
         private ObjectPool<GameObject> _projectilePool;
         private ObjectPool<GameObject> _impactPool;
         private ObjectPool<GameObject> _impactAoEPool;
-        private INetworkPrefabInstanceHandler _projHandler;
+        private bool Online => NetX.NM && NetX.IsListening;
+
 
         #region Unity Callbacks
 
@@ -42,7 +40,7 @@ namespace CT.Units.Attacks
         /// </summary>
         void Awake()
         {
-            if (_projectilePrefab != null)
+            if (!Online && _projectilePrefab != null)
             {
                 _projectilePool = new ObjectPool<GameObject>(
                     createFunc: () =>
@@ -95,19 +93,8 @@ namespace CT.Units.Attacks
                     _impactPool.Release(_impactPool.Get());
                 if (_impactAoEPool != null)
                     _impactAoEPool.Release(_impactAoEPool.Get());
-
             }
 
-            NetworkManager nm = NetworkManager.Singleton;
-            if (_projectilePrefab != null
-            && _projectilePrefab.GetComponent<NetworkObject>() != null
-            && nm != null
-            && nm.PrefabHandler != null)
-            {
-                _projHandler = new PooledProjectileHandler(_projectilePrefab, _projectilePool);
-                NetworkManager.Singleton.PrefabHandler.RemoveHandler(_projectilePrefab);
-                NetworkManager.Singleton.PrefabHandler.AddHandler(_projectilePrefab, _projHandler);
-            }
         }
 
         void OnDestroy()
@@ -116,15 +103,6 @@ namespace CT.Units.Attacks
             _impactPool?.Clear();
             _impactAoEPool?.Clear();
 
-            NetworkManager nm = NetworkManager.Singleton;
-            if (_projHandler != null && nm != null && nm.PrefabHandler != null)
-            {
-                if (NetPrefabHandlerRegistry.TryRelease(_projectilePrefab, out var handler, out bool lastRelease) && lastRelease)
-                {
-                    nm.PrefabHandler.RemoveHandler(_projectilePrefab);
-                }
-                _projHandler = null;
-            }
         }
 
         /// <summary>
@@ -147,6 +125,8 @@ namespace CT.Units.Attacks
         /// <param name="target"></param>
         public override void OnFire(Unit target)
         {
+            if (NetX.NM && NetX.IsListening && !NetX.IsServer)
+                return;
             if (CheckOwnerAndBarrelEnd(0))
                 return;
 
@@ -164,6 +144,8 @@ namespace CT.Units.Attacks
         /// <param name="target"></param>
         public override void OnFire2(Unit target)
         {
+            if (NetX.NM && NetX.IsListening && !NetX.IsServer)
+                return;
             if (CheckOwnerAndBarrelEnd(1))
                 return;
             GameObject projectile;
@@ -180,6 +162,8 @@ namespace CT.Units.Attacks
         /// <param name="target"></param>
         public override void OnFire3(Unit target)
         {
+            if (NetX.NM && NetX.IsListening && !NetX.IsServer)
+                return;
             if (CheckOwnerAndBarrelEnd(2))
                 return;
             GameObject projectile;
@@ -196,6 +180,8 @@ namespace CT.Units.Attacks
         /// <param name="target"></param>
         public override void OnFire4(Unit target)
         {
+            if (NetX.NM && NetX.IsListening && !NetX.IsServer)
+                return;
             if (CheckOwnerAndBarrelEnd(3))
                 return;
             GameObject projectile;
@@ -222,9 +208,13 @@ namespace CT.Units.Attacks
             if (proj == null)
             {
                 Debug.Log("Prefab doesn't have a projectile script");
-                _projectilePool.Release(projectile);
+                if (Online)
+                    Destroy(projectile);
+                else
+                    _projectilePool?.Release(projectile);
                 return;
             }
+
             if (_audioSource && _audioClip)
                 _audioSource.PlayOneShot(_audioClip);
 
@@ -309,19 +299,28 @@ namespace CT.Units.Attacks
         private void GetAndSetProjectile(int index, out GameObject projectile, out Projectile proj)
         {
             /*Online*/
-            if (NetX.IsServer)
+            if (Online && NetX.IsServer)
             {
                 projectile = Instantiate(_projectilePrefab, BarrelEnd[index].position, BarrelEnd[index].rotation);
 
-                if (!projectile.activeSelf) projectile.SetActive(true);
+                if (!projectile.activeInHierarchy)
+                    projectile.SetActive(true);
 
                 NetworkTransform nt = projectile.GetComponent<NetworkTransform>();
-                if (nt && !nt.enabled)
+                if (nt != null && !nt.enabled)
                     nt.enabled = true;
 
                 NetworkObject no = projectile.GetComponent<NetworkObject>();
+                if (no == null)
+                {
+                    Debug.LogError("[SRV] Projectile prefab missing NetworkObject on ROOT.");
+                    Destroy(projectile);
+                    proj = null;
+                    return;
+                }
+
                 if (no && !no.IsSpawned)
-                    no.Spawn(true);
+                    no.Spawn();
 
                 proj = projectile.GetComponent<Projectile>();
                 return;

@@ -531,7 +531,8 @@ public abstract class Unit : NetworkBehaviour
         if (_currentHealth <= 0)
         {
             IsDead = true;
-            _netAnimatorBody.SetTrigger(Animator.StringToHash("IsDead"));
+            if (NetX.InSession)
+                _netAnimatorBody.SetTrigger(Animator.StringToHash("IsDead"));
             OnUnitDeath?.Invoke(this);
             _hpBarCanvas.alpha = 0f;
             // Explosion animation

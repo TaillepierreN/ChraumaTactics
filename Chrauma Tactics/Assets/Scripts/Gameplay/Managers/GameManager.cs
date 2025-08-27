@@ -1,5 +1,7 @@
 using UnityEngine;
 using System;
+using CT.Tools;
+using Unity.Netcode;
 
 namespace CT.Gameplay
 {
@@ -30,15 +32,6 @@ namespace CT.Gameplay
 
         void Start()
         {
-            var nm = Unity.Netcode.NetworkManager.Singleton;
-            bool netActive = nm && nm.IsListening;
-            bool authoritative = !netActive || nm.IsServer;
-
-            if (!authoritative)
-            {
-                enabled = false;
-                return;
-            }
             _roundManager = _radioGameplay.RoundManager;
             if (_roundManager != null)
                 _roundManager.OnPhaseChanged += HandlePhaseChange;
@@ -106,6 +99,9 @@ namespace CT.Gameplay
                 CreditsChanged();
             }
             UpdateCreditsUI();
+            RoundManager rm = _radioGameplay.RoundManager;
+            if (NetX.NM && NetX.IsServer && rm != null)
+                rm.CreditsChangedClientRpc(player1.Credits, player2.Credits);
         }
 
         private void CreditsChanged()
@@ -171,6 +167,8 @@ namespace CT.Gameplay
         private void HandlePhaseChange(RoundPhase roundPhase)
         {
             SetSquadPhase?.Invoke(roundPhase);
+
+            if (!NetworkManager.Singleton || !NetworkManager.Singleton.IsServer) return;
 
             if (roundPhase == RoundPhase.PostPreparation)
             {

@@ -9,9 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3287234849258604141}
-  - component: {fileID: 3111585939468474032}
   - component: {fileID: 5539425506811489287}
   - component: {fileID: 5252843726123713110}
+  - component: {fileID: 3111585939468474032}
   m_Layer: 0
   m_Name: ProjectileTank
   m_TagString: Untagged
@@ -35,19 +35,6 @@ Transform:
   - {fileID: 5514188051440567845}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3111585939468474032
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3191253267326585072}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c9740c78636dd204d8303ebde61611c5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  DebugMode: 0
 --- !u!114 &5539425506811489287
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -119,6 +106,19 @@ MonoBehaviour:
   SwitchTransformSpaceWhenParented: 0
   Interpolate: 1
   SlerpPosition: 0
+--- !u!114 &3111585939468474032
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3191253267326585072}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9740c78636dd204d8303ebde61611c5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DebugMode: 0
 --- !u!1001 &5407958576636158414
 PrefabInstance:
   m_ObjectHideFlags: 0

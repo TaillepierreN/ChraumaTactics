@@ -2,6 +2,7 @@ using UnityEngine;
 using System;
 using Unity.Netcode;
 using CT.Tools;
+using System.Collections.Generic;
 
 public enum RoundPhase { Preparation, PostPreparation, Combat, PostCombat }
 
@@ -45,21 +46,15 @@ namespace CT.Gameplay
         #region Unity Callbacks
         void Awake()
         {
-
-            if (NetX.IsAuthoritative)
-                _radioGameplay.SetRoundManager(this);
+            _radioGameplay.SetRoundManager(this);
         }
 
         void Start()
         {
 
             if (!NetX.IsAuthoritative)
-            {
-                enabled = false;
                 return;
-            }
             _gameManager = _radioGameplay.GameManager;
-
             _gameManager.InitStartingCredits(creditsPerRound.Length > 0 ? creditsPerRound[0] : 0);
         }
 
@@ -67,38 +62,47 @@ namespace CT.Gameplay
         {
             if (!_gameStarted)
                 return;
-            TimeRemaining -= Time.deltaTime;
-            if (TimeRemaining < 0f)
-                TimeRemaining = 0f;
-
-            OnTimerTick?.Invoke(TimeRemaining);
-
-            if (TimeRemaining <= 0f)
+            if (NetX.IsAuthoritative)
             {
-                switch (CurrentPhase)
+                TimeRemaining = Mathf.Max(0f, TimeRemaining - Time.deltaTime);
+                OnTimerTick?.Invoke(TimeRemaining);
+
+                if (TimeRemaining <= 0f)
                 {
-                    case RoundPhase.Preparation:
-                        BeginPostPreparationPhase();
-                        break;
+                    switch (CurrentPhase)
+                    {
+                        case RoundPhase.Preparation:
+                            BeginPostPreparationPhase();
+                            break;
 
-                    case RoundPhase.PostPreparation:
-                        BeginCombatPhase();
-                        break;
+                        case RoundPhase.PostPreparation:
+                            BeginCombatPhase();
+                            break;
 
-                    case RoundPhase.Combat:
-                        BeginPostCombatPhase();
-                        break;
+                        case RoundPhase.Combat:
+                            BeginPostCombatPhase();
+                            break;
 
-                    case RoundPhase.PostCombat:
-                        BeginPreparationPhase();
-                        break;
+                        case RoundPhase.PostCombat:
+                            BeginPreparationPhase();
+                            break;
 
-                    default:
-                        Debug.Log("unknown phase");
-                        break;
+                        default:
+                            Debug.Log("unknown phase");
+                            break;
+                    }
+                }
+            }
+            else
+            {
+                if (TimeRemaining > 0f)
+                {
+                    TimeRemaining = Mathf.Max(0f, TimeRemaining - Time.deltaTime);
+                    OnTimerTick?.Invoke(TimeRemaining);
                 }
             }
         }
+
         #endregion
 
         #region StartGame
@@ -107,14 +111,21 @@ namespace CT.Gameplay
         /// </summary>
         public void StartGame()
         {
-            var nm = NetworkManager.Singleton;
-            bool netActive = nm && nm.IsListening;
-            bool authoritative = !netActive || nm.IsServer;
-
-            if (!authoritative || _gameStarted) return;
-            _radioGameplay?.RoundUIManager?.ShowRoundUI();
-            BeginPreparationPhase();
-            _gameStarted = true;
+            if (_gameStarted) return;
+            if (!NetX.IsListening)
+            {
+                _radioGameplay?.RoundUIManager?.ShowRoundUI();
+                BeginPreparationPhase();
+                _gameStarted = true;
+                return;
+            }
+            if (NetX.IsServer)
+            {
+                ShowRoundUIClientRpc();
+                _radioGameplay?.RoundUIManager?.ShowRoundUI();
+                BeginPreparationPhase();
+                _gameStarted = true;
+            }
         }
 
         #endregion
@@ -128,6 +139,16 @@ namespace CT.Gameplay
             if (CurrentPhase != RoundPhase.Preparation)
                 return;
             BeginPostPreparationPhase();
+        }
+
+        /// <summary>
+        /// Skip for client
+        /// </summary>
+        [ServerRpc(RequireOwnership = false)]
+        public void ForceEndPreparationServerRpc()
+        {
+            if (CurrentPhase == RoundPhase.Preparation)
+                BeginPostPreparationPhase();
         }
 
         /// <summary>
@@ -203,10 +224,58 @@ namespace CT.Gameplay
         /// </summary>
         private void TriggerEvents()
         {
+            if (!NetX.IsListening)
+            {
+                OnRoundChanged?.Invoke(CurrentRound, CurrentPhase);
+                OnPhaseChanged?.Invoke(CurrentPhase);
+                return;
+            }
+
+            if (!IsServer)
+                return;
+
             OnRoundChanged?.Invoke(CurrentRound, CurrentPhase);
             OnPhaseChanged?.Invoke(CurrentPhase);
+
+            if (NetX.NM && NetX.IsHost)
+            {
+                List<ulong> targets = new List<ulong>(NetX.NM.ConnectedClientsIds);
+                targets.Remove(NetX.NM.LocalClientId);
+                if (targets.Count > 0)
+                {
+                    PhaseChangedClientRpc(CurrentPhase, CurrentRound, TimeRemaining,
+                    new ClientRpcParams { Send = new ClientRpcSendParams { TargetClientIds = targets } });
+                }
+            }
+            else
+            {
+                PhaseChangedClientRpc(CurrentPhase, CurrentRound, TimeRemaining);
+            }
         }
 
+        [ClientRpc]
+        private void PhaseChangedClientRpc(RoundPhase phase, int round, float timeRemaining,
+                                        ClientRpcParams rpcParams = default)
+        {
+            CurrentPhase = phase;
+            CurrentRound = round;
+            TimeRemaining = timeRemaining;
+            if (!_gameStarted)
+                _gameStarted = true;
+            OnRoundChanged?.Invoke(round, phase);
+            OnPhaseChanged?.Invoke(phase);
+        }
+
+        [ClientRpc]
+        private void ShowRoundUIClientRpc()
+        {
+            _radioGameplay?.RoundUIManager?.ShowRoundUI();
+        }
+        [ClientRpc]
+        public void CreditsChangedClientRpc(int p1, int p2)
+        {
+            _radioGameplay.RoundUIManager.UpdateCreditsUI(p1);
+        }
         #endregion
     }
 }
