@@ -70,9 +70,6 @@ public class Squad : MonoBehaviour
 
     public void SpawnUnit()
     {
-        var nm = NetworkManager.Singleton;
-        bool netActive = nm && nm.IsListening;
-        bool server = netActive && nm.IsServer;
 
         List<Vector3> formation = SquadFormationPresets.GetFormation(nbrOfUnits);
 

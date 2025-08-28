@@ -15,7 +15,6 @@ namespace CT.Gameplay
         private GameStateNetwork _stateNet;
 
 
-
         [Header("Player stats")]
         public Player player1;
         public Player player2;
@@ -70,22 +69,106 @@ namespace CT.Gameplay
             CreditsChanged();
         }
 
+        public void RequestCommanderSelection(Commander cmd, Team team)
+        {
+            int hp = cmd.playerHealth;
+
+            if (NetX.IsListening && !IsServer)
+            {
+                SelectCommanderServerRpc(hp);
+                return;
+            }
+            ApplyCommanderHPForLocalTeam(team, hp);
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        private void SelectCommanderServerRpc(int hp, ServerRpcParams rpcParams = default)
+        {
+            ulong sender = rpcParams.Receive.SenderClientId;
+            Team team = (sender == NetworkManager.ServerClientId) ? Team.Player1 : Team.Player2;
+            ApplyCommanderHPForLocalTeam(team, hp);
+        }
+
         /// <summary>
         /// Set hp corresponding to chosen commander
-        /// TEMP: set both player with the same commander
+        /// use the same for both player in offline
         /// </summary>
         /// <param name="cmd"></param>
-        public void SetChosenCommander(Commander cmd)
+        private void ApplyCommanderHPForLocalTeam(Team team, int hp)
         {
-            player1.HP = cmd.playerHealth;
-            //temporary//
-            player2.HP = cmd.playerHealth;
-            _radioGameplay.RoundUIManager.SetPlayerHp(cmd.playerHealth);
+
+            if (!NetX.IsListening)
+            {
+                player1.HP = hp;
+                player2.HP = hp;
+
+                _radioGameplay.RoundUIManager.SetPlayerHp(hp, Team.Player1);
+                _radioGameplay.RoundUIManager.SetPlayerHp(hp, Team.Player2);
+                return;
+            }
+
+            if (team == Team.Player1) player1.HP = hp; else player2.HP = hp;
+
             if (NetX.IsListening && IsServer && _stateNet != null && _stateNet.IsSpawned)
             {
                 _stateNet.P1HP.Value = player1.HP;
                 _stateNet.P2HP.Value = player2.HP;
+                InitHpBarClientRpc((int)team, hp);
             }
+
+            if (!NetX.IsListening)
+                _radioGameplay.RoundUIManager.SetPlayerHp(hp, team);
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        public void GrantVoucherServerRpc(int unitIndex, ServerRpcParams rpcParams = default)
+        {
+            if (!IsServer) return;
+            if (PlacementNetwork.Instance == null) return;
+
+            ulong sender = rpcParams.Receive.SenderClientId;
+            Team team = (sender == NetworkManager.ServerClientId) ? Team.Player1 : Team.Player2;
+
+            GameObject prefab = PlacementNetwork.Instance.GetUnitByIndex(unitIndex);
+            if (prefab == null) return;
+
+            Player player = GetPlayerByTeam(team);
+            player?.GiveFreeSquadVoucher(prefab);
+
+            MirrorVoucherAddClientRpc(unitIndex, (int)team, new ClientRpcParams
+            {
+                Send = new ClientRpcSendParams { TargetClientIds = new[] { sender } }
+            });
+
+            NotifyVoucherChangedClientRpc(new ClientRpcParams
+            {
+                Send = new ClientRpcSendParams { TargetClientIds = new[] { sender } }
+            });
+        }
+
+        [ClientRpc]
+        private void MirrorVoucherAddClientRpc(int unitIndex, int teamInt, ClientRpcParams _ = default)
+        {
+            PlacementNetwork pn = PlacementNetwork.Instance;
+            GameManager gm = this;
+            if (pn == null || gm == null) return;
+
+            GameObject prefab = pn.GetUnitByIndex(unitIndex);
+            Team team = (Team)teamInt;
+            Player player = gm.GetPlayerByTeam(team);
+            player?.GiveFreeSquadVoucher(prefab);
+        }
+
+        [ClientRpc]
+        private void NotifyVoucherChangedClientRpc(ClientRpcParams _ = default)
+        {
+            NotifyVoucherChanged();
+        }
+
+        [ClientRpc]
+        private void InitHpBarClientRpc(int teamInt, int hp)
+        {
+            _radioGameplay.RoundUIManager.SetPlayerHp(hp, (Team)teamInt);
         }
 
         #endregion

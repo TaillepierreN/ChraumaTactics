@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using CT.Gameplay;
-using Unity.Mathematics;
+using CT.Tools;
 using UnityEngine;
 
 namespace CT.Grid
@@ -45,7 +45,7 @@ namespace CT.Grid
                     _gridSystemVisualSingleArray[x, z].Show();
                 }
             }
-            //HideAllGridPosition();
+            HideAllGridPosition();
         }
 
         void OnDisable()
@@ -89,7 +89,7 @@ namespace CT.Grid
             switch (phase)
             {
                 case RoundPhase.Preparation:
-                    ShowAllGridPosition();
+                    ShowLocalTeamGrid();
                     break;
                 case RoundPhase.PostPreparation:
                     HideAllGridPosition();
@@ -114,6 +114,20 @@ namespace CT.Grid
             if (!LevelGrid.Instance.IsValidGridPosition(gridPosition))
                 return;
             _gridSystemVisualSingleArray[gridPosition.x, gridPosition.z].ShowOverlay(color);
+        }
+
+        private Team GetLocalTeam()
+        {
+            if (!NetX.IsListening)
+                return Team.Player1;
+            return (NetX.NM != null && NetX.IsServer) ? Team.Player1 : Team.Player2;
+        }
+
+        private void ShowLocalTeamGrid()
+        {
+            Team team = GetLocalTeam();
+            foreach (GridPosition gp in LevelGrid.Instance.GetAllPositionsInTeamArea(team))
+                _gridSystemVisualSingleArray[gp.x, gp.z].Show();
         }
 
     }

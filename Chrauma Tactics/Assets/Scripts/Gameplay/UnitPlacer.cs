@@ -20,9 +20,9 @@ namespace CT.Gameplay
         private bool usingVoucher = false;
         private GameObject voucherUnitPrefab = null;
 
-
         private GameObject ghostUnit;
-
+        private Vector3 p1Forward = Vector3.forward;
+        private Vector3 p2Forward = Vector3.back;
         private bool isPlacing = false;
 
         private void Awake()
@@ -48,12 +48,6 @@ namespace CT.Gameplay
             if (rm != null) rm.OnPhaseChanged -= HandleChangePhase;
         }
 
-        private void HandleChangePhase(RoundPhase phase)
-        {
-            if (phase == RoundPhase.PostPreparation)
-                ClearGhostUnit();
-        }
-
         private void Update()
         {
             if (!isPlacing || ghostUnit == null)
@@ -65,15 +59,25 @@ namespace CT.Gameplay
             if (Physics.Raycast(ray, out RaycastHit hit, 100f))
             {
                 GridPosition gridPos = LevelGrid.Instance.GetGridPosition(hit.point);
-                bool isValid = LevelGrid.Instance.IsValidGridPosition(gridPos) &&
+
+                bool inMyArea = LevelGrid.Instance.IsInTeamArea(gridPos, placingTeam);
+                bool isValid = inMyArea && LevelGrid.Instance.IsValidGridPosition(gridPos) &&
                     !LevelGrid.Instance.HasAnySquadOnGridPosition(gridPos);
 
-                ghostUnit.transform.position = LevelGrid.Instance.GetWorldPosition(gridPos);
+                Vector3 worldPos = LevelGrid.Instance.GetWorldPosition(gridPos);
+                ghostUnit.transform.SetPositionAndRotation(worldPos,
+                                    Quaternion.LookRotation(placingTeam == Team.Player1 ? p1Forward : p2Forward, Vector3.up));
                 GridSystemVisual.Instance.ShowOverlay(gridPos, isValid ? Color.green : Color.red);
 
                 if (isValid && Input.GetMouseButtonDown(0))
                     PlaceUnit(gridPos);
             }
+        }
+
+        private void HandleChangePhase(RoundPhase phase)
+        {
+            if (phase == RoundPhase.PostPreparation)
+                ClearGhostUnit();
         }
 
         public void StartPlacingUnit(GameObject unitToPlace, int nbrOfUnits = 1, Team team = Team.Player1)
@@ -136,6 +140,7 @@ namespace CT.Gameplay
                 GameObject SquadObject = Instantiate(squadPrefab, LevelGrid.Instance.GetWorldPosition(pos), Quaternion.identity);
                 Squad squad = SquadObject.GetComponent<Squad>();
 
+                SquadObject.transform.SetParent(TeamSquadPool.Get(Team.Player1), true);
                 squad.team = placingTeam;
                 squad.nbrOfUnits = numberOfUnits;
                 squad.unitPrefab = unitPrefab;

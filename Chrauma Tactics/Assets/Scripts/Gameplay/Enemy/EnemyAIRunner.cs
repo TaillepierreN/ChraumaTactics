@@ -38,7 +38,7 @@ namespace CT.Gameplay.Enemy
         void Start()
         {
 
-            if (!NetX.IsAuthoritative && NetworkManager.Singleton != null)
+            if (NetX.NM && NetX.IsListening)
             {
                 enabled = false;
                 return;

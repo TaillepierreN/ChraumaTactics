@@ -8,6 +8,7 @@ namespace CT.Units.Attacks
 {
     public class Ballistic : Attack
     {
+        [SerializeField] private Rd_Gameplay _radioGameplay;
         [Header("Prefabs")]
         [SerializeField] private GameObject _projectilePrefab;
         [SerializeField] private GameObject[] _impactVFXPrefab;
@@ -24,6 +25,7 @@ namespace CT.Units.Attacks
         /// used to store pooled projectiles and impacts
         /// </summary>
         [SerializeField] private Transform _poolContainer;
+        private Transform _vfxRoot;
 
 
         [Header("Pools")]
@@ -31,70 +33,18 @@ namespace CT.Units.Attacks
         private ObjectPool<GameObject> _impactPool;
         private ObjectPool<GameObject> _impactAoEPool;
         private bool Online => NetX.NM && NetX.IsListening;
+        private bool _projHasNob;
 
 
         #region Unity Callbacks
 
-        /// <summary>
-        /// Initialize the pools of projectile and impact
-        /// </summary>
-        void Awake()
+        void Start()
         {
-            if (!Online && _projectilePrefab != null)
-            {
-                _projectilePool = new ObjectPool<GameObject>(
-                    createFunc: () =>
-                    {
-                        GameObject go = Instantiate(_projectilePrefab, _poolContainer);
-                        go.SetActive(false);
-                        return go;
-                    },
-                    actionOnGet: go => go.SetActive(true),
-                    actionOnRelease: go => go.SetActive(false),
-                    actionOnDestroy: go => Destroy(go),
-                    defaultCapacity: 32, maxSize: 256
-                );
-            }
-            if (_impactVFXPrefab != null && _impactVFXPrefab.Length >= 1)
-            {
-                _impactPool = new ObjectPool<GameObject>(
-                    createFunc: () =>
-                    {
-                        GameObject go = Instantiate(_impactVFXPrefab[0], _poolContainer);
-                        go.SetActive(false);
-                        return go;
-                    },
-                    actionOnGet: go => go.SetActive(true),
-                    actionOnRelease: go => go.SetActive(false),
-                    actionOnDestroy: go => Destroy(go),
-                    defaultCapacity: 32, maxSize: 256
-                );
-            }
-            if (_impactVFXPrefab != null && _impactVFXPrefab.Length > 1)
-            {
-                _impactAoEPool = new ObjectPool<GameObject>(
-                    createFunc: () =>
-                    {
-                        GameObject go = Instantiate(_impactVFXPrefab[1], _poolContainer);
-                        go.SetActive(false);
-                        return go;
-                    },
-                    actionOnGet: go => go.SetActive(true),
-                    actionOnRelease: go => go.SetActive(false),
-                    actionOnDestroy: go => Destroy(go),
-                    defaultCapacity: 32, maxSize: 256
-                );
-            }
-            for (int i = 0; i < _nbrOfPooledProjectile; i++)
-            {
-                if (_projectilePool != null)
-                    _projectilePool.Release(_projectilePool.Get());
-                if (_impactPool != null)
-                    _impactPool.Release(_impactPool.Get());
-                if (_impactAoEPool != null)
-                    _impactAoEPool.Release(_impactAoEPool.Get());
-            }
-
+            _projHasNob = _projectilePrefab && _projectilePrefab.GetComponent<NetworkObject>() != null;
+            ResolveVfxRoot();
+            EnsurePoolContainerParented();
+            InitPools();
+            PrewarmPools(_nbrOfPooledProjectile);
         }
 
         void OnDestroy()
@@ -105,6 +55,9 @@ namespace CT.Units.Attacks
 
         }
 
+        #endregion
+        #region Init
+
         /// <summary>
         /// initialize the owner and exit transform and damage of the projectile
         /// </summary>
@@ -113,6 +66,98 @@ namespace CT.Units.Attacks
         {
             base.Initialize(owner);
             _damage = owner.CurrentAtk;
+        }
+
+        private void ResolveVfxRoot()
+        {
+            if (!_vfxRoot && _radioGameplay && _radioGameplay.Pool)
+                _vfxRoot = _radioGameplay.Pool;
+
+            if (!_vfxRoot)
+            {
+                Debug.Log("can't find a general pool,so i'm making it myself");
+                GameObject go = GameObject.Find("--- Pools ---") ?? new GameObject("--- Pools ---");
+                _vfxRoot = go.transform;
+            }
+        }
+
+        private void EnsurePoolContainerParented()
+        {
+            if (_poolContainer && _poolContainer.parent != _vfxRoot)
+                _poolContainer.SetParent(_vfxRoot, worldPositionStays: true);
+        }
+
+        /// <summary>
+        /// Initialize the pools of projectile and impact
+        /// </summary>
+        private void InitPools()
+        {
+            if (!Online && _projectilePrefab != null)
+            {
+                _projectilePool = new ObjectPool<GameObject>(
+                    createFunc: () =>
+                    {
+                        GameObject go = Instantiate(_projectilePrefab, _poolContainer);
+                        go.SetActive(false);
+                        return go;
+                    },
+                    actionOnGet: go =>
+                    {
+                        if (_projHasNob) go.transform.SetParent(_vfxRoot, true);
+                        go.SetActive(true);
+                    },
+                    actionOnRelease: go =>
+                    {
+                        if (_projHasNob) go.transform.SetParent(_poolContainer, true);
+                        go.SetActive(false);
+                    },
+                    actionOnDestroy: go => Destroy(go),
+                    defaultCapacity: 32, maxSize: 256
+                );
+            }
+            if (_impactVFXPrefab != null && _impactVFXPrefab.Length >= 1)
+            {
+                _impactPool = new ObjectPool<GameObject>(
+                    createFunc: () =>
+                    {
+                        var go = Instantiate(_impactVFXPrefab[0], _poolContainer);
+                        go.SetActive(false);
+                        return go;
+                    },
+                    actionOnGet: go => { go.transform.SetParent(_vfxRoot, true); go.SetActive(true); },
+                    actionOnRelease: go => { go.transform.SetParent(_poolContainer, true); go.SetActive(false); },
+                    actionOnDestroy: go => Destroy(go),
+                    defaultCapacity: 32, maxSize: 256
+                );
+            }
+            if (_impactVFXPrefab != null && _impactVFXPrefab.Length > 1)
+            {
+                _impactAoEPool = new ObjectPool<GameObject>(
+                    createFunc: () =>
+                    {
+                        var go = Instantiate(_impactVFXPrefab[1], _poolContainer);
+                        go.SetActive(false);
+                        return go;
+                    },
+                    actionOnGet: go => { go.transform.SetParent(_vfxRoot, true); go.SetActive(true); },
+                    actionOnRelease: go => { go.transform.SetParent(_poolContainer, true); go.SetActive(false); },
+                    actionOnDestroy: go => Destroy(go),
+                    defaultCapacity: 32, maxSize: 256
+                );
+            }
+        }
+
+        private void PrewarmPools(int n)
+        {
+            for (int i = 0; i < n; i++)
+            {
+                if (_projectilePool != null)
+                    _projectilePool.Release(_projectilePool.Get());
+                if (_impactPool != null)
+                    _impactPool.Release(_impactPool.Get());
+                if (_impactAoEPool != null)
+                    _impactAoEPool.Release(_impactAoEPool.Get());
+            }
         }
 
         #endregion
@@ -265,7 +310,6 @@ namespace CT.Units.Attacks
                     if (no && no.IsSpawned)
                     {
                         no.Despawn(true);
-                        Destroy(projectile);
                     }
                     else
                     {
@@ -351,7 +395,6 @@ namespace CT.Units.Attacks
                 if (no && no.IsSpawned)
                 {
                     no.Despawn(true);
-                    Destroy(go);
                 }
                 else
                 {

@@ -12,7 +12,8 @@ public class PlacementNetwork : NetworkBehaviour
     [SerializeField] private GameObject _squdPrefab;
     [SerializeField] private GameObject[] _unitPrefabs;
     [SerializeField] private Rd_Gameplay _radioGameplay;
-
+    private Vector3 p1Forward = Vector3.forward;
+    private Vector3 p2Forward = Vector3.back;
     public override void OnNetworkSpawn()
     {
         if (Instance == null)
@@ -50,7 +51,8 @@ public class PlacementNetwork : NetworkBehaviour
 
         GridPosition gridPos = LevelGrid.Instance.GetGridPosition(worldPosition);
         if (!LevelGrid.Instance.IsValidGridPosition(gridPos) ||
-            LevelGrid.Instance.HasAnySquadOnGridPosition(gridPos))
+            LevelGrid.Instance.HasAnySquadOnGridPosition(gridPos) ||
+            !LevelGrid.Instance.IsInTeamArea(gridPos, team))
         {
             Debug.LogWarning("PlacementNetwork: invalid or occupied grid cell, rejecting placement");
             return;
@@ -73,8 +75,10 @@ public class PlacementNetwork : NetworkBehaviour
             if (!gm.CanAfford(cost, team)) return;
             if (!gm.SpendCredits(cost, team)) return;
         }
+        Vector3 teamForward = (team == Team.Player1) ? p1Forward : p2Forward;
+        Quaternion rot = Quaternion.LookRotation(teamForward, Vector3.up);
 
-        GameObject squadGameobject = Instantiate(_squdPrefab, worldPosition, Quaternion.identity);
+        GameObject squadGameobject = Instantiate(_squdPrefab, worldPosition, rot);
         NetworkObject squadNetworkObject = squadGameobject.GetComponent<NetworkObject>();
         if (squadNetworkObject == null)
         {
@@ -83,7 +87,6 @@ public class PlacementNetwork : NetworkBehaviour
             return;
         }
 
-
         Squad squad = squadGameobject.GetComponent<Squad>();
         squad.nbrOfUnits = Mathf.Clamp(unitCount, 1, 16);
         squad.unitPrefab = _unitPrefabs[unitIndex];
@@ -91,6 +94,14 @@ public class PlacementNetwork : NetworkBehaviour
         squadNetworkObject.Spawn(true);
         squad.SpawnUnit();
         LevelGrid.Instance.AddSquadAtGridPosition(gridPos, squad);
+
+        if (free)
+        {
+            MirrorVoucherRemoveClientRpc(unitIndex, team == Team.Player1 ? 1 : 2, new ClientRpcParams
+            {
+                Send = new ClientRpcSendParams { TargetClientIds = new[] { sender } }
+            });
+        }
     }
     public int IndexOfUnit(GameObject prefab)
     {
@@ -98,4 +109,20 @@ public class PlacementNetwork : NetworkBehaviour
             if (_unitPrefabs[i] == prefab) return i;
         return -1;
     }
+
+    public GameObject GetUnitByIndex(int i) =>
+    (i >= 0 && i < _unitPrefabs.Length) ? _unitPrefabs[i] : null;
+
+    [ClientRpc]
+    private void MirrorVoucherRemoveClientRpc(int unitIndex, int teamInt, ClientRpcParams _ = default)
+    {
+        GameManager gm = _radioGameplay.GameManager;
+        GameObject prefab = GetUnitByIndex(unitIndex);
+        if (gm == null || prefab == null) return;
+
+        Team team = (Team)teamInt;
+        gm.GetPlayerByTeam(team)?.ConsumeFreeSquadVoucher(prefab);
+        gm.NotifyVoucherChanged();
+    }
+
 }

@@ -9,6 +9,7 @@ public class Rd_Gameplay : ScriptableObject
     private RoundUIManager _roundUIManager;
     private BoostManager _boostManager;
     private GameStateNetwork _gameStateNetwork;
+    private Transform _poolContainer;
 
 
     public GameManager GameManager => _gameManager;
@@ -16,30 +17,18 @@ public class Rd_Gameplay : ScriptableObject
     public RoundUIManager RoundUIManager => _roundUIManager;
     public BoostManager BoostManager => _boostManager;
     public GameStateNetwork GameStateNetwork => _gameStateNetwork;
+    public Transform Pool => _poolContainer;
 
-    public void SetGameManager(GameManager gm)
-    {
-        _gameManager = gm;
-    }
 
-    public void SetRoundManager(RoundManager rm)
-    {
-        _roundManager = rm;
-    }
+    public void SetGameManager(GameManager gm) => _gameManager = gm;
 
-    public void SetRoundUIManager(RoundUIManager ruim)
-    {
-        _roundUIManager = ruim;
-    }
+    public void SetRoundManager(RoundManager rm) => _roundManager = rm;
 
-    public void SetBoostManager(BoostManager bm)
-    {
-        _boostManager = bm;
-    }
+    public void SetRoundUIManager(RoundUIManager ruim) => _roundUIManager = ruim;
 
-    public void SetGameStateNetwork(GameStateNetwork gsn)
-    {
-        _gameStateNetwork = gsn;
-    }
+    public void SetBoostManager(BoostManager bm) => _boostManager = bm;
 
+    public void SetGameStateNetwork(GameStateNetwork gsn) => _gameStateNetwork = gsn;
+
+    public void SetPoolContainer(Transform p) => _poolContainer = p;
 }

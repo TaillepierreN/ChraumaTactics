@@ -128,8 +128,8 @@ namespace CT.UI.UnitSelectionUI
         #endregion
         #region Helpers
 
-        private void OnCreditsNVChangedP1(int _, int __) { Debug.Log($"P1 NV -> {__}"); CheckIfCanAfford(); }
-        private void OnCreditsNVChangedP2(int _, int __) { Debug.Log($"P2 NV -> {__}"); CheckIfCanAfford(); }
+        private void OnCreditsNVChangedP1(int _, int __) { /*Debug.Log($"P1 NV -> {__}");*/ CheckIfCanAfford(); }
+        private void OnCreditsNVChangedP2(int _, int __) { /*Debug.Log($"P2 NV -> {__}");*/ CheckIfCanAfford(); }
         private void OnVoucherChanged() => CheckIfCanAfford();
         private IEnumerator ListenToChange()
         {

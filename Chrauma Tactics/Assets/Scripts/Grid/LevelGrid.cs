@@ -6,6 +6,15 @@ namespace CT.Grid
 {
     public class LevelGrid : MonoBehaviour
     {
+        [System.Serializable]
+        public struct GridRect
+        {
+            public int minX, maxX, minZ, maxZ;
+            public bool Contains(GridPosition gp) =>
+                gp.x >= minX && gp.x <= maxX && gp.z >= minZ && gp.z <= maxZ;
+        }
+        [SerializeField] private GridRect _p1PlacementArea;
+        [SerializeField] private GridRect _p2PlacementArea;
         public bool DebugMode = false;
         public static LevelGrid Instance { get; private set; }
 
@@ -42,7 +51,7 @@ namespace CT.Grid
             _gridSystem.GetGridObject(gridPosition).RemoveSquad(squad);
         }
 
-        public void SquadMovedGridPosition(GridPosition  fromGridPosition, GridPosition toGridPosition, Squad squad)
+        public void SquadMovedGridPosition(GridPosition fromGridPosition, GridPosition toGridPosition, Squad squad)
         {
             RemoveSquadAtGridPosition(fromGridPosition, squad);
             AddSquadAtGridPosition(toGridPosition, squad);
@@ -59,5 +68,18 @@ namespace CT.Grid
             GridObject gridObject = _gridSystem.GetGridObject(gridPosition);
             return gridObject.HasAnySquad();
         }
+
+        public bool IsInTeamArea(GridPosition gp, Team team)
+        {
+            return (team == Team.Player1 ? _p1PlacementArea : _p2PlacementArea).Contains(gp);
+        }
+        public IEnumerable<GridPosition> GetAllPositionsInTeamArea(Team team)
+        {
+            GridRect r = (team == Team.Player1) ? _p1PlacementArea : _p2PlacementArea;
+            for (int x = r.minX; x <= r.maxX; x++)
+                for (int z = r.minZ; z <= r.maxZ; z++)
+                    yield return new GridPosition(x, z);
+        }
     }
+
 }

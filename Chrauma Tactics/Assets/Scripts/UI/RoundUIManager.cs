@@ -105,7 +105,7 @@ public class RoundUIManager : MonoBehaviour
     {
         if (_roundManager == null) return;
 
-        if (Unity.Netcode.NetworkManager.Singleton && Unity.Netcode.NetworkManager.Singleton.IsServer)
+        if ((NetX.NM && NetX.IsServer) || !NetX.IsListening)
             _roundManager.ForceEndPreparation();
         else
             _roundManager.ForceEndPreparationServerRpc();
@@ -152,8 +152,6 @@ public class RoundUIManager : MonoBehaviour
         _offlineBOund = true;
 
         _gameManager.P1CreditsChanged += UpdateCreditsUI;
-        // (If you show P2 credits somewhere later, add another subscription for P2)
-        // _gm.P2CreditsChanged += v => ...;
 
         UpdateCreditsUI(_gameManager.player1.Credits, 1);
         UpdateCreditsUI(_gameManager.player2.Credits, 2);
@@ -254,15 +252,22 @@ public class RoundUIManager : MonoBehaviour
         }
     }
 
-    public void SetPlayerHp(int playerHp)
+    public void SetPlayerHp(int playerHp, Team team)
     {
-        HPSliderP1.maxValue = playerHp;
-        HPSliderP1.value = playerHp;
-        HPSliderP2.maxValue = playerHp;
-        HPSliderP2.value = playerHp;
-        HPTextP1.text = $"{playerHp}/{playerHp}";
-        HPTextP2.text = $"{playerHp}/{playerHp}";
-        P1maxHP = P2maxHP = playerHp;
+        if (team == Team.Player1)
+        {
+            HPSliderP1.maxValue = playerHp;
+            HPSliderP1.value = playerHp;
+            HPTextP1.text = $"{playerHp}/{playerHp}";
+            P1maxHP = playerHp;
+        }
+        else
+        {
+            HPSliderP2.maxValue = playerHp;
+            HPSliderP2.value = playerHp;
+            HPTextP2.text = $"{playerHp}/{playerHp}";
+            P2maxHP = playerHp;
+        }
     }
 
     public void UpdatePlayerHp(int player, int playerHp)
@@ -286,7 +291,7 @@ public class RoundUIManager : MonoBehaviour
         int myIndex = (creditsForTeam == Team.Player1) ? 1 : 2;
         if (player == myIndex)
         {
-            Debug.Log($"[UI] Credits updated for me (P{myIndex}): {playerCred}");
+            /*Debug.Log($"[UI] Credits updated for me (P{myIndex}): {playerCred}");*/
             creditsText.text = playerCred.ToString();
         }
     }
