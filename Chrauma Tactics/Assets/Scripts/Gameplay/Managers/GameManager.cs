@@ -272,7 +272,7 @@ namespace CT.Gameplay
         {
             SetSquadPhase?.Invoke(roundPhase);
 
-            if (!NetworkManager.Singleton || !NetworkManager.Singleton.IsServer) return;
+            if (NetX.IsListening && (!NetworkManager.Singleton || !NetworkManager.Singleton.IsServer)) return;
 
             if (roundPhase == RoundPhase.PostPreparation)
             {
@@ -289,6 +289,8 @@ namespace CT.Gameplay
         /// </summary>
         public void CheckWinRound()
         {
+            if (NetX.IsListening && !NetX.IsServer) return;
+
             int player1Survivors = 0;
             int player2Survivors = 0;
 
@@ -296,33 +298,51 @@ namespace CT.Gameplay
                 player1Survivors += squad.nbrOfUnits - squad.nbrOfDeadUnit;
             foreach (Squad squad in player2.Army)
                 player2Survivors += squad.nbrOfUnits - squad.nbrOfDeadUnit;
+
             if (DebugMode)
             {
                 Debug.Log($"Player 1 has {player1Survivors} surviving units");
                 Debug.Log($"Player 2 has {player2Survivors} surviving units");
             }
+            int winner;
             if (player1Survivors > player2Survivors)
             {
                 if (DebugMode)
                     Debug.Log("Player 1 win this round");
-                _radioGameplay.RoundUIManager.RoundResult(1);
-                DamagePlayer(2/*, player2Survivors*/);
+                winner = 1;
             }
             else if (player1Survivors < player2Survivors)
             {
                 if (DebugMode)
                     Debug.Log("Player 2 win this round");
-                _radioGameplay.RoundUIManager.RoundResult(2);
-                DamagePlayer(1/*, player1Survivors*/);
+                winner = 2;
             }
             else
             {
                 if (DebugMode)
                     Debug.Log("Draw");
-                _radioGameplay.RoundUIManager.RoundResult(3);
-                DamagePlayer(1/*, player2Survivors*/);
-                DamagePlayer(2/*, player1Survivors*/);
+                winner = 3;
             }
+            if (!NetX.IsListening || NetX.IsServer)
+            {
+                switch (winner)
+                {
+                    case 1:
+                        DamagePlayer(2/*, player2Survivors*/);
+                        break;
+                    case 2:
+                        DamagePlayer(1/*, player1Survivors*/);
+                        break;
+                    default:
+                        DamagePlayer(1/*, player2Survivors*/);
+                        DamagePlayer(2/*, player1Survivors*/);
+                        break;
+                }
+            }
+            if (!NetX.IsListening)
+                _radioGameplay.RoundUIManager.RoundResult(winner);
+            else if (NetX.IsServer)
+                _radioGameplay.RoundManager.Server_AnnounceRoundResult(winner);
         }
 
         /// <summary>

@@ -10,6 +10,7 @@ public class Rd_Gameplay : ScriptableObject
     private BoostManager _boostManager;
     private GameStateNetwork _gameStateNetwork;
     private Transform _poolContainer;
+    private CommanderSelectionMenu _commanderSelectionMenu;
 
 
     public GameManager GameManager => _gameManager;
@@ -18,6 +19,7 @@ public class Rd_Gameplay : ScriptableObject
     public BoostManager BoostManager => _boostManager;
     public GameStateNetwork GameStateNetwork => _gameStateNetwork;
     public Transform Pool => _poolContainer;
+    public CommanderSelectionMenu CommanderSelectionmenu => _commanderSelectionMenu;
 
 
     public void SetGameManager(GameManager gm) => _gameManager = gm;
@@ -31,4 +33,5 @@ public class Rd_Gameplay : ScriptableObject
     public void SetGameStateNetwork(GameStateNetwork gsn) => _gameStateNetwork = gsn;
 
     public void SetPoolContainer(Transform p) => _poolContainer = p;
+    public void SetCommanderSelectionMenu(CommanderSelectionMenu csm) => _commanderSelectionMenu = csm;
 }

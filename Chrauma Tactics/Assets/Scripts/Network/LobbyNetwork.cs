@@ -2,6 +2,7 @@ using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
 using TMPro;
+using CT.UI;
 
 namespace CT.Network
 {
@@ -58,6 +59,10 @@ namespace CT.Network
                 UnityEngine.SceneManagement.LoadSceneMode.Single);
         }
 
+        public void GoBack()
+        {
+            SceneLoader.LoadOffline("GameMenu");
+        }
 
         void HookEvents()
         {
@@ -141,12 +146,6 @@ namespace CT.Network
             nm.CustomMessagingManager.SendNamedMessage(MsgRequestCount, NetworkManager.ServerClientId, w);
         }
 
-
-        void OnRequestCount(ulong sender, FastBufferReader _)
-        {
-            SendCountToClient(sender, ComputeCount());
-        }
-
         void BroadcastCount()
         {
             var nm = NetworkManager.Singleton;
@@ -162,15 +161,6 @@ namespace CT.Network
             nm.CustomMessagingManager.SendNamedMessageToAll(MsgLobbyCount, w);
         }
 
-        void SendCountToClient(ulong client, int count)
-        {
-            var nm = NetworkManager.Singleton;
-            if (nm?.CustomMessagingManager == null) return;
-
-            using var w = new FastBufferWriter(sizeof(int), Allocator.Temp);
-            w.WriteValueSafe(count);
-            nm.CustomMessagingManager.SendNamedMessage(MsgLobbyCount, client, w);
-        }
 
         int ComputeCount()
         {

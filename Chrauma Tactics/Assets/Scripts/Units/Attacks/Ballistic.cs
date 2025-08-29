@@ -33,14 +33,13 @@ namespace CT.Units.Attacks
         private ObjectPool<GameObject> _impactPool;
         private ObjectPool<GameObject> _impactAoEPool;
         private bool Online => NetX.NM && NetX.IsListening;
-        private bool _projHasNob;
+
 
 
         #region Unity Callbacks
 
         void Start()
         {
-            _projHasNob = _projectilePrefab && _projectilePrefab.GetComponent<NetworkObject>() != null;
             ResolveVfxRoot();
             EnsurePoolContainerParented();
             InitPools();
@@ -97,18 +96,20 @@ namespace CT.Units.Attacks
                 _projectilePool = new ObjectPool<GameObject>(
                     createFunc: () =>
                     {
-                        GameObject go = Instantiate(_projectilePrefab, _poolContainer);
+                        GameObject go = Instantiate(_projectilePrefab);
+                        NetRemover.StripNetcodeComponents(go);
+                        go.transform.SetParent(_poolContainer, true);
                         go.SetActive(false);
                         return go;
                     },
                     actionOnGet: go =>
                     {
-                        if (_projHasNob) go.transform.SetParent(_vfxRoot, true);
+                        go.transform.SetParent(_vfxRoot, true);
                         go.SetActive(true);
                     },
                     actionOnRelease: go =>
                     {
-                        if (_projHasNob) go.transform.SetParent(_poolContainer, true);
+                        go.transform.SetParent(_poolContainer, true);
                         go.SetActive(false);
                     },
                     actionOnDestroy: go => Destroy(go),
@@ -120,7 +121,11 @@ namespace CT.Units.Attacks
                 _impactPool = new ObjectPool<GameObject>(
                     createFunc: () =>
                     {
-                        var go = Instantiate(_impactVFXPrefab[0], _poolContainer);
+                        GameObject go = Instantiate(_impactVFXPrefab[0]);
+                        if (!Online)
+                            NetRemover.StripNetcodeComponents(go);
+
+                        go.transform.SetParent(_poolContainer, true);
                         go.SetActive(false);
                         return go;
                     },
@@ -135,7 +140,11 @@ namespace CT.Units.Attacks
                 _impactAoEPool = new ObjectPool<GameObject>(
                     createFunc: () =>
                     {
-                        var go = Instantiate(_impactVFXPrefab[1], _poolContainer);
+                        GameObject go = Instantiate(_impactVFXPrefab[1]);
+                        if (!Online)
+                            NetRemover.StripNetcodeComponents(go);
+
+                        go.transform.SetParent(_poolContainer, true);
                         go.SetActive(false);
                         return go;
                     },

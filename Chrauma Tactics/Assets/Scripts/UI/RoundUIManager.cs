@@ -15,7 +15,7 @@ public class RoundUIManager : MonoBehaviour
 
     [Header("Panels and buttons")]
     [SerializeField] private GameObject _roundUI;
-
+    [SerializeField] private GameObject _waitingEndPrepOverlay;
     public GameObject prepUI;
     public GameObject augmentSelectionUI;
     public GameObject battleUI;
@@ -105,10 +105,14 @@ public class RoundUIManager : MonoBehaviour
     {
         if (_roundManager == null) return;
 
-        if ((NetX.NM && NetX.IsServer) || !NetX.IsListening)
+        if (!NetX.IsListening)
+        {
             _roundManager.ForceEndPreparation();
-        else
-            _roundManager.ForceEndPreparationServerRpc();
+            return;
+        }
+        Team myTeam = (NetX.IsListening && NetX.NM && !NetX.IsServer) ? Team.Player2 : Team.Player1;
+        _roundManager.EndPreparationVoteServerRpc(myTeam);
+        if (endRoundButton) endRoundButton.SetActive(false);
     }
 
     public void OnSkipAugmentSelection()
@@ -180,6 +184,7 @@ public class RoundUIManager : MonoBehaviour
             case RoundPhase.PostPreparation:
                 prepUI.SetActive(false);
                 endRoundButton.SetActive(false);
+                ShowWaitingEndPrep(false);
                 break;
 
             case RoundPhase.Combat:
@@ -298,12 +303,15 @@ public class RoundUIManager : MonoBehaviour
 
     public void RoundResult(int winningPlayer)
     {
-        if (winningPlayer == 1)
-            postBattleText.text = "Round Won";
-        else if (winningPlayer == 2)
-            postBattleText.text = "Round Lost";
-        else
+        if (winningPlayer == 3)
+        {
             postBattleText.text = "Draw";
+            return;
+        }
+        //Debug.Log("Winning is " + winningPlayer);
+        int myIndex = !NetX.IsListening ? 1 : (NetX.IsServer ? 1 : 2);
+        //Debug.Log($"my index is {myIndex}");
+        postBattleText.text = (winningPlayer == myIndex) ? "Round Won" : "Round Lost";
     }
 
     private IEnumerator ShowResult()
@@ -317,5 +325,18 @@ public class RoundUIManager : MonoBehaviour
             yield return null;
         }
         resultGroup.alpha = 1;
+    }
+
+    public void ShowWaitingEndPrep(bool show)
+    {
+        if (_waitingEndPrepOverlay)
+        {
+            _waitingEndPrepOverlay.SetActive(show);
+        }
+        if (show)
+        {
+            prepUI.SetActive(false);
+            endRoundButton.SetActive(false);
+        }
     }
 }

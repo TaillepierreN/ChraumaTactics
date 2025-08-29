@@ -75,7 +75,7 @@ public class CommanderUI : MonoBehaviour
                     _radioGameplay.GameManager.GrantVoucherServerRpc(pn.IndexOfUnit(commanderData.unitPrefab2));
             }
             if (GameFlowNetwork.Instance != null)
-                GameFlowNetwork.Instance.StartGameServerRpc();
+                GameFlowNetwork.Instance.NotifyCommanderSelectedServerRpc(team);
         }
         else
         {

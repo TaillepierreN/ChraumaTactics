@@ -38,6 +38,8 @@ namespace CT.Gameplay
 
         private bool _isFirstPrep = true;
         private bool _gameStarted = false;
+        private bool _p1WantsEndPrep = false;
+        private bool _p2WantsEndPrep = false;
 
         public event Action<RoundPhase> OnPhaseChanged;
         public event Action<int, RoundPhase> OnRoundChanged;
@@ -159,6 +161,9 @@ namespace CT.Gameplay
             CurrentPhase = RoundPhase.Preparation;
             TimeRemaining = prepTime;
 
+            _p1WantsEndPrep = false;
+            _p2WantsEndPrep = false;
+
             if (!_isFirstPrep)
             {
                 CurrentRound++;
@@ -182,6 +187,11 @@ namespace CT.Gameplay
             CurrentPhase = RoundPhase.PostPreparation;
             TimeRemaining = postPrepTime;
 
+            _radioGameplay?.RoundUIManager?.ShowWaitingEndPrep(false);
+
+            if (NetX.IsListening && IsServer)
+                HideWaitingEndPrepClientRpc();
+
             TriggerEvents();
 
             if (DebugMode)
@@ -195,7 +205,7 @@ namespace CT.Gameplay
         {
             CurrentPhase = RoundPhase.Combat;
             TimeRemaining = battleTime;
-
+            _radioGameplay?.RoundUIManager?.ShowWaitingEndPrep(false);
             TriggerEvents();
 
             if (DebugMode)
@@ -270,8 +280,57 @@ namespace CT.Gameplay
         private void ShowRoundUIClientRpc()
         {
             _radioGameplay?.RoundUIManager?.ShowRoundUI();
+            _radioGameplay.CommanderSelectionmenu?.HideWaiting();
         }
 
+        [ServerRpc(RequireOwnership = false)]
+        public void EndPreparationVoteServerRpc(Team team, ServerRpcParams rpcParams = default)
+        {
+            if (CurrentPhase != RoundPhase.Preparation) return;
+
+            if (team == Team.Player1)
+                _p1WantsEndPrep = true;
+            else
+                _p2WantsEndPrep = true;
+
+            if (_p1WantsEndPrep && _p2WantsEndPrep)
+            {
+                BeginPostPreparationPhase();
+            }
+            else
+            {
+                ClientRpcParams target = new ClientRpcParams
+                {
+                    Send = new ClientRpcSendParams { TargetClientIds = new[] { rpcParams.Receive.SenderClientId } }
+                };
+                ShowWaitingEndPrepClientRpc(target);
+            }
+        }
+
+        [ClientRpc]
+        private void ShowWaitingEndPrepClientRpc(ClientRpcParams rpcParams = default)
+        {
+            _radioGameplay?.RoundUIManager?.ShowWaitingEndPrep(true);
+        }
+
+        [ClientRpc]
+        private void HideWaitingEndPrepClientRpc()
+        {
+            _radioGameplay?.RoundUIManager?.ShowWaitingEndPrep(false);
+        }
+
+        [ClientRpc]
+        private void AnnounceRoundResultClientRpc(int winningPlayer, int round)
+        {
+            if (round != CurrentRound) return;
+
+            _radioGameplay?.RoundUIManager?.RoundResult(winningPlayer);
+        }
+        public void Server_AnnounceRoundResult(int winningPlayer)
+        {
+            if (!IsServer) return;
+            AnnounceRoundResultClientRpc(winningPlayer, CurrentRound);
+        }
         #endregion
     }
 }

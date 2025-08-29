@@ -139,7 +139,7 @@ namespace CT.Gameplay
             {
                 GameObject SquadObject = Instantiate(squadPrefab, LevelGrid.Instance.GetWorldPosition(pos), Quaternion.identity);
                 Squad squad = SquadObject.GetComponent<Squad>();
-
+                NetRemover.StripNetcodeComponents(SquadObject);
                 SquadObject.transform.SetParent(TeamSquadPool.Get(Team.Player1), true);
                 squad.team = placingTeam;
                 squad.nbrOfUnits = numberOfUnits;
