@@ -339,10 +339,20 @@ namespace CT.Gameplay
                         break;
                 }
             }
+			if ((!NetX.IsListening || NetX.IsHost) && (player1.HP <= 0 || player2.HP <= 0))
+			{
+				
+				int winnerPlayer = player1.HP <= 0 ? 2 : 1;
+				Debug.Log("Is in check end result");
+				if (!NetX.IsListening)
+					_radioGameplay?.RoundManager?.SetEndPhase(winnerPlayer);
+				else if (NetX.IsServer)
+					_radioGameplay?.RoundManager?.Server_AnnonceEndResult(winnerPlayer);
+			}
             if (!NetX.IsListening)
-                _radioGameplay.RoundUIManager.RoundResult(winner);
-            else if (NetX.IsServer)
-                _radioGameplay.RoundManager.Server_AnnounceRoundResult(winner);
+					_radioGameplay.RoundUIManager.RoundResult(winner);
+				else if (NetX.IsServer)
+					_radioGameplay.RoundManager.Server_AnnounceRoundResult(winner);
         }
 
         /// <summary>
