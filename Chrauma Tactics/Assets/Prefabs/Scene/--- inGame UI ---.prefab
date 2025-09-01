@@ -283,6 +283,7 @@ GameObject:
   - component: {fileID: 3009107066443542091}
   - component: {fileID: 4209345666695708358}
   - component: {fileID: 5347201195926647379}
+  - component: {fileID: 4498385513240123335}
   m_Layer: 5
   m_Name: CountdownPanel
   m_TagString: Untagged
@@ -348,6 +349,18 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!225 &4498385513240123335
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1199666221709726245}
+  m_Enabled: 1
+  m_Alpha: 0
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &1266295594640749363
 GameObject:
   m_ObjectHideFlags: 0
@@ -1807,7 +1820,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "LOADING NEXT PHASE \n..."
+  m_text: Get Ready
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: a85a5fb20be32c74e8b4a078e736f5ab, type: 2}
   m_sharedMaterial: {fileID: -8262044034710385518, guid: a85a5fb20be32c74e8b4a078e736f5ab, type: 2}
@@ -2419,7 +2432,7 @@ MonoBehaviour:
   EndBattleUI: {fileID: 3601279093740606722}
   resultGroup: {fileID: 4108877002727380405}
   endRoundButton: {fileID: 9206516020788185787}
-  betweenRoundsPanel: {fileID: 1199666221709726245}
+  betweenRoundsPanel: {fileID: 4498385513240123335}
   HPSliderP1: {fileID: 2094234816177820575}
   HPTextP1: {fileID: 658823534347781481}
   HPSliderP2: {fileID: 3032977342266360723}

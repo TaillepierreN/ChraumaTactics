@@ -3,6 +3,8 @@ using Unity.Netcode;
 using UnityEngine;
 using TMPro;
 using CT.UI;
+using CT.Tools;
+using System.Collections;
 
 namespace CT.Network
 {
@@ -35,19 +37,25 @@ namespace CT.Network
 
             RegisterCountHandlers();
             if (!nm.StartClient()) return;
+			StartCoroutine(CheckIfConnected());
+        }
+		private IEnumerator CheckIfConnected()
+		{
+			yield return new WaitForSeconds(2f);
+			Debug.Log($"is client? {NetX.IsClient}, is connected/listening? {NetX.IsListening}");
 
             _statusPanel?.SetActive(true);
             RequestCountFromHost();
-        }
+		}
 
         public void Shutdown()
-        {
-            UnhookEvents();
-            NetworkManager.Singleton?.Shutdown();
-            SetCountLabel(0);
-            _buttonStart?.SetActive(false);
-            _statusPanel?.SetActive(false);
-        }
+		{
+			UnhookEvents();
+			NetworkManager.Singleton?.Shutdown();
+			SetCountLabel(0);
+			_buttonStart?.SetActive(false);
+			_statusPanel?.SetActive(false);
+		}
 
         public void StartGame()
         {

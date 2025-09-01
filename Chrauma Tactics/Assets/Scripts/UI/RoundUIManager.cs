@@ -23,7 +23,7 @@ public class RoundUIManager : MonoBehaviour
 	public GameObject EndBattleUI;
 	public CanvasGroup resultGroup;
 	public GameObject endRoundButton;
-	public GameObject betweenRoundsPanel;
+	public CanvasGroup betweenRoundsPanel;
 
 	[Header("Player Stats")]
 	[SerializeField] Slider HPSliderP1;
@@ -253,11 +253,15 @@ public class RoundUIManager : MonoBehaviour
 	{
 		if (betweenRoundsPanel)
 		{
-			betweenRoundsPanel.SetActive(true);
-			yield return new WaitForSeconds(duration);
-			betweenRoundsPanel.SetActive(false);
+			betweenRoundsPanel.alpha = 0;
+			betweenRoundsPanel.gameObject.SetActive(true);
+			betweenRoundsPanel.alpha = 1;
+			yield return new WaitForSeconds(0.9f);
+			betweenRoundsPanel.alpha = 0;
+			betweenRoundsPanel.gameObject.SetActive(false);
 		}
 	}
+
 
 	public void SetPlayerHp(int playerHp, Team team)
 	{
