@@ -16,54 +16,74 @@ namespace CT.Network
         [SerializeField] GameObject _statusPanel;
         [SerializeField] TMP_Text _nbrPlayerText;
         [SerializeField] GameObject _buttonStart;
+        [SerializeField] GameObject _connectingPanel;
+        [SerializeField] GameObject _failedConnectPanel;
 
         // --- UI buttons ---
         public void StartHost()
         {
-            var nm = NetworkManager.Singleton;
-            if (!nm) return;
-
-            if (!nm.StartHost()) return;
+            if (!NetX.NM) return;
 
             HookEvents();
+            if (!NetX.NM.StartHost()) return;
+
             _statusPanel?.SetActive(true);
             BroadcastCount();
         }
 
         public void StartClient()
         {
-            var nm = NetworkManager.Singleton;
-            if (!nm) return;
+            if (!NetX.NM) return;
 
-            RegisterCountHandlers();
-            if (!nm.StartClient()) return;
-			StartCoroutine(CheckIfConnected());
+            if (NetX.NM.NetworkConfig.NetworkTransport is Unity.Netcode.Transports.UTP.UnityTransport utp)
+            {
+                utp.MaxConnectAttempts = 2;
+                utp.ConnectTimeoutMS = 1500;
+            }
+
+            HookEvents();
+
+            _connectingPanel.SetActive(true);
+
+            if (!NetX.NM.StartClient())
+            {
+                _statusPanel?.SetActive(false);
+                _failedConnectPanel.SetActive(true);
+                return;
+            }
+
+            StartCoroutine(ConnectWatchdog(5f));
         }
-		private IEnumerator CheckIfConnected()
-		{
-			yield return new WaitForSeconds(2f);
-			Debug.Log($"is client? {NetX.IsClient}, is connected/listening? {NetX.IsListening}");
 
-            _statusPanel?.SetActive(true);
-            RequestCountFromHost();
-		}
+        private IEnumerator ConnectWatchdog(float seconds)
+        {
+            float end = Time.time + seconds;
+            while (Time.time < end)
+            {
+                if (NetX.NM && NetX.NM.IsConnectedClient) yield break;
+                yield return null;
+            }
+            NetX.NM?.Shutdown();
+            _statusPanel?.SetActive(false);
+            _failedConnectPanel?.SetActive(true);
+        }
 
         public void Shutdown()
-		{
-			UnhookEvents();
-			NetworkManager.Singleton?.Shutdown();
-			SetCountLabel(0);
-			_buttonStart?.SetActive(false);
-			_statusPanel?.SetActive(false);
-		}
+        {
+            UnhookEvents();
+            NetworkManager.Singleton?.Shutdown();
+            SetCountLabel(0);
+            _buttonStart?.SetActive(false);
+            _statusPanel?.SetActive(false);
+            _failedConnectPanel?.SetActive(false);
+            SceneLoader.CompleteNetwork();
+        }
 
         public void StartGame()
         {
-            var nm = NetworkManager.Singleton;
-            if (!nm || !nm.IsServer) return;
+            if (!NetX.NM || !NetX.NM.IsServer) return;
 
-            UI.SceneLoader.BeginNetwork("SampleScene");
-            nm.SceneManager.LoadScene("SampleScene",
+            NetX.NM.SceneManager.LoadScene("SampleScene",
                 UnityEngine.SceneManagement.LoadSceneMode.Single);
         }
 
@@ -72,112 +92,133 @@ namespace CT.Network
             SceneLoader.LoadOffline("GameMenu");
         }
 
-        void HookEvents()
+        private void HookEvents()
         {
-            var nm = NetworkManager.Singleton;
-            if (!nm) return;
+            if (!NetX.NM) return;
 
-            nm.OnServerStarted += OnServerStarted;
-            nm.OnClientConnectedCallback += OnClientConnected;
-            nm.OnClientDisconnectCallback += OnClientDisconnected;
+            NetX.NM.OnServerStarted -= OnServerStarted;
+            NetX.NM.OnClientConnectedCallback -= OnClientConnected;
+            NetX.NM.OnClientDisconnectCallback -= OnClientDisconnected;
+
+            NetX.NM.OnServerStarted += OnServerStarted;
+            NetX.NM.OnClientConnectedCallback += OnClientConnected;
+            NetX.NM.OnClientDisconnectCallback += OnClientDisconnected;
 
             RegisterCountHandlers();
         }
 
-        void UnhookEvents()
+        private void UnhookEvents()
         {
-            var nm = NetworkManager.Singleton;
-            if (!nm) return;
+            if (!NetX.NM) return;
 
-            nm.OnServerStarted -= OnServerStarted;
-            nm.OnClientConnectedCallback -= OnClientConnected;
-            nm.OnClientDisconnectCallback -= OnClientDisconnected;
+            NetX.NM.OnServerStarted -= OnServerStarted;
+            NetX.NM.OnClientConnectedCallback -= OnClientConnected;
+            NetX.NM.OnClientDisconnectCallback -= OnClientDisconnected;
 
             UnregisterCountHandlers();
         }
 
-        void RegisterCountHandlers()
+        private void RegisterCountHandlers()
         {
-            var nm = NetworkManager.Singleton;
-            if (nm?.CustomMessagingManager == null) return;
+            if (NetX.NM?.CustomMessagingManager == null) return;
 
 
-            nm.CustomMessagingManager.UnregisterNamedMessageHandler(MsgLobbyCount);
-            nm.CustomMessagingManager.RegisterNamedMessageHandler(MsgLobbyCount, OnCountMessage);
+            NetX.NM.CustomMessagingManager.UnregisterNamedMessageHandler(MsgLobbyCount);
+            NetX.NM.CustomMessagingManager.RegisterNamedMessageHandler(MsgLobbyCount, OnCountMessage);
 
-            if (nm.IsServer)
+            if (NetX.NM.IsServer)
             {
-                nm.CustomMessagingManager.UnregisterNamedMessageHandler(MsgRequestCount);
-                nm.CustomMessagingManager.RegisterNamedMessageHandler(MsgRequestCount,
-            (sender, _) => SendCountToClient(sender));
+                NetX.NM.CustomMessagingManager.UnregisterNamedMessageHandler(MsgRequestCount);
+                NetX.NM.CustomMessagingManager.RegisterNamedMessageHandler(MsgRequestCount,
+            (sender, _) =>
+            {
+                if (NetX.NM.IsServer)
+                    SendCountToClient(sender);
+            });
             }
         }
 
-        void UnregisterCountHandlers()
+        private void UnregisterCountHandlers()
         {
-            var nm = NetworkManager.Singleton;
-            if (nm?.CustomMessagingManager == null) return;
+            if (NetX.NM?.CustomMessagingManager == null) return;
 
-            nm.CustomMessagingManager.UnregisterNamedMessageHandler(MsgLobbyCount);
-            if (nm.IsServer)
-                nm.CustomMessagingManager.UnregisterNamedMessageHandler(MsgRequestCount);
+            NetX.NM.CustomMessagingManager.UnregisterNamedMessageHandler(MsgLobbyCount);
+            if (NetX.NM.IsServer)
+                NetX.NM.CustomMessagingManager.UnregisterNamedMessageHandler(MsgRequestCount);
         }
 
-        void OnServerStarted() => BroadcastCount();
-        void OnClientConnected(ulong clientId)
+        private void OnServerStarted() => BroadcastCount();
+        private void OnClientConnected(ulong clientId)
         {
-            var nm = NetworkManager.Singleton;
-            if (nm && nm.IsServer)
+            if (NetX.NM && NetX.NM.IsServer)
             {
                 BroadcastCount();
                 SendCountToClient(clientId);
             }
+            else if (clientId == NetX.NM.LocalClientId)
+            {
+                _statusPanel.SetActive(true);
+                _connectingPanel.SetActive(false);
+                RequestCountFromHost();
+            }
         }
-        void OnClientDisconnected(ulong _) { if (NetworkManager.Singleton.IsServer) BroadcastCount(); }
-
-        void SendCountToClient(ulong clientId)
+        private void OnClientDisconnected(ulong clientId)
         {
-            var nm = NetworkManager.Singleton;
-            if (nm?.CustomMessagingManager == null) return;
+            if (!NetX.NM) return;
 
-            int count = nm.ConnectedClientsIds.Count;
+            if (NetX.NM.IsServer)
+            {
+                BroadcastCount();
+            }
+            else if (clientId == NetX.NM.LocalClientId)
+            {
+
+                _statusPanel?.SetActive(false);
+                _failedConnectPanel.SetActive(true);
+                _connectingPanel.SetActive(false);
+                SetCountLabel(0);
+            }
+        }
+
+        private void SendCountToClient(ulong clientId)
+        {
+            if (NetX.NM?.CustomMessagingManager == null) return;
+
+            int count = NetX.NM.ConnectedClientsIds.Count;
             using var w = new FastBufferWriter(sizeof(int), Allocator.Temp);
             w.WriteValueSafe(count);
-            nm.CustomMessagingManager.SendNamedMessage("ct/lobby/count", clientId, w);
+            NetX.NM.CustomMessagingManager.SendNamedMessage("ct/lobby/count", clientId, w);
         }
-        void RequestCountFromHost()
+        private void RequestCountFromHost()
         {
-            var nm = NetworkManager.Singleton;
-            if (nm?.CustomMessagingManager == null) return;
+            if (NetX.NM?.CustomMessagingManager == null) return;
 
             using var w = new FastBufferWriter(0, Allocator.Temp);
-            nm.CustomMessagingManager.SendNamedMessage(MsgRequestCount, NetworkManager.ServerClientId, w);
+            NetX.NM.CustomMessagingManager.SendNamedMessage(MsgRequestCount, NetworkManager.ServerClientId, w);
         }
 
-        void BroadcastCount()
+        private void BroadcastCount()
         {
-            var nm = NetworkManager.Singleton;
-            if (!nm || !nm.IsServer) return;
+            if (!NetX.NM || !NetX.NM.IsServer) return;
 
             int count = ComputeCount();
             SetCountLabel(count);
             UpdateStartButton(count);
 
-            if (nm.CustomMessagingManager == null) return;
+            if (NetX.NM.CustomMessagingManager == null) return;
             using var w = new FastBufferWriter(sizeof(int), Allocator.Temp);
             w.WriteValueSafe(count);
-            nm.CustomMessagingManager.SendNamedMessageToAll(MsgLobbyCount, w);
+            NetX.NM.CustomMessagingManager.SendNamedMessageToAll(MsgLobbyCount, w);
         }
 
 
-        int ComputeCount()
+        private int ComputeCount()
         {
-            var nm = NetworkManager.Singleton;
-            return (nm != null) ? nm.ConnectedClientsIds.Count : 0;
+            return (NetX.NM != null) ? NetX.NM.ConnectedClientsIds.Count : 0;
         }
 
         // --- UI helpers ---
-        void OnCountMessage(ulong _, FastBufferReader reader)
+        private void OnCountMessage(ulong _, FastBufferReader reader)
         {
             if (!reader.TryBeginRead(sizeof(int))) return;
             reader.ReadValueSafe(out int count);
@@ -185,16 +226,15 @@ namespace CT.Network
             UpdateStartButton(count);
         }
 
-        void SetCountLabel(int count)
+        private void SetCountLabel(int count)
         {
             if (_nbrPlayerText)
                 _nbrPlayerText.text = $"Connected Players: {count}";
         }
 
-        void UpdateStartButton(int count)
+        private void UpdateStartButton(int count)
         {
-            var nm = NetworkManager.Singleton;
-            bool canStart = nm && nm.IsServer && count >= 2;
+            bool canStart = NetX.NM && NetX.NM.IsServer && count >= 2;
             if (_buttonStart) _buttonStart.SetActive(canStart);
         }
     }

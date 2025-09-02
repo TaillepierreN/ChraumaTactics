@@ -18,6 +18,7 @@ namespace CT.UI
         private NetworkSceneManager _hookedSM;
         private bool _isLoading;
         private string _nextScene;
+        private bool _hooked;
         Coroutine _networkAnim;
 
         /// <summary>
@@ -44,8 +45,13 @@ namespace CT.UI
         void OnDestroy()
         {
             if (_hookedSM != null)
+            {
                 _hookedSM.OnLoadEventCompleted -= OnNetLoadCompleted;
+                _hookedSM.OnSceneEvent -= OnNetSceneEvent;
+            }
+
             _hookedSM = null;
+            _hooked = false;
         }
 
         void TryHookNetSceneEvents()
@@ -55,9 +61,23 @@ namespace CT.UI
             NetworkSceneManager sm = nm.SceneManager;
             if (sm == null) return;
 
+            if (_hookedSM == sm && _hooked)
+                return;
+
+            if (_hookedSM != null)
+            {
+                _hookedSM.OnLoadEventCompleted -= OnNetLoadCompleted;
+                _hookedSM.OnSceneEvent -= OnNetSceneEvent;
+            }
+
             sm.OnLoadEventCompleted -= OnNetLoadCompleted;
             sm.OnLoadEventCompleted += OnNetLoadCompleted;
+
+            sm.OnSceneEvent -= OnNetSceneEvent;
+            sm.OnSceneEvent += OnNetSceneEvent;
+
             _hookedSM = sm;
+            _hooked = true;
         }
 
         IEnumerator HookWhenReady()
@@ -233,8 +253,19 @@ namespace CT.UI
                                 System.Collections.Generic.List<ulong> clientsCompleted,
                                 System.Collections.Generic.List<ulong> clientsTimedOut)
         {
+            if (clientsTimedOut != null && clientsTimedOut.Count > 0)
+                Debug.LogWarning($"Network load done with timeouts for {sceneName}.client timed out: {clientsTimedOut}");
             if (_isLoading)
                 StopNetworkVisuals();
+        }
+
+        void OnNetSceneEvent(SceneEvent e)
+        {
+            /* When the server initiates a network LOAD for any scene, show visuals*/
+            if (e.SceneEventType == SceneEventType.Load)
+            {
+                BeginNetwork(e.SceneName);
+            }
         }
         #endregion
 
