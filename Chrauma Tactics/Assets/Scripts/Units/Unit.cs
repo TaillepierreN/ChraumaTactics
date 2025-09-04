@@ -142,6 +142,10 @@ public abstract class Unit : NetworkBehaviour
     /// <summary>tolerance threshold (really close to 0)</summary>
     const float EPSILON = 0.001f;
 
+    [Header("Network")]
+    private NetworkVariable<int> _netHealth = new NetworkVariable<int>(writePerm: NetworkVariableWritePermission.Server);
+    private NetworkObject no;
+
     #endregion
 
     #region Unit Events
@@ -161,6 +165,7 @@ public abstract class Unit : NetworkBehaviour
     public Unit CurrentTarget => _currentTarget;
     public Transform Hitbox => _ownHitbox;
     public int UnitCost => _unitCost;
+    public bool IsTargetable => !IsDead && gameObject.activeInHierarchy;
 
 
     #endregion
@@ -234,7 +239,7 @@ public abstract class Unit : NetworkBehaviour
         }
         if (IsAttacking && _currentTarget != null)
         {
-            if (!_currentTarget.gameObject.activeInHierarchy)
+            if (!_currentTarget.IsTargetable)
             {
                 ClearTarget(_currentTarget);
                 return;
@@ -304,6 +309,30 @@ public abstract class Unit : NetworkBehaviour
         }
     }
 
+    public override void OnNetworkSpawn()
+    {
+        base.OnNetworkSpawn();
+        _netHealth.OnValueChanged += OnNetHealthChanged;
+
+        if (IsClient)
+        {
+            if (_netHealth.Value > 0)
+            {
+                _hpBar.maxValue = (_hpBar.maxValue <= 0) ? _baseHealth : _hpBar.maxValue;
+                OnNetHealthChanged(0, _netHealth.Value);
+            }
+        }
+
+        if (IsServer)
+            _netHealth.Value = _currentHealth;
+    }
+
+    public override void OnNetworkDespawn()
+    {
+        _netHealth.OnValueChanged -= OnNetHealthChanged;
+        base.OnNetworkDespawn();
+    }
+
     #endregion
 
     #region Stats
@@ -315,6 +344,8 @@ public abstract class Unit : NetworkBehaviour
         _hpBarCanvas.alpha = 0;
         _agent.isStopped = false;
         _attack?.Initialize(this);
+        if (NetX.InSession)
+            TryGetComponent<NetworkObject>(out no);
     }
 
     /// <summary>Sets the team of the unit.</summary>
@@ -361,6 +392,8 @@ public abstract class Unit : NetworkBehaviour
                     weap.SetFloat(HASH_AtkSpeed, _currentAtkSpeed);
         _hpBar.maxValue = _currentHealth;
         _hpBar.value = _currentHealth;
+        if (IsServer)
+            _netHealth.Value = _currentHealth;
     }
 
     /// <summary>
@@ -431,6 +464,16 @@ public abstract class Unit : NetworkBehaviour
             yield return null;
         }
     }
+
+    private void OnNetHealthChanged(int oldValue, int newValue)
+    {
+        _barTargetHp = Mathf.Clamp(newValue, _hpBar.minValue, _hpBar.maxValue);
+        _delayUntil = Time.unscaledTime + _delayBeforeFade;
+
+        if (_hpDisplayCoroutine == null)
+            _hpDisplayCoroutine = StartCoroutine(DisplayHealth());
+    }
+
     #endregion
 
     #region Movement mecanics
@@ -511,8 +554,14 @@ public abstract class Unit : NetworkBehaviour
 
         (_attack as Ballistic)?.ClearProjectiles();
 
+        _knownUntargetable.Clear();
+
         if (IsDead)
             IsDead = false;
+        if (NetX.InSession)
+            _netAnimatorBody.SetTrigger(Animator.StringToHash("Revive"));
+        else
+            _animatorBody.SetTrigger(Animator.StringToHash("Revive"));
         _waitingForStop = false;
         ResetStats();
     }
@@ -520,7 +569,15 @@ public abstract class Unit : NetworkBehaviour
     /// <summary>Applies damage to the unit, call for hp bar update and checks if it should be dead.</summary>
     public virtual void TakeDamage(int damage)
     {
+        if (NetX.InSession && !IsServer)
+            return;
+
+        if (IsDead)
+            return;
+
         _currentHealth = Mathf.Max(0, _currentHealth - damage);
+
+        _netHealth.Value = _currentHealth;
 
         _barTargetHp = Mathf.Clamp(_currentHealth, _hpBar.minValue, _hpBar.maxValue);
         _delayUntil = Time.unscaledTime + _delayBeforeFade;
@@ -533,12 +590,14 @@ public abstract class Unit : NetworkBehaviour
             IsDead = true;
             if (NetX.InSession)
                 _netAnimatorBody.SetTrigger(Animator.StringToHash("IsDead"));
+            else
+                _animatorBody.SetTrigger(Animator.StringToHash("IsDead"));
             OnUnitDeath?.Invoke(this);
             _hpBarCanvas.alpha = 0f;
             // Explosion animation
-            this.gameObject.SetActive(false);
         }
     }
+
 
     /// <summary>
     /// Detects units within range check with known friendlies untargetable and enemies.
@@ -547,8 +606,12 @@ public abstract class Unit : NetworkBehaviour
     /// </summary>
     private void DetectEnemies()
     {
-        if (_currentTarget != null && _currentTarget.gameObject.activeInHierarchy)
-            return;
+        if (_currentTarget != null)
+        {
+            if (_currentTarget.IsTargetable)
+                return;
+            ClearTarget(_currentTarget);
+        }
 
         int hitCount = Physics.OverlapSphereNonAlloc(transform.position, _detectionRadius, _hits/*, detectionMask*/);
 
@@ -571,13 +634,28 @@ public abstract class Unit : NetworkBehaviour
             if (_knownFriendlies.ContainsKey(hitGo) || _knownUntargetable.ContainsKey(hitGo))
                 continue;
 
+            if (_knownEnemies.TryGetValue(hitGo, out Unit enemyUnit))
+            {
+                if (!enemyUnit.IsTargetable)
+                {
+                    _knownEnemies.Remove(hitGo);
+                    _knownUntargetable[hitGo] = enemyUnit;
+                    continue;
+                }
+            }
             //if not known enemy, check which team it is on
             // if it is an ally, add to known friendlies
             // if it is an enemy, add to known enemies
-            if (!_knownEnemies.TryGetValue(hitGo, out Unit enemyUnit))
+            else
             {
                 if (!hitGo.TryGetComponent(out enemyUnit))
                     continue;
+
+                if (!enemyUnit.IsTargetable)
+                {
+                    _knownUntargetable.TryAdd(hitGo, enemyUnit);
+                    continue;
+                }
 
                 if (enemyUnit.team == this.team)
                 {
@@ -629,6 +707,8 @@ public abstract class Unit : NetworkBehaviour
     /// <summary>Engages the target unit in combat.</summary>
     public virtual void EngageTarget(Unit target)
     {
+        if (target == null || !target.IsTargetable)
+            return;
         if (_currentTarget == target)
             return;
 
