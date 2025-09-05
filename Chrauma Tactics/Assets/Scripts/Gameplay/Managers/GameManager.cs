@@ -18,7 +18,9 @@ namespace CT.Gameplay
         [Header("Player stats")]
         public Player player1;
         public Player player2;
-        [Min(1)] public int playerDamage = 500;
+        [Min(1)] public int playerDamage = 200;
+        [SerializeField] private float damageMultiplier = 1.15f;
+        private int currentPlayerDamage;
 
         [Header("Events")]
         public Action<RoundPhase> SetSquadPhase;
@@ -35,6 +37,7 @@ namespace CT.Gameplay
 
         void Start()
         {
+            currentPlayerDamage = playerDamage;
             _roundManager = _radioGameplay.RoundManager;
             _stateNet = _radioGameplay.GameStateNetwork;
 
@@ -359,13 +362,42 @@ namespace CT.Gameplay
         /// Deal damage to losing player
         /// </summary>
         /// <param name="player"></param>
+        // private void DamagePlayer(int player/*, int numberOfUnitAlive*/)
+        // {
+        //     if (player == 1)
+        //     {
+        //         player1.HP -= playerDamage/* * numberofUnitAlive*/;
+        //         if (player1.HP < 0)
+        //             Debug.Log($"Player 2 won the game");
+        //         if (NetX.IsListening && IsServer && _stateNet != null && _stateNet.IsSpawned)
+        //             _stateNet.P1HP.Value = player1.HP;
+        //         else
+        //             _radioGameplay.RoundUIManager.UpdatePlayerHp(1, player1.HP);
+        //     }
+        //     else
+        //     {
+        //         player2.HP -= playerDamage/* * numberofUnitAlive*/;
+        //         if (player2.HP < 0)
+        //             Debug.Log($"Player 1 won the game");
+        //         if (NetX.IsListening && IsServer && _stateNet != null && _stateNet.IsSpawned)
+        //             _stateNet.P2HP.Value = player2.HP;
+        //         else
+        //             _radioGameplay.RoundUIManager.UpdatePlayerHp(2, player2.HP);
+        //     }
+        // }
+
         private void DamagePlayer(int player/*, int numberOfUnitAlive*/)
         {
             if (player == 1)
             {
-                player1.HP -= playerDamage/* * numberofUnitAlive*/;
-                if (player1.HP < 0)
+                player1.HP -= currentPlayerDamage;
+                IncreaseDamage();/* * numberofUnitAlive*/;
+                if (player1.HP <= 0)
+                {
                     Debug.Log($"Player 2 won the game");
+                    
+                }
+
                 if (NetX.IsListening && IsServer && _stateNet != null && _stateNet.IsSpawned)
                     _stateNet.P1HP.Value = player1.HP;
                 else
@@ -373,14 +405,25 @@ namespace CT.Gameplay
             }
             else
             {
-                player2.HP -= playerDamage/* * numberofUnitAlive*/;
-                if (player2.HP < 0)
+                player2.HP -= currentPlayerDamage;
+                IncreaseDamage(); /* * numberofUnitAlive*/;
+                if (player2.HP <= 0)
+                {
                     Debug.Log($"Player 1 won the game");
+                    
+                }
+
                 if (NetX.IsListening && IsServer && _stateNet != null && _stateNet.IsSpawned)
                     _stateNet.P2HP.Value = player2.HP;
                 else
                     _radioGameplay.RoundUIManager.UpdatePlayerHp(2, player2.HP);
             }
+        }
+
+        private void IncreaseDamage()
+        {
+            currentPlayerDamage = Mathf.RoundToInt(currentPlayerDamage * damageMultiplier);
+            // Debug.Log($"New player damage: {currentPlayerDamage}");
         }
         #endregion
 
