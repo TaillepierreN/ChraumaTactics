@@ -16,11 +16,13 @@ namespace CT.Gameplay
         {
             if (unitPrefab == null) return;
             FreeSquadVouchers.Add(unitPrefab);
+            /*Debug.Log($"Team {Team} has 1 {unitPrefab} voucher");*/
         }
         public void ConsumeFreeSquadVoucher(GameObject unitPrefab)
         {
             if (unitPrefab == null) return;
             FreeSquadVouchers.Remove(unitPrefab);
+            /*Debug.Log($"Team {Team} has consumed {unitPrefab} voucher, nom nom");*/
         }
     }
 

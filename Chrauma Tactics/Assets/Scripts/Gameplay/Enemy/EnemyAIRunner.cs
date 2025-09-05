@@ -1,10 +1,12 @@
 using System.Collections.Generic;
 using NaughtyAttributes;
 using UnityEngine;
+using Unity.Netcode;
+using CT.Tools;
 
 namespace CT.Gameplay.Enemy
 {
-    public class EnemyAIRunner : MonoBehaviour
+    public class EnemyAIRunner : NetworkBehaviour
     {
         public enum PlanSelectMode { Single, Random }
 
@@ -35,6 +37,13 @@ namespace CT.Gameplay.Enemy
 
         void Start()
         {
+
+            if (NetX.NM && NetX.IsListening)
+            {
+                enabled = false;
+                return;
+            }
+
             if (_roundManager == null && _radioGameplay != null)
                 _roundManager = _radioGameplay.RoundManager;
 
@@ -58,7 +67,7 @@ namespace CT.Gameplay.Enemy
 
         private void OnDisable()
         {
-            if (_roundManager != null)
+            if (NetX.IsAuthoritative && _roundManager != null)
                 _roundManager.OnRoundChanged -= HandleRoundChanged;
         }
 
@@ -130,6 +139,16 @@ namespace CT.Gameplay.Enemy
             Quaternion rotation = Quaternion.Euler(order.EulerRotation);
 
             GameObject squadGO = Instantiate(_squadPrefab, worldPosition, rotation, _spawnRoot);
+
+            var nm = NetworkManager.Singleton;
+            bool netActive = nm && nm.IsListening;
+
+            if (netActive && nm.IsServer)
+            {
+                NetworkObject squadNO = squadGO.GetComponent<NetworkObject>();
+                if (squadNO != null && !squadNO.IsSpawned)
+                    squadNO.Spawn(false);
+            }
 
             Squad squad = squadGO.GetComponent<Squad>();
             if (squad == null)

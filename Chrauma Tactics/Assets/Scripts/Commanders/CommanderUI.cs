@@ -3,6 +3,8 @@ using UnityEngine.UI;
 using TMPro;
 using System;
 using CT.Gameplay;
+using Unity.Netcode;
+using CT.Tools;
 
 public class CommanderUI : MonoBehaviour
 {
@@ -13,7 +15,7 @@ public class CommanderUI : MonoBehaviour
     public TMP_Text unit2NameText;
     public TMP_Text HPText;
     [SerializeField] private Rd_Gameplay _radioGameplay;
-    [SerializeField] private Team team;
+    [SerializeField] private Team team = Team.Player1;
     private Commander commanderData;
     public Image UnitIcon1;
     public Image UnitIcon2;
@@ -22,6 +24,11 @@ public class CommanderUI : MonoBehaviour
 
     public Action CommanderChosen;
 
+
+    void Start()
+    {
+        team = (NetX.IsListening && !NetX.IsHost) ? Team.Player2 : Team.Player1;
+    }
 
     public void SetCommander(Commander commander)
     {
@@ -46,7 +53,8 @@ public class CommanderUI : MonoBehaviour
     /// </summary>
     public void SelectCommander()
     {
-        _radioGameplay.GameManager.SetChosenCommander(commanderData);
+
+        _radioGameplay.GameManager.RequestCommanderSelection(commanderData, team);
         if (commanderData.StartingAugment != null && commanderData.StartingAugment.Length > 0)
         {
             foreach (Augment augment in commanderData.StartingAugment)
@@ -55,11 +63,26 @@ public class CommanderUI : MonoBehaviour
                 _radioGameplay.BoostManager.RegisterAugmentToTeam(team, augment);
             }
         }
-        if (commanderData.unitPrefab1 != null)
-            GiveFreeSquadToPlayer(team, commanderData.unitPrefab1);
-        if (commanderData.unitPrefab2 != null)
-            GiveFreeSquadToPlayer(team, commanderData.unitPrefab2);
-        _radioGameplay.RoundManager.StartGame();
+
+        if (NetX.NM && NetX.IsListening)
+        {
+            PlacementNetwork pn = PlacementNetwork.Instance;
+            if (pn != null)
+            {
+                if (commanderData.unitPrefab1 != null)
+                    _radioGameplay.GameManager.GrantVoucherServerRpc(pn.IndexOfUnit(commanderData.unitPrefab1));
+                if (commanderData.unitPrefab2 != null)
+                    _radioGameplay.GameManager.GrantVoucherServerRpc(pn.IndexOfUnit(commanderData.unitPrefab2));
+            }
+            if (GameFlowNetwork.Instance != null)
+                GameFlowNetwork.Instance.NotifyCommanderSelectedServerRpc(team);
+        }
+        else
+        {
+            if (commanderData.unitPrefab1 != null) GiveFreeSquadToPlayer(team, commanderData.unitPrefab1);
+            if (commanderData.unitPrefab2 != null) GiveFreeSquadToPlayer(team, commanderData.unitPrefab2);
+            _radioGameplay.RoundManager.StartGame();
+        }
         CommanderChosen?.Invoke();
     }
 
