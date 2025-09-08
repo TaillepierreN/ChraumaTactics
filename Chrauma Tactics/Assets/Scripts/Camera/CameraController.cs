@@ -5,7 +5,7 @@ using CT.Tools;
 public class CameraController : MonoBehaviour
 {
     private const float MIN_ZOOM = 2f;
-    private const float MAX_ZOOM = 12f;
+    private const float MAX_ZOOM = 20f;
 
     [Header("Speed")]
     private float _moveSpeed = 10f;
@@ -26,6 +26,7 @@ public class CameraController : MonoBehaviour
     [Tooltip("Play area box collider")]
     [SerializeField] private BoxCollider _playArea;
     [SerializeField] private float _edgeMargin = 0.5f;
+    [SerializeField] private float _startHeight = 20f;
 
     private Vector3 _followOffset;
     private Vector3 _cameraPosition;
@@ -44,6 +45,7 @@ public class CameraController : MonoBehaviour
             _activeBounds = _playArea.bounds;
 
         _followOffset = _cinemachineFollow.FollowOffset;
+        _followOffset.y = Mathf.Clamp(_startHeight, MIN_ZOOM, MAX_ZOOM);
         _cameraPosition = _cameraTransform.position;
 
         ClampInsideBounds();
