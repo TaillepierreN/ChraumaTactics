@@ -22,6 +22,8 @@ namespace CT.UI.UnitSelectionUI
         private int _cost;
         public Team Team = Team.Player1;
 
+        
+
         #region Unity Methods
         private void Awake()
         {
