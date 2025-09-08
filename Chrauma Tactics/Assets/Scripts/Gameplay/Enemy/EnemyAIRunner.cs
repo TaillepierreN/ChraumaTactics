@@ -53,7 +53,7 @@ namespace CT.Gameplay.Enemy
                 Debug.LogWarning("EnemyAIRunner: no plan was selected");
                 return;
             }
-
+            SetEnemyName();
             if (_squadPrefab == null)
             {
                 Debug.LogWarning("EnemyAIRunner: Squad prefab is not set");
@@ -96,6 +96,11 @@ namespace CT.Gameplay.Enemy
                 }
             }
             return null;
+        }
+
+        private void SetEnemyName()
+        {
+            _radioGameplay.RoundUIManager.UpdatePlayerTwoName(_activePlan.Name);
         }
 
         /// <summary>

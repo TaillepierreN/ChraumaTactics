@@ -4,6 +4,7 @@ using System.Linq;
 using System.Collections.Generic;
 using Unity.Netcode;
 using CT.Tools;
+using System.Collections;
 
 namespace CT.Gameplay
 {
@@ -139,8 +140,9 @@ namespace CT.Gameplay
             {
                 GameObject SquadObject = Instantiate(squadPrefab, LevelGrid.Instance.GetWorldPosition(pos), Quaternion.identity);
                 Squad squad = SquadObject.GetComponent<Squad>();
-                NetRemover.StripNetcodeComponents(SquadObject);
-                SquadObject.transform.SetParent(TeamSquadPool.Get(Team.Player1), true);
+                //NetRemover.StripNetcodeComponents(SquadObject);
+                //SquadObject.transform.SetParent(TeamSquadPool.Get(Team.Player1), true);
+                StartCoroutine(StripThenParent(SquadObject, TeamSquadPool.Get(Team.Player1)));
                 squad.team = placingTeam;
                 squad.nbrOfUnits = numberOfUnits;
                 squad.unitPrefab = unitPrefab;
@@ -196,9 +198,17 @@ namespace CT.Gameplay
                     _radioGameplay.GameManager.P2CreditsChanged?.Invoke(_radioGameplay.GameManager.player2.Credits, 2);
             }
 
-
             ClearGhostUnit();
         }
+
+
+        private IEnumerator StripThenParent(GameObject go, Transform parent)
+        {
+            NetRemover.StripNetcodeComponents(go);
+            yield return null;
+            go.transform.SetParent(parent, true);
+        }
+
 
         private void ClearGhostUnit()
         {

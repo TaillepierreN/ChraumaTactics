@@ -577,7 +577,8 @@ public abstract class Unit : NetworkBehaviour
 
         _currentHealth = Mathf.Max(0, _currentHealth - damage);
 
-        _netHealth.Value = _currentHealth;
+        if (NetX.InSession)
+            _netHealth.Value = _currentHealth;
 
         _barTargetHp = Mathf.Clamp(_currentHealth, _hpBar.minValue, _hpBar.maxValue);
         _delayUntil = Time.unscaledTime + _delayBeforeFade;

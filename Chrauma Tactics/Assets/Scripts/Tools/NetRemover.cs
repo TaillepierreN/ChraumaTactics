@@ -10,27 +10,27 @@ public static class NetRemover
         if (no)
         {
             no.enabled = false;
-            Object.DestroyImmediate(no);
+            Object.Destroy(no);
         }
 
         NetworkTransform nt = go.GetComponent<NetworkTransform>();
         if (nt)
         {
             nt.enabled = false;
-            Object.DestroyImmediate(nt);
+            Object.Destroy(nt);
         }
 
         foreach (NetworkBehaviour nb in go.GetComponents<NetworkBehaviour>())
         {
-            Debug.Log($"got {nb} in {go}");
+            //Debug.Log($"got {nb} in {go}");
             nb.enabled = false;
-            Object.DestroyImmediate(nb);
+            Object.Destroy(nb);
         }
         foreach (NetworkBehaviour nbc in go.GetComponentsInChildren<NetworkBehaviour>(true))
             if (nbc)
             {
                 nbc.enabled = false;
-                Object.DestroyImmediate(nbc);
+                Object.Destroy(nbc);
             }
 
         NetworkObject[] nobs = go.GetComponentsInChildren<NetworkObject>(true);
@@ -38,7 +38,7 @@ public static class NetRemover
             if (noc)
             {
                 noc.enabled = false;
-                Object.DestroyImmediate(noc);
+                Object.Destroy(noc);
             }
     }
 }

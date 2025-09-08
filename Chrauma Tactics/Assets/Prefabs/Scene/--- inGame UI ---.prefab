@@ -2423,6 +2423,8 @@ MonoBehaviour:
   prepTimerText: {fileID: 2670868902047074590}
   battleTimerText: {fileID: 3391258630644484037}
   postBattleText: {fileID: 6936401336862808247}
+  PlayerOneName: {fileID: 1246555910688185786}
+  PlayerTwoName: {fileID: 2759541458454908342}
   _roundUI: {fileID: 4581719304667243144}
   _waitingEndPrepOverlay: {fileID: 1700662077153285053}
   prepUI: {fileID: 1339017865588661486}
@@ -4013,9 +4015,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3680168019501518044, guid: e6debbeec0eda4defbba0cfba81d89b5, type: 3}
       propertyPath: m_text
-      value: 'Nicolas P2
-
-'
+      value: Player 2
       objectReference: {fileID: 0}
     - target: {fileID: 3680168019501518044, guid: e6debbeec0eda4defbba0cfba81d89b5, type: 3}
       propertyPath: m_HorizontalAlignment
@@ -4055,6 +4055,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 2015234873694131478, guid: e6debbeec0eda4defbba0cfba81d89b5, type: 3}
   m_PrefabInstance: {fileID: 1538341034789896554}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &2759541458454908342 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3680168019501518044, guid: e6debbeec0eda4defbba0cfba81d89b5, type: 3}
+  m_PrefabInstance: {fileID: 1538341034789896554}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &3032977342266360723 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4561589895756727033, guid: e6debbeec0eda4defbba0cfba81d89b5, type: 3}
@@ -4362,7 +4373,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3680168019501518044, guid: e6debbeec0eda4defbba0cfba81d89b5, type: 3}
       propertyPath: m_text
-      value: Thomas P1
+      value: Player 1
       objectReference: {fileID: 0}
     - target: {fileID: 3680168019501518044, guid: e6debbeec0eda4defbba0cfba81d89b5, type: 3}
       propertyPath: m_margin.z
@@ -4406,6 +4417,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1246555910688185786 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3680168019501518044, guid: e6debbeec0eda4defbba0cfba81d89b5, type: 3}
+  m_PrefabInstance: {fileID: 2476472575339762022}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &2094234816177820575 stripped

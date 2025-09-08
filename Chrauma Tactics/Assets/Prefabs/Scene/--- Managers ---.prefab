@@ -125,7 +125,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 917211487424089806, guid: 0c03530c31c2de74b9d360c386a1bf2a, type: 3}
       propertyPath: GlobalObjectIdHash
-      value: 128225104
+      value: 3912137514
       objectReference: {fileID: 0}
     - target: {fileID: 2448478065898301126, guid: 0c03530c31c2de74b9d360c386a1bf2a, type: 3}
       propertyPath: prepTime
@@ -263,6 +263,34 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2835058343681422211, guid: 210798b675deab546ad3ff3520f85e51, type: 3}
+      propertyPath: planPool.Array.size
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 2835058343681422211, guid: 210798b675deab546ad3ff3520f85e51, type: 3}
+      propertyPath: 'planPool.Array.data[0]'
+      value: 
+      objectReference: {fileID: 11400000, guid: 09af960a73def28418a449bce85b9d68, type: 2}
+    - target: {fileID: 2835058343681422211, guid: 210798b675deab546ad3ff3520f85e51, type: 3}
+      propertyPath: 'planPool.Array.data[1]'
+      value: 
+      objectReference: {fileID: 11400000, guid: a0271e3e188c6934c94b28ebdf131aa2, type: 2}
+    - target: {fileID: 2835058343681422211, guid: 210798b675deab546ad3ff3520f85e51, type: 3}
+      propertyPath: 'planPool.Array.data[2]'
+      value: 
+      objectReference: {fileID: 11400000, guid: 58ad582da31fbae4dad9c7a76254b218, type: 2}
+    - target: {fileID: 2835058343681422211, guid: 210798b675deab546ad3ff3520f85e51, type: 3}
+      propertyPath: 'planPool.Array.data[3]'
+      value: 
+      objectReference: {fileID: 11400000, guid: 7149183cfb6ec714d8b42726f0a66e23, type: 2}
+    - target: {fileID: 2835058343681422211, guid: 210798b675deab546ad3ff3520f85e51, type: 3}
+      propertyPath: 'planPool.Array.data[4]'
+      value: 
+      objectReference: {fileID: 11400000, guid: 7bdac4cfbf549d94b894b5fdeb7029ee, type: 2}
+    - target: {fileID: 2835058343681422211, guid: 210798b675deab546ad3ff3520f85e51, type: 3}
+      propertyPath: 'planPool.Array.data[5]'
+      value: 
+      objectReference: {fileID: 11400000, guid: 971b98ea6e33f694b9284678f1543a2a, type: 2}
     - target: {fileID: 4259731607476543899, guid: 210798b675deab546ad3ff3520f85e51, type: 3}
       propertyPath: m_Name
       value: EnemyPlayerManager
@@ -416,7 +444,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 1757260259
+  GlobalObjectIdHash: 544170483
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1

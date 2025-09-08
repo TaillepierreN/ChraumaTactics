@@ -11,6 +11,7 @@ namespace CT.Gameplay
     /// </summary>
     public class EnemyAIPlan : ScriptableObject
     {
+        public string Name = "Enemy";
 
         [Tooltip("Round 1 = index 0")]
         public List<RoundPlanning> Rounds = new();

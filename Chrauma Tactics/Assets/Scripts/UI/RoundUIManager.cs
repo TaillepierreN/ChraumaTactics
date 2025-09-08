@@ -12,6 +12,8 @@ public class RoundUIManager : MonoBehaviour
 	public TextMeshProUGUI prepTimerText;
 	public TextMeshProUGUI battleTimerText;
 	public TMP_Text postBattleText;
+	public TMP_Text PlayerOneName;
+	public TMP_Text PlayerTwoName;
 
 	[Header("Panels and buttons")]
 	[SerializeField] private GameObject _roundUI;
@@ -304,6 +306,22 @@ public class RoundUIManager : MonoBehaviour
 		{
 			/*Debug.Log($"[UI] Credits updated for me (P{myIndex}): {playerCred}");*/
 			creditsText.text = playerCred.ToString();
+		}
+	}
+
+	public void UpdatePlayerOneName(string name)
+	{
+		if (name != null && PlayerOneName != null)
+		{
+			PlayerOneName.text = $"P1 {name}";
+		}
+	}
+
+	public void UpdatePlayerTwoName(string name)
+	{
+		if (name != null && PlayerTwoName != null)
+		{
+			PlayerTwoName.text = $"{name} P2";
 		}
 	}
 

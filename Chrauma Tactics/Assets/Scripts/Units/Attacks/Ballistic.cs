@@ -3,6 +3,7 @@ using UnityEngine.Pool;
 using Unity.Netcode;
 using CT.Tools;
 using Unity.Netcode.Components;
+using System.Collections;
 
 namespace CT.Units.Attacks
 {
@@ -98,18 +99,18 @@ namespace CT.Units.Attacks
                     {
                         GameObject go = Instantiate(_projectilePrefab);
                         NetRemover.StripNetcodeComponents(go);
-                        go.transform.SetParent(_poolContainer, true);
+                        StartCoroutine(StripThenParent(go));
                         go.SetActive(false);
                         return go;
                     },
                     actionOnGet: go =>
                     {
-                        go.transform.SetParent(_vfxRoot, true);
+                        //go.transform.SetParent(_vfxRoot, true);
                         go.SetActive(true);
                     },
                     actionOnRelease: go =>
                     {
-                        go.transform.SetParent(_poolContainer, true);
+                        //go.transform.SetParent(_poolContainer, true);
                         go.SetActive(false);
                     },
                     actionOnDestroy: go => Destroy(go),
@@ -168,6 +169,13 @@ namespace CT.Units.Attacks
                     _impactAoEPool.Release(_impactAoEPool.Get());
             }
         }
+        private IEnumerator StripThenParent(GameObject go)
+        {
+            NetRemover.StripNetcodeComponents(go);
+            yield return null;
+            go.transform.SetParent(_poolContainer, true);
+        }
+
 
         #endregion
 
