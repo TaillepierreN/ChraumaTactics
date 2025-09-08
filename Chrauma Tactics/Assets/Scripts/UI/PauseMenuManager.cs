@@ -4,26 +4,35 @@ using UnityEngine.UI;
 
 public class PauseMenuManager : MonoBehaviour
 {
-    public GameObject settingsMenu;
-    private bool isSettingsOpen = false;
+    public GameObject pauseMenu;
+    private bool isPauseOpen = false;
 
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            ToggleSettingsMenu();
+            TogglePauseMenu();
         }
     }
 
-    void ToggleSettingsMenu()
+    void TogglePauseMenu()
     {
-        isSettingsOpen = !isSettingsOpen;
-        settingsMenu.SetActive(isSettingsOpen);
+        isPauseOpen = !isPauseOpen;
+        pauseMenu.SetActive(isPauseOpen);
     }
 
-    public void CloseSettingsMenu()
+    public void ClosePauseMenu()
     {
-        isSettingsOpen = false;
-        settingsMenu.SetActive(false);
+        isPauseOpen = false;
+        pauseMenu.SetActive(false);
+    }
+
+    public void QuitGame()
+    {
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
     }
 }
