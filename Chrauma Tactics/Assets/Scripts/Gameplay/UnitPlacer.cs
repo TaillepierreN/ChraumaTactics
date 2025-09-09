@@ -201,7 +201,6 @@ namespace CT.Gameplay
             ClearGhostUnit();
         }
 
-
         private IEnumerator StripThenParent(GameObject go, Transform parent)
         {
             NetRemover.StripNetcodeComponents(go);
