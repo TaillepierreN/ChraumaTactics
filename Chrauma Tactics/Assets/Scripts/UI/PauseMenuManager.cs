@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using CT.UI;
 
 public class PauseMenuManager : MonoBehaviour
 {
@@ -25,6 +26,11 @@ public class PauseMenuManager : MonoBehaviour
     {
         isPauseOpen = false;
         pauseMenu.SetActive(false);
+    }
+
+    public void BackToMenu()
+    {
+        SceneLoader.Instance.LeaveBattle();
     }
 
     public void QuitGame()
