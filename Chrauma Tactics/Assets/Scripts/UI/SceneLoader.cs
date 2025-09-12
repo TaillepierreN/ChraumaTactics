@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Unity.Netcode;
+using CT.Tools;
 
 namespace CT.UI
 {
@@ -19,6 +20,8 @@ namespace CT.UI
         private bool _isLoading;
         private string _nextScene;
         private bool _hooked;
+        private bool _leaving = false;
+
         Coroutine _networkAnim;
 
         /// <summary>
@@ -327,6 +330,28 @@ namespace CT.UI
         {
             loadingGroup.blocksRaycasts = isInteractable;
             loadingGroup.interactable = isInteractable;
+        }
+
+        public void LeaveBattle()
+        {
+            if (_leaving)
+                return;
+            _leaving = true;
+
+            StartCoroutine(Co_LeaveBattleRoutine());
+        }
+
+        private IEnumerator Co_LeaveBattleRoutine()
+        {
+
+            if (NetX.IsListening)
+            {
+                NetworkManager nm = NetX.NM;
+                nm.Shutdown();
+                yield return new WaitUntil(() => nm == null || !NetX.IsListening);
+                yield return null;
+            }
+            LoadOffline("GameMenu");
         }
     }
 

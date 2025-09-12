@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using System.Collections;
 using CT.Gameplay;
 using CT.Tools;
+using CT.UI;
 
 public class RoundUIManager : MonoBehaviour
 {
@@ -47,6 +48,7 @@ public class RoundUIManager : MonoBehaviour
 	private GameStateNetwork _stateNet;
 	private bool _boundToState;
 	private bool _offlineBOund;
+
 	private int _currentRound = 1;
 	private Coroutine betweenRoundsRoutine;
 
@@ -370,9 +372,15 @@ public class RoundUIManager : MonoBehaviour
 		int ownIndex = NetX.IsListening ? (NetX.IsHost ? 1 : 2) : 1;
 		Debug.Log($"Winner is set winning player is {winningPlayer} and you are {ownIndex}");
 		if (ownIndex == winningPlayer)
-			_winLoseBattleText.text = "You Won";
+			_winLoseBattleText.text = "Victory";
 		else
-			_winLoseBattleText.text = "You Lost";
-
+			_winLoseBattleText.text = "Defeat";
 	}
+
+	public void QuitBattle()
+	{
+		SceneLoader.Instance.LeaveBattle();
+		Time.timeScale = 1f;
+	}
+
 }
