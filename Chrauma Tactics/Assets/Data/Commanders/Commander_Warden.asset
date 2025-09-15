@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b8cb3c6b7f4043a08594072e8204d38, type: 3}
+  m_Name: Commander_Warden
+  m_EditorClassIdentifier: 
+  commanderName: Warden
+  portrait: {fileID: 21300000, guid: 780aab8831b3a4f7d93e5ae9c6e02998, type: 3}
+  description: "piti\xE9"
+  unitPrefab1: {fileID: 8013387478697621675, guid: 3d1170f9ae40a43e99fd70bc120e1b25, type: 3}
+  unitName1: Hammer
+  unitPrefab2: {fileID: 5112724625264564338, guid: fdf6dc419fcb54945b42db6cede17584, type: 3}
+  unitName2: Arclight
+  unitIcon1: {fileID: 21300000, guid: d2da53fcae2e84305b3d0950b3944bf7, type: 3}
+  unitIcon2: {fileID: 21300000, guid: 92e9f6ab2e02d4ad7a549cf142b56639, type: 3}
+  boostIcon1: {fileID: 21300000, guid: 11e40dd8122b5a14282c0f6900aef54c, type: 3}
+  boostIcon2: {fileID: 21300000, guid: c2591cd5c61f4164cbbdb34b8a1ca082, type: 3}
+  playerHealth: 4500
+  StartingAugment:
+  - {fileID: 11400000, guid: e654751d089bb4bd2b2386a05f9b4d28, type: 2}
+  - {fileID: 11400000, guid: 08061014424e545159d128289d7f5934, type: 2}

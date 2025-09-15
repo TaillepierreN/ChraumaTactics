@@ -11,6 +11,7 @@ namespace CT.Gameplay
     /// </summary>
     public class EnemyAIPlan : ScriptableObject
     {
+        public string Name = "Enemy";
 
         [Tooltip("Round 1 = index 0")]
         public List<RoundPlanning> Rounds = new();
@@ -53,6 +54,7 @@ namespace CT.Gameplay
         [Header("Positioning")]
         [InfoBox("use [0 - 200], 0, [145 - 245]")]
         public Vector3 Position;
-        public Vector3 EulerRotation = new Vector3(0, 180, 0);
+        private Vector3 eR = new Vector3(0, 180, 0);
+        public Vector3 EulerRotation => eR;
     }
 }

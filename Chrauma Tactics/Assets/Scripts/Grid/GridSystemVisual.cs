@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using CT.Gameplay;
-using Unity.Mathematics;
+using CT.Tools;
 using UnityEngine;
 
 namespace CT.Grid
@@ -30,7 +30,10 @@ namespace CT.Grid
         }
         void Start()
         {
-            rd_Gameplay.RoundManager.OnPhaseChanged += UpdateGridVisual;
+            RoundManager rm = rd_Gameplay ? rd_Gameplay.RoundManager : null;
+            if (rm != null)
+                rm.OnPhaseChanged += UpdateGridVisual;
+
             _gridSystemVisualSingleArray = new GridSystemVisualSingle[LevelGrid.Instance.GetWidth(), LevelGrid.Instance.GetHeight()];
             for (int x = 0; x < LevelGrid.Instance.GetWidth(); x++)
             {
@@ -42,12 +45,14 @@ namespace CT.Grid
                     _gridSystemVisualSingleArray[x, z].Show();
                 }
             }
-            //HideAllGridPosition();
+            HideAllGridPosition();
         }
 
         void OnDisable()
         {
-            rd_Gameplay.RoundManager.OnPhaseChanged -= UpdateGridVisual;
+            RoundManager rm = rd_Gameplay ? rd_Gameplay.RoundManager : null;
+            if (rm != null)
+                rm.OnPhaseChanged -= UpdateGridVisual;
         }
         public void HideAllGridPosition()
         {
@@ -84,7 +89,7 @@ namespace CT.Grid
             switch (phase)
             {
                 case RoundPhase.Preparation:
-                    ShowAllGridPosition();
+                    ShowLocalTeamGrid();
                     break;
                 case RoundPhase.PostPreparation:
                     HideAllGridPosition();
@@ -109,6 +114,20 @@ namespace CT.Grid
             if (!LevelGrid.Instance.IsValidGridPosition(gridPosition))
                 return;
             _gridSystemVisualSingleArray[gridPosition.x, gridPosition.z].ShowOverlay(color);
+        }
+
+        private Team GetLocalTeam()
+        {
+            if (!NetX.IsListening)
+                return Team.Player1;
+            return (NetX.NM != null && NetX.IsServer) ? Team.Player1 : Team.Player2;
+        }
+
+        private void ShowLocalTeamGrid()
+        {
+            Team team = GetLocalTeam();
+            foreach (GridPosition gp in LevelGrid.Instance.GetAllPositionsInTeamArea(team))
+                _gridSystemVisualSingleArray[gp.x, gp.z].Show();
         }
 
     }

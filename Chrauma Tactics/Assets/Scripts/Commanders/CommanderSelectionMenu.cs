@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class CommanderSelectionMenu : MonoBehaviour
 {
+    [SerializeField] private Rd_Gameplay _radioGameplay;
     [Header("Commander Selection")]
     public Commander[] commanders;
     public GameObject commanderUIPrefab;
@@ -10,6 +11,16 @@ public class CommanderSelectionMenu : MonoBehaviour
     private List<CommanderUI> _listOfComUI = new();
     [SerializeField] private GameObject _commanderSelectPanel;
 
+    [Header("Waiting Overlay")]
+    [SerializeField] private GameObject _waitingOverlay;
+
+
+    void Awake()
+    {
+        _radioGameplay.SetCommanderSelectionMenu(this);
+        if (_waitingOverlay)
+            _waitingOverlay.SetActive(false);
+    }
     void Start()
     {
         Shuffle(commanders);
@@ -25,6 +36,17 @@ public class CommanderSelectionMenu : MonoBehaviour
         }
     }
 
+    void OnDisable()
+    {
+        if (_listOfComUI.Count != 0)
+        {
+            foreach (CommanderUI comUI in _listOfComUI)
+            {
+                if (comUI != null)
+                    comUI.CommanderChosen -= GameStart;
+            }
+        }
+    }
     void Shuffle(Commander[] array)
     {
         for (int i = 0; i < array.Length; i++)
@@ -41,15 +63,14 @@ public class CommanderSelectionMenu : MonoBehaviour
         _commanderSelectPanel.SetActive(false);
     }
 
-    void OnDisable()
+    public void ShowWaiting()
     {
-        if (_listOfComUI.Count != 0)
-        {
-            foreach (CommanderUI comUI in _listOfComUI)
-            {
-                if (comUI != null)
-                    comUI.CommanderChosen -= GameStart;
-            }
-        }
+        if (_commanderSelectPanel) _commanderSelectPanel.SetActive(false);
+        if (_waitingOverlay) _waitingOverlay.SetActive(true);
+    }
+
+    public void HideWaiting()
+    {
+        if (_waitingOverlay) _waitingOverlay.SetActive(false);
     }
 }

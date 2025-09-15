@@ -7,20 +7,20 @@ using TMPro;
 public abstract class Commander : ScriptableObject
 {
     [Header("Commander Info")]
-    [SerializeField] public string commanderName;
-    [SerializeField] public Sprite portrait;
-    [SerializeField] public string description;
+    public string commanderName;
+    public Sprite portrait;
+    public string description;
 
 
     [Header("Starting Units")]
-    [SerializeField] public GameObject unitPrefab1;
-    [SerializeField] public string unitName1;
-    [SerializeField] public GameObject unitPrefab2;
-    [SerializeField] public string unitName2;
-    [SerializeField] public Sprite unitIcon1;
-    [SerializeField] public Sprite unitIcon2;
-    [SerializeField] public Sprite boostIcon1;
-    [SerializeField] public Sprite boostIcon2;
+    public GameObject unitPrefab1;
+    public string unitName1;
+    public GameObject unitPrefab2;
+    public string unitName2;
+    public Sprite unitIcon1;
+    public Sprite unitIcon2;
+    public Sprite boostIcon1;
+    public Sprite boostIcon2;
 
 
 
@@ -29,7 +29,7 @@ public abstract class Commander : ScriptableObject
     // public CommanderBonus bonus2;
 
     [Header("Commander Stats")]
-    [SerializeField] public int playerHealth;
+    public int playerHealth;
 
     [Header("Augment")]
     public Augment[] StartingAugment;

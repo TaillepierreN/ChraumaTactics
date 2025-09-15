@@ -10,11 +10,13 @@ GameObject:
   m_Component:
   - component: {fileID: 4941957840860349129}
   - component: {fileID: 422033399817437097}
+  - component: {fileID: -1970523539492723262}
   - component: {fileID: 8173776738278847501}
   - component: {fileID: 5844399747333442983}
   - component: {fileID: 1556980426057000772}
   - component: {fileID: 732240996812903446}
   - component: {fileID: 4118013909892122749}
+  - component: {fileID: -6262981459429665166}
   m_Layer: 0
   m_Name: Scorpion Y
   m_TagString: Untagged
@@ -62,6 +64,31 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &-1970523539492723262
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1359244389155804338}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 866391020
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
 --- !u!114 &8173776738278847501
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -74,6 +101,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 24faec5bac5c5481cb1346c198b2f6d5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   DebugMode: 1
   DebugStats: 0
   team: 0
@@ -92,6 +120,7 @@ MonoBehaviour:
   _hasSmoothStop: 0
   _decelerationRate: 2.5
   _animatorBody: {fileID: 1746039809796746031}
+  _netAnimatorBody: {fileID: 8621344966859693334}
   _animatorWeap: []
   _turretAim:
   - {fileID: 2776214135809421003}
@@ -101,7 +130,7 @@ MonoBehaviour:
   _right2TrackRenderer: {fileID: 0}
   _audioSource: {fileID: 1556980426057000772}
   _moveClip: {fileID: 8300000, guid: a8455b1d59da4c341a14f65e76343565, type: 3}
-  _detectionRadius: 170
+  _detectionRadius: 240
   _requierFacingForAttack: 0
   _canTargetFlying: 0
   _aerialOnly: 0
@@ -281,6 +310,52 @@ NavMeshObstacle:
   m_CarveOnlyStationary: 1
   m_Center: {x: 0, y: 0.64, z: -0.48}
   m_TimeToStationary: 0.25
+--- !u!114 &-6262981459429665166
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1359244389155804338}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e96cb6065543e43c4a752faaa1468eb1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
+  NetworkTransformExpanded: 0
+  AutoOwnerAuthorityTickOffset: 1
+  PositionInterpolationType: 0
+  RotationInterpolationType: 0
+  ScaleInterpolationType: 0
+  PositionLerpSmoothing: 1
+  PositionMaxInterpolationTime: 0.1
+  RotationLerpSmoothing: 1
+  RotationMaxInterpolationTime: 0.1
+  ScaleLerpSmoothing: 1
+  ScaleMaxInterpolationTime: 0.1
+  AuthorityMode: 0
+  TickSyncChildren: 0
+  UseUnreliableDeltas: 0
+  SyncPositionX: 1
+  SyncPositionY: 1
+  SyncPositionZ: 1
+  SyncRotAngleX: 1
+  SyncRotAngleY: 1
+  SyncRotAngleZ: 1
+  SyncScaleX: 1
+  SyncScaleY: 1
+  SyncScaleZ: 1
+  PositionThreshold: 0.001
+  RotAngleThreshold: 0.01
+  ScaleThreshold: 0.01
+  UseQuaternionSynchronization: 0
+  UseQuaternionCompression: 0
+  UseHalfFloatPrecision: 0
+  InLocalSpace: 0
+  SwitchTransformSpaceWhenParented: 0
+  Interpolate: 1
+  SlerpPosition: 0
 --- !u!1001 &1767956869784109094
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -416,6 +491,9 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 1480226832053752774}
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7485478698803717516, guid: cd8058a92ff2d49ff8260541ef6e7634, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8621344966859693334}
     - targetCorrespondingSourceObject: {fileID: 1947432612696145162, guid: cd8058a92ff2d49ff8260541ef6e7634, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2776214135809421003}
@@ -454,6 +532,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rotationSpeed: 5
   baseTransform: {fileID: 1946292576227688024}
+--- !u!1 &5442719139082146267 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7485478698803717516, guid: cd8058a92ff2d49ff8260541ef6e7634, type: 3}
+  m_PrefabInstance: {fileID: 3200281489699042391}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &8621344966859693334
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5442719139082146267}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8d0727d5ae3244e3b569694d3912374, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
+  TransitionStateInfoList: []
+  m_Animator: {fileID: 1746039809796746031}
 --- !u!4 &7666728742675388897 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5047442426616442294, guid: cd8058a92ff2d49ff8260541ef6e7634, type: 3}

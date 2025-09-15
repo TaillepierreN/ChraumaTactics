@@ -41,11 +41,13 @@ GameObject:
   m_Component:
   - component: {fileID: 6632059028174725001}
   - component: {fileID: 2724217148693398389}
+  - component: {fileID: -6587017563390668871}
   - component: {fileID: 4326294082231054100}
   - component: {fileID: 1887093394192124713}
   - component: {fileID: 2159192398232211552}
   - component: {fileID: 6629708193565723756}
   - component: {fileID: 8695058375770228387}
+  - component: {fileID: 8634588062393831617}
   m_Layer: 0
   m_Name: Aegis Paragon
   m_TagString: Untagged
@@ -93,6 +95,31 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &-6587017563390668871
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1526412967014533734}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 2756964389
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
 --- !u!114 &4326294082231054100
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -105,6 +132,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e78bce2fac1c447d1879b9e1c13b2d8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   DebugMode: 1
   DebugStats: 0
   team: 0
@@ -123,6 +151,7 @@ MonoBehaviour:
   _hasSmoothStop: 1
   _decelerationRate: 2.5
   _animatorBody: {fileID: 2748436343337227958}
+  _netAnimatorBody: {fileID: 2359275205615196291}
   _animatorWeap:
   - {fileID: 8184411888464759163}
   _turretAim:
@@ -133,7 +162,7 @@ MonoBehaviour:
   _right2TrackRenderer: {fileID: 960952585675199195}
   _audioSource: {fileID: 2159192398232211552}
   _moveClip: {fileID: 8300000, guid: 4a70fde0477ca564398c94a88b4c8974, type: 3}
-  _detectionRadius: 170
+  _detectionRadius: 240
   _requierFacingForAttack: 0
   _canTargetFlying: 0
   _aerialOnly: 0
@@ -293,6 +322,7 @@ MonoBehaviour:
   _aoeRadius: 0
   _audioClip: {fileID: 8300000, guid: 0d763e4d2c65c574fa67111609aef024, type: 3}
   _audioSource: {fileID: 2159192398232211552}
+  _radioGameplay: {fileID: 11400000, guid: 1a380cd7d54b23342a8b318ae7e67f93, type: 2}
   _projectilePrefab: {fileID: 3191253267326585072, guid: e797a6601feeaac47bec867eca69959b, type: 3}
   _impactVFXPrefab:
   - {fileID: 7484493792602375096, guid: d54af38ad9f3b3e43a8123927165f838, type: 3}
@@ -316,6 +346,52 @@ NavMeshObstacle:
   m_CarveOnlyStationary: 1
   m_Center: {x: 0, y: 1.28, z: 0}
   m_TimeToStationary: 0.25
+--- !u!114 &8634588062393831617
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1526412967014533734}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e96cb6065543e43c4a752faaa1468eb1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
+  NetworkTransformExpanded: 0
+  AutoOwnerAuthorityTickOffset: 1
+  PositionInterpolationType: 0
+  RotationInterpolationType: 0
+  ScaleInterpolationType: 0
+  PositionLerpSmoothing: 1
+  PositionMaxInterpolationTime: 0.1
+  RotationLerpSmoothing: 1
+  RotationMaxInterpolationTime: 0.1
+  ScaleLerpSmoothing: 1
+  ScaleMaxInterpolationTime: 0.1
+  AuthorityMode: 0
+  TickSyncChildren: 0
+  UseUnreliableDeltas: 0
+  SyncPositionX: 1
+  SyncPositionY: 1
+  SyncPositionZ: 1
+  SyncRotAngleX: 1
+  SyncRotAngleY: 1
+  SyncRotAngleZ: 1
+  SyncScaleX: 1
+  SyncScaleY: 1
+  SyncScaleZ: 1
+  PositionThreshold: 0.001
+  RotAngleThreshold: 0.01
+  ScaleThreshold: 0.01
+  UseQuaternionSynchronization: 0
+  UseQuaternionCompression: 0
+  UseHalfFloatPrecision: 0
+  InLocalSpace: 0
+  SwitchTransformSpaceWhenParented: 0
+  Interpolate: 1
+  SlerpPosition: 0
 --- !u!1001 &2017642278164004679
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -388,12 +464,18 @@ PrefabInstance:
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 6240456900467456555, guid: 4dd39e3a38e8f4a8e9920990d0b078b4, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2359275205615196291}
     - targetCorrespondingSourceObject: {fileID: 2455009140658398015, guid: 4dd39e3a38e8f4a8e9920990d0b078b4, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7338906265108606850}
     - targetCorrespondingSourceObject: {fileID: 7896153516488132082, guid: 4dd39e3a38e8f4a8e9920990d0b078b4, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6618025353787138100}
+    - targetCorrespondingSourceObject: {fileID: 7896153516488132082, guid: 4dd39e3a38e8f4a8e9920990d0b078b4, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3111745265685296397}
   m_SourcePrefab: {fileID: 100100000, guid: 4dd39e3a38e8f4a8e9920990d0b078b4, type: 3}
 --- !u!23 &960952585675199195 stripped
 MeshRenderer:
@@ -449,6 +531,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rotationSpeed: 5
   baseTransform: {fileID: 2462525668639477216}
+--- !u!1 &5375772428292654444 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6240456900467456555, guid: 4dd39e3a38e8f4a8e9920990d0b078b4, type: 3}
+  m_PrefabInstance: {fileID: 2017642278164004679}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2359275205615196291
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5375772428292654444}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8d0727d5ae3244e3b569694d3912374, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
+  TransitionStateInfoList: []
+  m_Animator: {fileID: 2748436343337227958}
 --- !u!95 &8184411888464759163 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 7896153516495566396, guid: 4dd39e3a38e8f4a8e9920990d0b078b4, type: 3}
@@ -483,6 +585,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Attack: {fileID: 6629708193565723756}
   OwnerUnit: {fileID: 4326294082231054100}
+--- !u!114 &3111745265685296397
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8184411888474159797}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8d0727d5ae3244e3b569694d3912374, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
+  TransitionStateInfoList: []
+  m_Animator: {fileID: 8184411888464759163}
 --- !u!1001 &8023667361025233737
 PrefabInstance:
   m_ObjectHideFlags: 0

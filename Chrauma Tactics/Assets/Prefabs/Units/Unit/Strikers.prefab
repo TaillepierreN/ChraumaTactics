@@ -72,11 +72,13 @@ GameObject:
   m_Component:
   - component: {fileID: 8295864354445783835}
   - component: {fileID: 3476329988123684923}
+  - component: {fileID: -8328890021521319893}
   - component: {fileID: 4996285490162726068}
   - component: {fileID: 5644876710285584172}
   - component: {fileID: 5983638003046760124}
   - component: {fileID: 1040443809346417438}
   - component: {fileID: 6842549830650098512}
+  - component: {fileID: 8497026232546211023}
   m_Layer: 0
   m_Name: Strikers
   m_TagString: Untagged
@@ -124,6 +126,31 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &-8328890021521319893
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8210559173043192065}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 2987046240
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
 --- !u!114 &4996285490162726068
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -136,6 +163,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42720ac1338e84208b0e8eb0b66c49e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   DebugMode: 1
   DebugStats: 0
   team: 0
@@ -149,11 +177,12 @@ MonoBehaviour:
   _baseAtk: 20
   _baseMoveSpeed: 8
   _baseAtkSpeed: 1.6
-  _baseRange: 25
+  _baseRange: 26
   SpawnPosition: {x: 0, y: 0, z: 0}
   _hasSmoothStop: 0
   _decelerationRate: 2.5
   _animatorBody: {fileID: 8741907818351441991}
+  _netAnimatorBody: {fileID: 4258834257514017036}
   _animatorWeap:
   - {fileID: 8741907818351441991}
   _turretAim: []
@@ -163,7 +192,7 @@ MonoBehaviour:
   _right2TrackRenderer: {fileID: 0}
   _audioSource: {fileID: 1040443809346417438}
   _moveClip: {fileID: 8300000, guid: 7a907e38a97122447af089bf61f7d561, type: 3}
-  _detectionRadius: 170
+  _detectionRadius: 240
   _requierFacingForAttack: 1
   _canTargetFlying: 1
   _aerialOnly: 0
@@ -338,6 +367,7 @@ MonoBehaviour:
   _aoeRadius: 0
   _audioClip: {fileID: 8300000, guid: 0d763e4d2c65c574fa67111609aef024, type: 3}
   _audioSource: {fileID: 1040443809346417438}
+  _radioGameplay: {fileID: 11400000, guid: 1a380cd7d54b23342a8b318ae7e67f93, type: 2}
   _projectilePrefab: {fileID: 100000, guid: 7e2d264e03fb2fb4fb2b1e559515830a, type: 3}
   _impactVFXPrefab:
   - {fileID: 7484493792602375096, guid: d54af38ad9f3b3e43a8123927165f838, type: 3}
@@ -345,6 +375,52 @@ MonoBehaviour:
   _impactLifeTime: 0.5
   _nbrOfPooledProjectile: 5
   _poolContainer: {fileID: 3416314001319323122}
+--- !u!114 &8497026232546211023
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8210559173043192065}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e96cb6065543e43c4a752faaa1468eb1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
+  NetworkTransformExpanded: 0
+  AutoOwnerAuthorityTickOffset: 1
+  PositionInterpolationType: 0
+  RotationInterpolationType: 0
+  ScaleInterpolationType: 0
+  PositionLerpSmoothing: 1
+  PositionMaxInterpolationTime: 0.1
+  RotationLerpSmoothing: 1
+  RotationMaxInterpolationTime: 0.1
+  ScaleLerpSmoothing: 1
+  ScaleMaxInterpolationTime: 0.1
+  AuthorityMode: 0
+  TickSyncChildren: 0
+  UseUnreliableDeltas: 0
+  SyncPositionX: 1
+  SyncPositionY: 1
+  SyncPositionZ: 1
+  SyncRotAngleX: 1
+  SyncRotAngleY: 1
+  SyncRotAngleZ: 1
+  SyncScaleX: 1
+  SyncScaleY: 1
+  SyncScaleZ: 1
+  PositionThreshold: 0.001
+  RotAngleThreshold: 0.01
+  ScaleThreshold: 0.01
+  UseQuaternionSynchronization: 0
+  UseQuaternionCompression: 0
+  UseHalfFloatPrecision: 0
+  InLocalSpace: 0
+  SwitchTransformSpaceWhenParented: 0
+  Interpolate: 1
+  SlerpPosition: 0
 --- !u!1001 &4293609229661385922
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -480,6 +556,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1335379607261236, guid: 0d0607f3d6e989742a573ba5f4173669, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4612483880934805179}
+    - targetCorrespondingSourceObject: {fileID: 1335379607261236, guid: 0d0607f3d6e989742a573ba5f4173669, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4258834257514017036}
   m_SourcePrefab: {fileID: 100100000, guid: 0d0607f3d6e989742a573ba5f4173669, type: 3}
 --- !u!1 &8647309683023431081 stripped
 GameObject:
@@ -500,6 +579,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Attack: {fileID: 6842549830650098512}
   OwnerUnit: {fileID: 4996285490162726068}
+--- !u!114 &4258834257514017036
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8647309683023431081}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8d0727d5ae3244e3b569694d3912374, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
+  TransitionStateInfoList: []
+  m_Animator: {fileID: 8741907818351441991}
 --- !u!4 &8652858702904010827 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4774041545375190, guid: 0d0607f3d6e989742a573ba5f4173669, type: 3}

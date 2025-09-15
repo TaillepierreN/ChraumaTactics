@@ -10,6 +10,20 @@ namespace CT.Gameplay
         public int Credits;
         public int HP;
         public List<Squad> Army;
+        public List<GameObject> FreeSquadVouchers = new List<GameObject>();
+
+        public void GiveFreeSquadVoucher(GameObject unitPrefab)
+        {
+            if (unitPrefab == null) return;
+            FreeSquadVouchers.Add(unitPrefab);
+            /*Debug.Log($"Team {Team} has 1 {unitPrefab} voucher");*/
+        }
+        public void ConsumeFreeSquadVoucher(GameObject unitPrefab)
+        {
+            if (unitPrefab == null) return;
+            FreeSquadVouchers.Remove(unitPrefab);
+            /*Debug.Log($"Team {Team} has consumed {unitPrefab} voucher, nom nom");*/
+        }
     }
 
 }

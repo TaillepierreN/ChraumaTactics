@@ -2,6 +2,9 @@ using UnityEngine;
 using CT.Grid;
 using System.Linq;
 using System.Collections.Generic;
+using Unity.Netcode;
+using CT.Tools;
+using System.Collections;
 
 namespace CT.Gameplay
 {
@@ -14,17 +17,20 @@ namespace CT.Gameplay
         [SerializeField] private Rd_Gameplay _radioGameplay;
         private GameObject unitPrefab;
         private int numberOfUnits = 1;
-
+        private Team placingTeam;
+        private bool usingVoucher = false;
+        private GameObject voucherUnitPrefab = null;
 
         private GameObject ghostUnit;
-
+        private Vector3 p1Forward = Vector3.forward;
+        private Vector3 p2Forward = Vector3.back;
         private bool isPlacing = false;
 
         private void Awake()
         {
             if (Instance != null && Instance != this)
             {
-                Destroy(Instance);
+                Destroy(gameObject);
                 return;
             }
             Instance = this;
@@ -32,18 +38,15 @@ namespace CT.Gameplay
 
         private void Start()
         {
-            _radioGameplay.RoundManager.OnPhaseChanged += HandleChangePhase;
+            var rm = _radioGameplay.RoundManager;
+            if (rm != null)
+                rm.OnPhaseChanged += HandleChangePhase;
         }
 
         private void OnDestroy()
         {
-            _radioGameplay.RoundManager.OnPhaseChanged -= HandleChangePhase;
-        }
-
-        private void HandleChangePhase(RoundPhase phase)
-        {
-            if (phase == RoundPhase.PostPreparation)
-                ClearGhostUnit();
+            var rm = _radioGameplay.RoundManager;
+            if (rm != null) rm.OnPhaseChanged -= HandleChangePhase;
         }
 
         private void Update()
@@ -57,10 +60,14 @@ namespace CT.Gameplay
             if (Physics.Raycast(ray, out RaycastHit hit, 100f))
             {
                 GridPosition gridPos = LevelGrid.Instance.GetGridPosition(hit.point);
-                bool isValid = LevelGrid.Instance.IsValidGridPosition(gridPos) &&
+
+                bool inMyArea = LevelGrid.Instance.IsInTeamArea(gridPos, placingTeam);
+                bool isValid = inMyArea && LevelGrid.Instance.IsValidGridPosition(gridPos) &&
                     !LevelGrid.Instance.HasAnySquadOnGridPosition(gridPos);
 
-                ghostUnit.transform.position = LevelGrid.Instance.GetWorldPosition(gridPos);
+                Vector3 worldPos = LevelGrid.Instance.GetWorldPosition(gridPos);
+                ghostUnit.transform.SetPositionAndRotation(worldPos,
+                                    Quaternion.LookRotation(placingTeam == Team.Player1 ? p1Forward : p2Forward, Vector3.up));
                 GridSystemVisual.Instance.ShowOverlay(gridPos, isValid ? Color.green : Color.red);
 
                 if (isValid && Input.GetMouseButtonDown(0))
@@ -68,7 +75,29 @@ namespace CT.Gameplay
             }
         }
 
-        public void StartPlacingUnit(GameObject unitToPlace, int nbrOfUnits = 1)
+        private void HandleChangePhase(RoundPhase phase)
+        {
+            if (phase == RoundPhase.PostPreparation)
+                ClearGhostUnit();
+        }
+
+        public void StartPlacingUnit(GameObject unitToPlace, int nbrOfUnits = 1, Team team = Team.Player1)
+        {
+            placingTeam = team;
+            usingVoucher = false;
+            voucherUnitPrefab = null;
+            BeginPlacing(unitToPlace, nbrOfUnits);
+        }
+
+        public void StartPlacingFreeUnit(GameObject unitToPlace, int nbrOfUnits = 1, Team team = Team.Player1)
+        {
+            placingTeam = team;
+            usingVoucher = true;
+            voucherUnitPrefab = unitToPlace;
+            BeginPlacing(unitToPlace, nbrOfUnits);
+        }
+
+        private void BeginPlacing(GameObject unitToPlace, int nbrOfUnits)
         {
             unitPrefab = unitToPlace;
             numberOfUnits = nbrOfUnits;
@@ -96,6 +125,7 @@ namespace CT.Gameplay
             }
 
             isPlacing = true;
+            return;
         }
 
         private void PlaceUnit(GridPosition pos)
@@ -103,17 +133,81 @@ namespace CT.Gameplay
             if (!isPlacing)
                 return;
             isPlacing = false;
-            GameObject SquadObject = Instantiate(squadPrefab, LevelGrid.Instance.GetWorldPosition(pos), Quaternion.identity);
-            Squad squad = SquadObject.GetComponent<Squad>();
 
-            squad.nbrOfUnits = numberOfUnits;
-            squad.unitPrefab = unitPrefab;
-            squad.SpawnUnit();
+            Vector3 worldPos = LevelGrid.Instance.GetWorldPosition(pos);
 
-            LevelGrid.Instance.AddSquadAtGridPosition(pos, squad);
+            if (!NetX.IsListening)
+            {
+                GameObject SquadObject = Instantiate(squadPrefab, LevelGrid.Instance.GetWorldPosition(pos), Quaternion.identity);
+                Squad squad = SquadObject.GetComponent<Squad>();
+                //NetRemover.StripNetcodeComponents(SquadObject);
+                //SquadObject.transform.SetParent(TeamSquadPool.Get(Team.Player1), true);
+                StartCoroutine(StripThenParent(SquadObject, TeamSquadPool.Get(Team.Player1)));
+                squad.team = placingTeam;
+                squad.nbrOfUnits = numberOfUnits;
+                squad.unitPrefab = unitPrefab;
+                squad.SpawnUnit();
+
+                LevelGrid.Instance.AddSquadAtGridPosition(pos, squad);
+            }
+            else
+            {
+                if (PlacementNetwork.Instance == null)
+                {
+                    Debug.LogError("UnitPlacer: No PlacementNetwork instance found in the scene.");
+                    ClearGhostUnit();
+                    return;
+                }
+
+                int unitIndex = PlacementNetwork.Instance.IndexOfUnit(unitPrefab);
+                if (unitIndex < 0)
+                {
+                    Debug.LogError("Unit prefab not whitelisted in PlacementNetwork");
+                    ClearGhostUnit();
+                    return;
+                }
+
+                bool useVoucher = usingVoucher && voucherUnitPrefab == unitPrefab;
+                PlacementNetwork.Instance.PlaceSquadServerRpc(worldPos, numberOfUnits, unitIndex, useVoucher);
+                if (useVoucher && voucherUnitPrefab != null)
+                {
+                    GameManager gm = _radioGameplay.GameManager;
+                    Player player = gm.GetPlayerByTeam(placingTeam);
+                    if (player != null && player.FreeSquadVouchers.Contains(voucherUnitPrefab))
+                    {
+                        player.ConsumeFreeSquadVoucher(voucherUnitPrefab);
+                        gm.NotifyVoucherChanged();
+                    }
+                }
+
+            }
+            if (!NetX.IsListening && usingVoucher && voucherUnitPrefab != null)
+            {
+                Player player = _radioGameplay.GameManager.GetPlayerByTeam(placingTeam);
+                if (player != null)
+                    player.ConsumeFreeSquadVoucher(voucherUnitPrefab);
+            }
+            usingVoucher = false;
+            voucherUnitPrefab = null;
+
+            if (!NetX.IsListening)
+            {
+                if (placingTeam == Team.Player1)
+                    _radioGameplay.GameManager.P1CreditsChanged?.Invoke(_radioGameplay.GameManager.player1.Credits, 1);
+                else
+                    _radioGameplay.GameManager.P2CreditsChanged?.Invoke(_radioGameplay.GameManager.player2.Credits, 2);
+            }
 
             ClearGhostUnit();
         }
+
+        private IEnumerator StripThenParent(GameObject go, Transform parent)
+        {
+            NetRemover.StripNetcodeComponents(go);
+            yield return null;
+            go.transform.SetParent(parent, true);
+        }
+
 
         private void ClearGhostUnit()
         {

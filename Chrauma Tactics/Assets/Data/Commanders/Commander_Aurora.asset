@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9947b36b5042a44fb9d170a06d6c7174, type: 3}
+  m_Name: Commander_Aurora
+  m_EditorClassIdentifier: 
+  commanderName: Aurora
+  portrait: {fileID: 21300000, guid: 1914a1e9a957c4a2ba42d8c6d9264a35, type: 3}
+  description: Ranged Units +10% Range / All Units +4% Attack
+  unitPrefab1: {fileID: 1732825375848570203, guid: 481fbc7c36d3540c4af03509d02c6f86, type: 3}
+  unitName1: Snipers
+  unitPrefab2: {fileID: 9187776853955451205, guid: 3b699e3f4688e4847a6b692fae3922ef, type: 3}
+  unitName2: Swarmers
+  unitIcon1: {fileID: 21300000, guid: 4a087075aeb844882851f8e92362a400, type: 3}
+  unitIcon2: {fileID: 21300000, guid: a7d9260efceea4d7e87924e21bb177fe, type: 3}
+  boostIcon1: {fileID: 21300000, guid: 9e406253d198e3144bfc5127c13048a1, type: 3}
+  boostIcon2: {fileID: 21300000, guid: 11e40dd8122b5a14282c0f6900aef54c, type: 3}
+  playerHealth: 4000
+  StartingAugment:
+  - {fileID: 11400000, guid: 3fc38fb6e599147ad996c40f7d4132c1, type: 2}
+  - {fileID: 11400000, guid: 13bc85987ba204aeabb896de5f05f532, type: 2}

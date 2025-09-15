@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7bbb46d13c2b49d186c396b49bd9fd1, type: 3}
+  m_Name: Commander_IronSentinel
+  m_EditorClassIdentifier: 
+  commanderName: Iron Sentinel
+  portrait: {fileID: 21300000, guid: 2f0efc227ab2f42f18ce59d4d63f3321, type: 3}
+  description: Bonus pizza aqui
+  unitPrefab1: {fileID: 8210559173043192065, guid: 248f99515d5b34fc9bfe00b05a0c1635, type: 3}
+  unitName1: Strikers
+  unitPrefab2: {fileID: 8013387478697621675, guid: 3d1170f9ae40a43e99fd70bc120e1b25, type: 3}
+  unitName2: Hammer
+  unitIcon1: {fileID: 21300000, guid: 4db36883ffb674102b8648dc7a85317d, type: 3}
+  unitIcon2: {fileID: 21300000, guid: d2da53fcae2e84305b3d0950b3944bf7, type: 3}
+  boostIcon1: {fileID: 21300000, guid: c2591cd5c61f4164cbbdb34b8a1ca082, type: 3}
+  boostIcon2: {fileID: 21300000, guid: db7e2dc1a8334d94482fe0e0a13d9287, type: 3}
+  playerHealth: 5000
+  StartingAugment:
+  - {fileID: 11400000, guid: 6ae7075ca141d43018e71ce0a0010d75, type: 2}
+  - {fileID: 11400000, guid: f631ea197564344ddaa1f0d5c7164ac7, type: 2}

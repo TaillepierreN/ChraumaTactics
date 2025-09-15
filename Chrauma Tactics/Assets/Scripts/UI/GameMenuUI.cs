@@ -1,6 +1,7 @@
 using CT.UI;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Unity.Netcode;
 
 public class GameMenuUI : MonoBehaviour
 {
@@ -10,18 +11,41 @@ public class GameMenuUI : MonoBehaviour
     public GameObject rankingPanel;
 
 
-
-
-    public void OnPlay()
+    static bool NetActive()
     {
-        SceneLoader.Load("LobbyPreGame");
+        var nm = NetworkManager.Singleton;
+        return nm && nm.IsListening && (nm.IsServer || nm.IsClient);
     }
 
-    public void OnSolo()
+    static bool IsServer()
     {
-        SceneLoader.Load("SampleScene");
+        var nm = NetworkManager.Singleton;
+        return nm && nm.IsListening && nm.IsServer;
     }
 
+    public void OnPlay() => LoadGameEntry("LobbyPreGame");
+    public void OnSolo() => LoadGameEntry("SampleScene");
+
+    void LoadGameEntry(string sceneName)
+    {
+        if (!NetActive())
+        {
+            SceneLoader.LoadOffline(sceneName);
+            return;
+        }
+
+        if (IsServer())
+        {
+            SceneLoader.BeginNetwork(sceneName);
+            NetworkManager.Singleton.SceneManager.LoadScene(sceneName, LoadSceneMode.Single);
+        }
+        else
+        {
+            Debug.Log("[Menu] Waiting for host to start…");
+            //disable the button for clients maybe
+            // GetComponentInChildren<Button>().interactable = false;
+        }
+    }
     public void OnAboutUs()
     {
         Debug.Log("About Us");
@@ -114,5 +138,5 @@ public class GameMenuUI : MonoBehaviour
             Debug.Log("Quit confirmation popup closed");
         }
     }
-    
+
 }

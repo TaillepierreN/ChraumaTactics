@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2fb1c9a0ac774b778f1014b0feb0602, type: 3}
+  m_Name: Commander_Skyblade
+  m_EditorClassIdentifier: 
+  commanderName: Skyblade
+  portrait: {fileID: 21300000, guid: c7b4058d2a25e46b7b69303f719c4aff, type: 3}
+  description: BOBO et NUNUS
+  unitPrefab1: {fileID: 5112724625264564338, guid: fdf6dc419fcb54945b42db6cede17584, type: 3}
+  unitName1: Arclight
+  unitPrefab2: {fileID: 1732825375848570203, guid: 481fbc7c36d3540c4af03509d02c6f86, type: 3}
+  unitName2: Snipers
+  unitIcon1: {fileID: 21300000, guid: 92e9f6ab2e02d4ad7a549cf142b56639, type: 3}
+  unitIcon2: {fileID: 21300000, guid: 4a087075aeb844882851f8e92362a400, type: 3}
+  boostIcon1: {fileID: 21300000, guid: c2591cd5c61f4164cbbdb34b8a1ca082, type: 3}
+  boostIcon2: {fileID: 21300000, guid: 9e406253d198e3144bfc5127c13048a1, type: 3}
+  playerHealth: 4100
+  StartingAugment:
+  - {fileID: 11400000, guid: 9955ebc9d717d4d23ae213e2c66b8a6b, type: 2}
+  - {fileID: 11400000, guid: 0aa72b5cc625045ef9ba6d02f053799c, type: 2}

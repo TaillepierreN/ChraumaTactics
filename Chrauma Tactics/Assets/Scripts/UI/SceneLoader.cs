@@ -3,6 +3,8 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Unity.Netcode;
+using CT.Tools;
 
 namespace CT.UI
 {
@@ -14,9 +16,13 @@ namespace CT.UI
         [SerializeField] private Slider progressSlider;
         [SerializeField] private TMP_Text progressValue;
         [SerializeField] private float fadeDuration = 0.25f;
+        private NetworkSceneManager _hookedSM;
+        private bool _isLoading;
+        private string _nextScene;
+        private bool _hooked;
+        private bool _leaving = false;
 
-        bool _isLoading;
-        string _nextScene;
+        Coroutine _networkAnim;
 
         /// <summary>
         /// Singleton and loading screen setup
@@ -34,43 +40,89 @@ namespace CT.UI
             loadingGroup.alpha = 0f;
             SetInteractable(false);
             ResetProgress();
+
+            TryHookNetSceneEvents();
+            StartCoroutine(HookWhenReady());
         }
 
-        /// <summary>
-        /// Reset loading bar and value to 0;
-        /// </summary>
-        private void ResetProgress()
+        void OnDestroy()
         {
-            if (progressSlider)
-                progressSlider.SetValueWithoutNotify(0f);
-            if (progressValue)
-                progressValue.text = "0%";
+            if (_hookedSM != null)
+            {
+                _hookedSM.OnLoadEventCompleted -= OnNetLoadCompleted;
+                _hookedSM.OnSceneEvent -= OnNetSceneEvent;
+            }
+
+            _hookedSM = null;
+            _hooked = false;
         }
 
+        void TryHookNetSceneEvents()
+        {
+            NetworkManager nm = NetworkManager.Singleton;
+            if (nm == null) return;
+            NetworkSceneManager sm = nm.SceneManager;
+            if (sm == null) return;
+
+            if (_hookedSM == sm && _hooked)
+                return;
+
+            if (_hookedSM != null)
+            {
+                _hookedSM.OnLoadEventCompleted -= OnNetLoadCompleted;
+                _hookedSM.OnSceneEvent -= OnNetSceneEvent;
+            }
+
+            sm.OnLoadEventCompleted -= OnNetLoadCompleted;
+            sm.OnLoadEventCompleted += OnNetLoadCompleted;
+
+            sm.OnSceneEvent -= OnNetSceneEvent;
+            sm.OnSceneEvent += OnNetSceneEvent;
+
+            _hookedSM = sm;
+            _hooked = true;
+        }
+
+        IEnumerator HookWhenReady()
+        {
+            // For client world in Multiplayer Play Mode
+            while (true)
+            {
+                NetworkManager nm = NetworkManager.Singleton;
+                if (nm != null && nm.SceneManager != null)
+                {
+                    TryHookNetSceneEvents();
+                    yield break;
+                }
+                yield return null;
+            }
+        }
+
+        #region  Offline / Local Loading
         /// <summary>
         /// Start loading scene
         /// </summary>
         /// <param name="sceneName"></param>
-        public static void Load(string sceneName)
+        public static void LoadOffline(string sceneName)
         {
             if (!Instance)
             {
                 Debug.Log("SceneLoad is not in the scene, add the SceneLoader prefab");
                 return;
             }
-            Instance.QueueLoad(sceneName);
+            Instance.QueueLocalLoad(sceneName);
         }
 
         /// <summary>
         /// start loading coroutine and protect from multiple load
         /// </summary>
         /// <param name="sceneName"></param>
-        private void QueueLoad(string sceneName)
+        private void QueueLocalLoad(string sceneName)
         {
             if (_isLoading) return;
             _isLoading = true;
             _nextScene = sceneName;
-            StartCoroutine(LoadRoutine());
+            StartCoroutine(LocalLoadRoutine());
         }
 
         /// <summary>
@@ -82,7 +134,7 @@ namespace CT.UI
         /// reset and fade out loading screen
         /// </summary>
         /// <returns></returns>
-        private IEnumerator LoadRoutine()
+        private IEnumerator LocalLoadRoutine()
         {
             yield return Fade(1f);
 
@@ -115,7 +167,121 @@ namespace CT.UI
             ResetProgress();
 
         }
+        #endregion
+        #region Online / NGO load
 
+        /// <summary>
+        /// Start network loading visuals, called by NGO when starting a network scene load
+        /// </summary>
+        /// <param name="sceneName"></param>
+        public static void BeginNetwork(string sceneName)
+        {
+            if (!Instance)
+                return;
+            Instance.StartNetworkVisuals(sceneName);
+        }
+
+        /// <summary>
+        /// Stop network loading visuals, called by NGO when all clients have finished loading
+        /// </summary>
+        public static void CompleteNetwork()
+        {
+            if (!Instance)
+                return;
+            Instance.StopNetworkVisuals();
+        }
+
+        /// <summary>
+        /// Start network loading screen animation
+        /// </summary>
+        /// <param name="sceneName"></param>
+        void StartNetworkVisuals(string sceneName)
+        {
+            if (_isLoading)
+                return;
+            _isLoading = true;
+            _nextScene = sceneName;
+            if (_networkAnim != null)
+                StopCoroutine(_networkAnim);
+            _networkAnim = StartCoroutine(NetworkLoadVisuals());
+        }
+
+        /// <summary>
+        /// Stop network loading screen animation
+        /// </summary>
+        void StopNetworkVisuals()
+        {
+            if (!_isLoading) return;
+            if (_networkAnim != null) StopCoroutine(_networkAnim);
+            StartCoroutine(NetworkCompleteRoutine());
+        }
+
+        /// <summary>
+        /// Network loading animation
+        /// </summary>
+        /// <returns></returns>
+        IEnumerator NetworkLoadVisuals()
+        {
+            yield return Fade(1f);
+            float p = 0f;
+            while (true)
+            {
+                p = Mathf.MoveTowards(p, 0.9f, Time.unscaledDeltaTime * 0.3f);
+                UpdateProgress(p);
+                yield return null;
+            }
+        }
+
+        /// <summary>
+        /// Network loading complete animation
+        /// </summary>
+        /// <returns></returns>
+        IEnumerator NetworkCompleteRoutine()
+        {
+            UpdateProgress(1f);
+            yield return null;
+            yield return Fade(0f);
+            _isLoading = false;
+            ResetProgress();
+        }
+
+        /// <summary>
+        /// NGO callback when all clients have finished loading the scene
+        /// </summary>
+        /// <param name="sceneName"></param>
+        /// <param name="mode"></param>
+        /// <param name="clientsCompleted"></param>
+        /// <param name="clientsTimedOut"></param>
+        void OnNetLoadCompleted(string sceneName, LoadSceneMode mode,
+                                System.Collections.Generic.List<ulong> clientsCompleted,
+                                System.Collections.Generic.List<ulong> clientsTimedOut)
+        {
+            if (clientsTimedOut != null && clientsTimedOut.Count > 0)
+                Debug.LogWarning($"Network load done with timeouts for {sceneName}.client timed out: {clientsTimedOut}");
+            if (_isLoading)
+                StopNetworkVisuals();
+        }
+
+        void OnNetSceneEvent(SceneEvent e)
+        {
+            /* When the server initiates a network LOAD for any scene, show visuals*/
+            if (e.SceneEventType == SceneEventType.Load)
+            {
+                BeginNetwork(e.SceneName);
+            }
+        }
+        #endregion
+
+        /// <summary>
+        /// Reset loading bar and value to 0;
+        /// </summary>
+        private void ResetProgress()
+        {
+            if (progressSlider)
+                progressSlider.SetValueWithoutNotify(0f);
+            if (progressValue)
+                progressValue.text = "0%";
+        }
 
         /// <summary>
         /// Upade loading value / bar visuals
@@ -164,6 +330,28 @@ namespace CT.UI
         {
             loadingGroup.blocksRaycasts = isInteractable;
             loadingGroup.interactable = isInteractable;
+        }
+
+        public void LeaveBattle()
+        {
+            if (_leaving)
+                return;
+            _leaving = true;
+
+            StartCoroutine(Co_LeaveBattleRoutine());
+        }
+
+        private IEnumerator Co_LeaveBattleRoutine()
+        {
+
+            if (NetX.IsListening)
+            {
+                NetworkManager nm = NetX.NM;
+                nm.Shutdown();
+                yield return new WaitUntil(() => nm == null || !NetX.IsListening);
+                yield return null;
+            }
+            LoadOffline("GameMenu");
         }
     }
 
