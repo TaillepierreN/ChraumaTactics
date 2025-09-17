@@ -12,10 +12,12 @@ namespace CT.Units.Attacks
         [SerializeField] private float _tickInterval = 0.2f;
 
         /// <summary>
-        /// Laser visual, may change from linerenderer to vfxgraph
+        /// Laser visual
         /// </summary>
-        [SerializeField] private LineRenderer[] _beams;
+        [SerializeField] private BeamStretch _beamPrefab;
+        [SerializeField] private BeamStretch[] _beams;
         [SerializeField] private Transform[] _impactMarkers;
+        [SerializeField] private Transform _pool;
 
         private float _damage = 10f;
         private Coroutine[] _loops;
@@ -48,15 +50,23 @@ namespace CT.Units.Attacks
             /*match the arrays to the number of weapons firing*/
             int numberOfBarrel = BarrelEnd?.Length ?? 1;
             if (_beams == null || _beams.Length != numberOfBarrel)
-                System.Array.Resize(ref _beams, numberOfBarrel);
+                _beams = new BeamStretch[numberOfBarrel];
             if (_impactMarkers == null || _impactMarkers.Length != numberOfBarrel)
                 System.Array.Resize(ref _impactMarkers, numberOfBarrel);
             if (_loops == null || _loops.Length != numberOfBarrel)
                 _loops = new Coroutine[numberOfBarrel];
 
-            for (int i = 0; i < _beams.Length; i++)
-                if (_beams[i] != null)
-                    _beams[i].enabled = false;
+            for (int i = 0; i < numberOfBarrel; i++)
+            {
+                if (!_beams[i] && _beamPrefab)
+                {
+                    _beams[i] = Instantiate(_beamPrefab, _pool);
+                    _beams[i].SetScale(gameObject.transform.localScale.y);
+                    _beams[i].Hide();
+                }
+                else if (_beams[i])
+                    _beams[i].Hide();
+            }
             for (int i = 0; i < _impactMarkers.Length; i++)
                 if (_impactMarkers[i] != null)
                     _impactMarkers[i].gameObject.SetActive(false);
@@ -151,7 +161,7 @@ namespace CT.Units.Attacks
             }
 
             if (_beams != null && barrelIndex < _beams.Length && _beams[barrelIndex] != null)
-                _beams[barrelIndex].enabled = false;
+                _beams[barrelIndex].Hide();
 
             if (_impactMarkers != null && barrelIndex < _impactMarkers.Length && _impactMarkers[barrelIndex] != null)
                 _impactMarkers[barrelIndex].gameObject.SetActive(false);
@@ -175,12 +185,12 @@ namespace CT.Units.Attacks
         /// <returns></returns>
         IEnumerator BeamLoop(int index, Unit target)
         {
-            LineRenderer beam = (_beams != null && index < _beams.Length) ? _beams[index] : null;
+            BeamStretch beam = (_beams != null && index < _beams.Length) ? _beams[index] : null;
             Transform shootPosition = (BarrelEnd != null && index < BarrelEnd.Length && BarrelEnd[index] != null) ? BarrelEnd[index] : null;
             Transform marker = (_impactMarkers != null && index < _impactMarkers.Length) ? _impactMarkers[index] : null;
 
             if (beam)
-                beam.enabled = true;
+                beam.gameObject.SetActive(true);
             if (marker)
                 marker.gameObject.SetActive(true);
 
@@ -192,10 +202,7 @@ namespace CT.Units.Attacks
                 Vector3 endPos = target.Hitbox ? target.Hitbox.position : target.transform.position;
 
                 if (beam)
-                {
-                    beam.SetPosition(0, startPos);
-                    beam.SetPosition(1, endPos);
-                }
+                    beam.UpdateBeam(startPos, endPos);
                 if (marker)
                     marker.position = endPos;
 
@@ -236,7 +243,7 @@ namespace CT.Units.Attacks
             }
 
             if (beam)
-                beam.enabled = false;
+                beam.Hide();
             if (marker)
                 marker.gameObject.SetActive(false);
             _loops[index] = null;

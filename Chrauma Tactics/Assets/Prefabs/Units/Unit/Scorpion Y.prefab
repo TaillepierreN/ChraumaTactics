@@ -290,10 +290,11 @@ MonoBehaviour:
   _audioClip: {fileID: 8300000, guid: de48bd7a8f94aa44cbff92da5aff50bd, type: 3}
   _audioSource: {fileID: 1556980426057000772}
   _tickInterval: 0.2
-  _beams:
-  - {fileID: 4257830523118253500}
+  _beamPrefab: {fileID: 7485100477930697401, guid: 75739a5c0da819f4a9436c24950e2f4e, type: 3}
+  _beams: []
   _impactMarkers:
   - {fileID: 7418035312548749139}
+  _pool: {fileID: 2773320172390475342}
 --- !u!208 &4118013909892122749
 NavMeshObstacle:
   m_ObjectHideFlags: 0
@@ -416,11 +417,6 @@ PrefabInstance:
 --- !u!4 &1480226832053752774 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 865774224686535648, guid: e9da09e066f06064bb170aa50767f2f2, type: 3}
-  m_PrefabInstance: {fileID: 1767956869784109094}
-  m_PrefabAsset: {fileID: 0}
---- !u!120 &4257830523118253500 stripped
-LineRenderer:
-  m_CorrespondingSourceObject: {fileID: 2567000293996164506, guid: e9da09e066f06064bb170aa50767f2f2, type: 3}
   m_PrefabInstance: {fileID: 1767956869784109094}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &3200281489699042391

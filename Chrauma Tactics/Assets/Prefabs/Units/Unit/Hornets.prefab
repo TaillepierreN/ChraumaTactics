@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &4986014859196884142
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 168550424520241601}
+  m_Layer: 0
+  m_Name: Barrel
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &168550424520241601
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4986014859196884142}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -15, y: 1.7, z: 63.3}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 925274537532112814}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7526224258789276705
 GameObject:
   m_ObjectHideFlags: 0
@@ -289,10 +320,11 @@ MonoBehaviour:
   _audioClip: {fileID: 8300000, guid: de48bd7a8f94aa44cbff92da5aff50bd, type: 3}
   _audioSource: {fileID: 3920531310147560548}
   _tickInterval: 0.2
-  _beams:
-  - {fileID: 1465430674211642169}
+  _beamPrefab: {fileID: -730134573354091260, guid: 1003b0233757c1a4b96443e32a0b09d8, type: 3}
+  _beams: []
   _impactMarkers:
   - {fileID: 9097549735257145967}
+  _pool: {fileID: 4525566324385282930}
 --- !u!208 &9122565686844881584
 NavMeshObstacle:
   m_ObjectHideFlags: 0
@@ -556,6 +588,9 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 1704446247603422603, guid: d0886a38f25d10f40bb3834ef8c768a7, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 168550424520241601}
     - targetCorrespondingSourceObject: {fileID: 1704446247603422605, guid: d0886a38f25d10f40bb3834ef8c768a7, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4308336620010945859}
@@ -743,11 +778,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e9da09e066f06064bb170aa50767f2f2, type: 3}
---- !u!120 &1465430674211642169 stripped
-LineRenderer:
-  m_CorrespondingSourceObject: {fileID: 2567000293996164506, guid: e9da09e066f06064bb170aa50767f2f2, type: 3}
-  m_PrefabInstance: {fileID: 4019902771362688675}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &4308336620010945859 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 865774224686535648, guid: e9da09e066f06064bb170aa50767f2f2, type: 3}

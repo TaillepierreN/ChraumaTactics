@@ -293,12 +293,12 @@ MonoBehaviour:
   _audioClip: {fileID: 8300000, guid: de48bd7a8f94aa44cbff92da5aff50bd, type: 3}
   _audioSource: {fileID: 4005735412706850104}
   _tickInterval: 0.2
-  _beams:
-  - {fileID: 1733730006999974165}
-  - {fileID: 563681990774721714}
+  _beamPrefab: {fileID: -730134573354091260, guid: 1003b0233757c1a4b96443e32a0b09d8, type: 3}
+  _beams: []
   _impactMarkers:
   - {fileID: 5428114356481753657}
   - {fileID: 6253696998950086678}
+  _pool: {fileID: 854134647763565348}
 --- !u!208 &-1683825422210305331
 NavMeshObstacle:
   m_ObjectHideFlags: 0
@@ -418,11 +418,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e9da09e066f06064bb170aa50767f2f2, type: 3}
---- !u!120 &563681990774721714 stripped
-LineRenderer:
-  m_CorrespondingSourceObject: {fileID: 2567000293996164506, guid: e9da09e066f06064bb170aa50767f2f2, type: 3}
-  m_PrefabInstance: {fileID: 2615827094334044456}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &2904419286619400904 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 865774224686535648, guid: e9da09e066f06064bb170aa50767f2f2, type: 3}
@@ -485,11 +480,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e9da09e066f06064bb170aa50767f2f2, type: 3}
---- !u!120 &1733730006999974165 stripped
-LineRenderer:
-  m_CorrespondingSourceObject: {fileID: 2567000293996164506, guid: e9da09e066f06064bb170aa50767f2f2, type: 3}
-  m_PrefabInstance: {fileID: 4292110128168940687}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &4004679159014811503 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 865774224686535648, guid: e9da09e066f06064bb170aa50767f2f2, type: 3}
