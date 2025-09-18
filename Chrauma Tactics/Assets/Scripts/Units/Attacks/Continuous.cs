@@ -1,9 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
+using CT.Tools;
 using UnityEngine;
 
 namespace CT.Units.Attacks
 {
+    [RequireComponent(typeof(ContinuousNetProxy))]
     public class Continuous : Attack
     {
         /// <summary>
@@ -169,6 +171,23 @@ namespace CT.Units.Attacks
             StopAudio();
         }
 
+        /// <summary>
+        /// StartAutoFire loop, but local-only
+        /// </summary>
+        public void StartAllBeamsLocal(Unit target)
+        {
+            for (int i = 0; i < BarrelEnd.Length; i++)
+                StartBeam(i, target);
+        }
+
+        /// <summary>
+        /// stops every running loop localy
+        /// </summary>
+        public void StopAllBeamsLocal()
+        {
+            OnStop();
+        }
+
         #endregion
 
         #region Loop
@@ -176,7 +195,7 @@ namespace CT.Units.Attacks
         /// <summary>
         /// Coroutine of the beam lifecycle
         /// start the beam at shootpositon to target hitbox
-        /// accumulate time to accurately trigger damage at tickInterval
+        /// accumulate time to accurately trigger damage (server only) at tickInterval
         /// if aoe, use overlap sphere non alloc(buffered in aoebuffer) to iterate through enemies and damage them
         /// and finally stop damaging,visuals and audio at the end
         /// </summary>
@@ -189,6 +208,8 @@ namespace CT.Units.Attacks
             Transform shootPosition = (BarrelEnd != null && index < BarrelEnd.Length && BarrelEnd[index] != null) ? BarrelEnd[index] : null;
             Transform marker = (_impactMarkers != null && index < _impactMarkers.Length) ? _impactMarkers[index] : null;
 
+            bool isAuth = NetX.NM && NetX.IsListening ? NetX.IsServer : true;
+
             if (beam)
                 beam.gameObject.SetActive(true);
             if (marker)
@@ -198,6 +219,9 @@ namespace CT.Units.Attacks
 
             while (target != null && target.gameObject.activeInHierarchy)
             {
+                if (_owner == null || _owner.IsDead)
+                    break;
+
                 Vector3 startPos = shootPosition.position;
                 Vector3 endPos = target.Hitbox ? target.Hitbox.position : target.transform.position;
 
@@ -206,38 +230,44 @@ namespace CT.Units.Attacks
                 if (marker)
                     marker.position = endPos;
 
-                timeAccumulation += Time.deltaTime;
-
-                while (timeAccumulation >= _tickInterval)
+                if (isAuth)
                 {
-                    timeAccumulation -= _tickInterval;
-                    int dmg = Mathf.RoundToInt(_damage * _tickInterval);
 
-                    if (_isAoe)
+                    timeAccumulation += Time.deltaTime;
+
+                    while (timeAccumulation >= _tickInterval)
                     {
-                        _aoeSeen.Clear();
-                        int hitCount = Physics.OverlapSphereNonAlloc(endPos, _aoeRadius, _aoeBuffer);
-                        if (hitCount == _aoeBuffer.Length)
-                            Debug.LogWarning("aoe buffer is full, need to make it bigger");
-                        for (int i = 0; i < hitCount; i++)
+                        timeAccumulation -= _tickInterval;
+                        int dmg = Mathf.RoundToInt(_damage * _tickInterval);
+
+                        if (_isAoe)
                         {
-                            Collider col = _aoeBuffer[i];
-                            if (!col)
-                                continue;
-                            if (!col.TryGetComponent(out Unit unit))
-                                continue;
-                            if (unit == _owner || unit.team == _owner.team)
-                                continue;
-                            if (_aoeSeen.Add(unit))
-                                unit.TakeDamage(dmg);
+                            _aoeSeen.Clear();
+                            int hitCount = Physics.OverlapSphereNonAlloc(endPos, _aoeRadius, _aoeBuffer);
+                            if (hitCount == _aoeBuffer.Length)
+                                Debug.LogWarning("aoe buffer is full, need to make it bigger");
+                            for (int i = 0; i < hitCount; i++)
+                            {
+                                Collider col = _aoeBuffer[i];
+                                if (!col)
+                                    continue;
+                                Unit unit = col ? col.GetComponentInParent<Unit>() : null;
+
+                                if (unit == null)
+                                    continue;
+                                if (unit == _owner || unit.team == _owner.team)
+                                    continue;
+                                if (_aoeSeen.Add(unit))
+                                    unit.TakeDamage(dmg);
+                            }
                         }
+                        else
+                        {
+                            target.TakeDamage(dmg);
+                        }
+                        if (target == null || !target.gameObject.activeInHierarchy)
+                            break;
                     }
-                    else
-                    {
-                        target.TakeDamage(dmg);
-                    }
-                    if (target == null || !target.gameObject.activeInHierarchy)
-                        break;
                 }
                 yield return null;
             }

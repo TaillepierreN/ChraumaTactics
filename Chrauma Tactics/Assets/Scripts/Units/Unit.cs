@@ -78,6 +78,7 @@ public abstract class Unit : NetworkBehaviour
     [SerializeField] private Renderer _left2TrackRenderer;
     [SerializeField] private Renderer _rightTrackRenderer;
     [SerializeField] private Renderer _right2TrackRenderer;
+    private ContinuousNetProxy _cProxy;
     private Material _leftTrackMaterial;
     private Material _rightTrackMaterial;
     private Material _left2TrackMaterial;
@@ -88,6 +89,7 @@ public abstract class Unit : NetworkBehaviour
     static readonly int HASH_IsAttacking = Animator.StringToHash("IsAttacking");
     static readonly int HASH_MoveSpeed = Animator.StringToHash("MoveSpeed");
     static readonly int HASH_AtkSpeed = Animator.StringToHash("AtkSpeed");
+
 
     [Header("Unit Audio")]
     [SerializeField] protected AudioSource _audioSource;
@@ -105,7 +107,7 @@ public abstract class Unit : NetworkBehaviour
     /// <summary>Dictionary to keep track of know untargetable unit to skip if can't hit them</summary>
     private Dictionary<GameObject, Unit> _knownUntargetable = new();
     private readonly Collider[] _hits = new Collider[258];
-    private LayerMask _detectionMask = ~0; // all layers for now, TODO: set to only units layer
+    private LayerMask _detectionMask;
     private Unit _currentTarget = null;
     private bool _targetHasMovedAway = false;
 
@@ -188,16 +190,19 @@ public abstract class Unit : NetworkBehaviour
         _minFacingDot = DotFromDegrees(_facingConeDegree);
         if (_aerialOnly)
             _canTargetFlying = true;
+        _detectionMask = LayerMask.GetMask("Units");
     }
 
     protected virtual void Start()
     {
         Initialize();
+        if (_attack.IsContinuous)
+            _cProxy = GetComponent<ContinuousNetProxy>();
     }
 
     private void Update()
     {
-        if (!RoundStarted)
+        if (!RoundStarted || IsDead)
             return;
 
         _detectionTimer += Time.deltaTime;
@@ -206,6 +211,7 @@ public abstract class Unit : NetworkBehaviour
             _detectionTimer = 0f;
             DetectEnemies();
         }
+
 
         /*Wheel handling*/
         if (IsMoving && _agent.velocity.magnitude > 0.01f)
@@ -274,7 +280,7 @@ public abstract class Unit : NetworkBehaviour
                 else
                 {
                     if (_attack != null && _attack.IsContinuous)
-                        _attack.StartAutoFire(_currentTarget);
+                        StartBeamAttack();
 
                     if (_animatorWeap != null)
                         foreach (Animator weap in _animatorWeap)
@@ -537,9 +543,13 @@ public abstract class Unit : NetworkBehaviour
     /// <summary>Starts the round for the unit, allowing it to engage in combat and move.</summary>
     public virtual void StartRound()
     {
+        _knownFriendlies.Clear();
+        _knownEnemies.Clear();
+        _knownUntargetable.Clear();
+        _currentTarget = null;
+        _targetHasMovedAway = false;
         RoundStarted = true;
         //UpdateBoostedStats()
-
     }
 
     /// <summary>End the round, reset stats and position/// </summary>
@@ -559,9 +569,9 @@ public abstract class Unit : NetworkBehaviour
         if (IsDead)
             IsDead = false;
         if (NetX.InSession)
-            _netAnimatorBody.SetTrigger(Animator.StringToHash("Revive"));
+            _netAnimatorBody?.SetTrigger(Animator.StringToHash("Revive"));
         else
-            _animatorBody.SetTrigger(Animator.StringToHash("Revive"));
+            _animatorBody?.SetTrigger(Animator.StringToHash("Revive"));
         _waitingForStop = false;
         ResetStats();
     }
@@ -589,6 +599,10 @@ public abstract class Unit : NetworkBehaviour
         if (_currentHealth <= 0)
         {
             IsDead = true;
+            StopMovement();
+            if (_currentTarget != null) ClearTarget(_currentTarget);
+            RoundStarted = false;
+
             if (NetX.InSession)
                 _netAnimatorBody.SetTrigger(Animator.StringToHash("IsDead"));
             else
@@ -607,6 +621,8 @@ public abstract class Unit : NetworkBehaviour
     /// </summary>
     private void DetectEnemies()
     {
+        if (IsDead)
+            return;
         if (_currentTarget != null)
         {
             if (_currentTarget.IsTargetable)
@@ -614,7 +630,7 @@ public abstract class Unit : NetworkBehaviour
             ClearTarget(_currentTarget);
         }
 
-        int hitCount = Physics.OverlapSphereNonAlloc(transform.position, _detectionRadius, _hits/*, detectionMask*/);
+        int hitCount = Physics.OverlapSphereNonAlloc(transform.position, _detectionRadius, _hits, _detectionMask);
 
         float closestDistanceSqr = float.MaxValue;
         Unit closestEnemy = null;
@@ -649,8 +665,8 @@ public abstract class Unit : NetworkBehaviour
             // if it is an enemy, add to known enemies
             else
             {
-                if (!hitGo.TryGetComponent(out enemyUnit))
-                    continue;
+                enemyUnit = hitGo.GetComponentInParent<Unit>();
+                if (enemyUnit == null) continue;
 
                 if (!enemyUnit.IsTargetable)
                 {
@@ -742,6 +758,8 @@ public abstract class Unit : NetworkBehaviour
 
         while (target != null && target.gameObject.activeInHierarchy)
         {
+            if (IsDead) yield break;
+
             float dist = Vector3.Distance(transform.position, target.transform.position);
 
             if (dist > _currentAtkRange)
@@ -777,6 +795,8 @@ public abstract class Unit : NetworkBehaviour
     /// <param name="target"></param>
     private void BeginFiring(Unit target)
     {
+        if (IsDead)
+            return;
         IsAttacking = true;
         if (_animatorWeap != null)
             foreach (Animator weap in _animatorWeap)
@@ -787,6 +807,16 @@ public abstract class Unit : NetworkBehaviour
             _animatorBody.SetBool(HASH_IsAttacking, true);
 
         if (_attack != null && _attack.IsContinuous)
+        {
+            StartBeamAttack();
+        }
+    }
+
+    private void StartBeamAttack()
+    {
+        if (NetX.InSession && _cProxy)
+            _cProxy.StartAllBeamsNetworked(_currentTarget);
+        else
             _attack.StartAutoFire(_currentTarget);
     }
 
@@ -806,7 +836,12 @@ public abstract class Unit : NetworkBehaviour
             _agent.updateRotation = true;
 
         if (_attack != null && _attack.IsContinuous)
-            _attack.StopAutoFire();
+        {
+            if (NetX.InSession && _cProxy)
+                _cProxy.StopAllBeamsNetworked();
+            else
+                _attack.StopAutoFire();
+        }
 
         if (_animatorWeap != null)
             foreach (Animator weap in _animatorWeap)
