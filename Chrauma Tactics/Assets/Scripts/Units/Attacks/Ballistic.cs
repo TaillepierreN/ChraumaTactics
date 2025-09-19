@@ -131,7 +131,7 @@ namespace CT.Units.Attacks
                         return go;
                     },
                     actionOnGet: go => { go.transform.SetParent(_vfxRoot, true); go.SetActive(true); },
-                    actionOnRelease: go => { go.transform.SetParent(_poolContainer, true); go.SetActive(false); },
+                    actionOnRelease: go => { if(_poolContainer.gameObject.activeSelf)go.transform.SetParent(_poolContainer, true); go.SetActive(false); },
                     actionOnDestroy: go => Destroy(go),
                     defaultCapacity: 32, maxSize: 256
                 );

@@ -207,7 +207,6 @@ namespace CT.Units.Attacks
             BeamStretch beam = (_beams != null && index < _beams.Length) ? _beams[index] : null;
             Transform shootPosition = (BarrelEnd != null && index < BarrelEnd.Length && BarrelEnd[index] != null) ? BarrelEnd[index] : null;
             Transform marker = (_impactMarkers != null && index < _impactMarkers.Length) ? _impactMarkers[index] : null;
-
             bool isAuth = NetX.NM && NetX.IsListening ? NetX.IsServer : true;
 
             if (beam)

@@ -172,7 +172,7 @@ MonoBehaviour:
   _unitDescription: 
   _unitCost: 100
   _attack: {fileID: 6842549830650098512}
-  _ownHitbox: {fileID: 8652858702904010827}
+  _ownHitbox: {fileID: 8650126053137478947}
   _baseHealth: 100
   _baseAtk: 20
   _baseMoveSpeed: 8
@@ -370,7 +370,7 @@ MonoBehaviour:
   _radioGameplay: {fileID: 11400000, guid: 1a380cd7d54b23342a8b318ae7e67f93, type: 2}
   _projectilePrefab: {fileID: 100000, guid: 7e2d264e03fb2fb4fb2b1e559515830a, type: 3}
   _impactVFXPrefab:
-  - {fileID: 7484493792602375096, guid: d54af38ad9f3b3e43a8123927165f838, type: 3}
+  - {fileID: 7484493792602375096, guid: 647687d903c64b94d801bb8846b929c8, type: 3}
   _projectileSpeed: 30
   _impactLifeTime: 0.5
   _nbrOfPooledProjectile: 5
@@ -918,6 +918,11 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   TransitionStateInfoList: []
   m_Animator: {fileID: 8741907818351441991}
+--- !u!4 &8650126053137478947 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4150668069019838, guid: 0d0607f3d6e989742a573ba5f4173669, type: 3}
+  m_PrefabInstance: {fileID: 8648552658183509405}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &8652858702904010827 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4774041545375190, guid: 0d0607f3d6e989742a573ba5f4173669, type: 3}

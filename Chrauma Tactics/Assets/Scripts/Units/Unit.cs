@@ -569,9 +569,15 @@ public abstract class Unit : NetworkBehaviour
         if (IsDead)
             IsDead = false;
         if (NetX.InSession)
-            _netAnimatorBody?.SetTrigger(Animator.StringToHash("Revive"));
+        {
+            if (_netAnimatorBody != null)
+                _netAnimatorBody.SetTrigger(Animator.StringToHash("Revive"));
+        }
         else
-            _animatorBody?.SetTrigger(Animator.StringToHash("Revive"));
+        {
+            if (_animatorBody != null)
+                _animatorBody.SetTrigger(Animator.StringToHash("Revive"));
+        }
         _waitingForStop = false;
         ResetStats();
     }
@@ -604,9 +610,9 @@ public abstract class Unit : NetworkBehaviour
             RoundStarted = false;
 
             if (NetX.InSession)
-                _netAnimatorBody.SetTrigger(Animator.StringToHash("IsDead"));
+                _netAnimatorBody?.SetTrigger(Animator.StringToHash("IsDead"));
             else
-                _animatorBody.SetTrigger(Animator.StringToHash("IsDead"));
+                _animatorBody?.SetTrigger(Animator.StringToHash("IsDead"));
             OnUnitDeath?.Invoke(this);
             _hpBarCanvas.alpha = 0f;
             // Explosion animation
